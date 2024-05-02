@@ -7,6 +7,7 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/usuarios")
@@ -16,9 +17,36 @@ class UsuarioController {
 
     @PostMapping("/cadastro")
     fun post(@RequestBody @Valid novoUsuario: Usuario): ResponseEntity<UsuarioDTO> {
+        if (repository.findByEmail(novoUsuario.email) != null) {
+            return ResponseEntity.status(400).build()
+        }
         repository.save(novoUsuario)
         val novoUsuarioDTO = usuarioParaDTO(novoUsuario)
         return ResponseEntity.status(201).body(novoUsuarioDTO)
+    }
+
+    @PostMapping("/deletar")
+    fun softDelete(@RequestBody @Valid usuario: Usuario): ResponseEntity<Any> {
+        if (repository.findByEmailAndSenha(usuario.email, usuario.senha) == null) {
+            return ResponseEntity.status(400).build()
+        }
+        usuario.deletado = true
+        usuario.dataDeletado = LocalDateTime.now()
+        usuario.dataAtualizacao = LocalDateTime.now()
+        repository.save(usuario)
+        return ResponseEntity.status(200).build()
+    }
+
+    @DeleteMapping("/deletar")
+    fun hardDelete(@RequestBody @Valid usuario: Usuario): ResponseEntity<Any> {
+        if (repository.findByEmailAndSenha(usuario.email, usuario.senha) == null) {
+            return ResponseEntity.status(400).build()
+        }
+        repository.delete(usuario)
+        if (repository.findByEmailAndSenha(usuario.email, usuario.senha) == null) {
+            return ResponseEntity.status(200).build()
+        }
+        return ResponseEntity.status(500).build()
     }
 
     @GetMapping("/listar")
