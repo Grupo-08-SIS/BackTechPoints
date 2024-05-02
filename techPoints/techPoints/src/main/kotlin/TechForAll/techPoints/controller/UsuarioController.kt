@@ -43,20 +43,6 @@ class UsuarioController {
     }
 
 
-    @PostMapping("/login")
-    fun login(@RequestBody loginData: Map<String, String>): ResponseEntity<Any> {
-        val email = loginData["email"]
-        val senha = loginData["senha"]
-
-        if (email != null && senha != null) {
-            val user = repository.findByEmail(email)
-            if (user != null && senha == user.senha) {
-                return ResponseEntity.status(200).build()
-            }
-        }
-        return ResponseEntity.status(401).build()
-    } //falta fazer um login bom com autenticação
-
     @PatchMapping(value = ["/atualizar-imagem/{idUsuario}"],
         consumes = ["image/jpeg", "image/png", "image/jpg"])
     fun patchImagem(

@@ -1,19 +1,21 @@
 package TechForAll.techPoints.dominio
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "usuario")
-data class Usuario(
+class Usuario(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    var idUsuario: Int,
+    var idUsuario: Int? = null,
 
     @Column(name = "nome_usuario", nullable = false, length = 100)
     var nomeUsuario: String,
@@ -54,11 +56,46 @@ data class Usuario(
     @Column(name = "data_atualizacao")
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "fk_pontuacao", referencedColumnName = "id_pontuacao")
-//    var pontuacao: Pontuacao? = null,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
-    var endereco: Endereco? = null
-){}
+    var endereco: Endereco? = null,
+
+    @Enumerated(EnumType.STRING)
+    var role: UserRole = UserRole.USER
+) : UserDetails {
+
+    override fun getAuthorities(): Collection<GrantedAuthority?> {
+        return if (this.role === UserRole.ADMIN) {
+            listOf(
+                SimpleGrantedAuthority("ROLE_ADMIN"),
+                SimpleGrantedAuthority("ROLE_USER")
+            )
+        } else {
+            listOf(SimpleGrantedAuthority("ROLE_USER"))
+        }
+    }
+
+    override fun getPassword(): String {
+        return senha
+    }
+
+    override fun getUsername(): String {
+        return email
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isEnabled(): Boolean {
+        return true
+    }
+}
