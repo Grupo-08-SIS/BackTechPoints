@@ -38,9 +38,8 @@ CREATE TABLE IF NOT EXISTS ponto (
   FOREIGN KEY (fk_curso) REFERENCES curso (id_curso)
 );
 
--- Dúvidas em como inserir aqui o Id
 CREATE TABLE IF NOT EXISTS pontuacao (
-  id_pontuacao INT NOT NULL,
+  id_pontuacao INT AUTO_INCREMENT NOT NULL,
   fk_pontos INT NOT NULL,
   fk_tipo_ponto INT NOT NULL,
   total_pontos_usuario VARCHAR(60) NULL,
@@ -115,7 +114,7 @@ CREATE TABLE IF NOT EXISTS usuario (
 );
 
 CREATE TABLE IF NOT EXISTS redefinicao_senha (
-  id_redefinicao_senha INT NOT NULL,
+  id_redefinicao_senha INT AUTO_INCREMENT NOT NULL,
   codigo_redefinicao VARCHAR(8) NOT NULL,
   data_criacao DATETIME NOT NULL,
   data_expiracao DATETIME NOT NULL,
@@ -128,14 +127,14 @@ CREATE TABLE IF NOT EXISTS redefinicao_senha (
 );
 
 CREATE TABLE IF NOT EXISTS categoria_produto (
-  id_categoria_produto INT NOT NULL,
+  id_categoria_produto INT AUTO_INCREMENT NOT NULL,
   nome VARCHAR(45) NOT NULL,
   PRIMARY KEY (id_categoria_produto)
   );
 
 
 CREATE TABLE IF NOT EXISTS produto (
-  id_produto INT NOT NULL,
+  id_produto INT AUTO_INCREMENT NOT NULL,
   nome VARCHAR(45) NOT NULL,
   valor_pontos DOUBLE NOT NULL,
   descricao TINYTEXT NULL,
@@ -149,6 +148,7 @@ CREATE TABLE IF NOT EXISTS produto (
 );
 
 CREATE TABLE IF NOT EXISTS carrinho (
+  id_carrinho INT AUTO_INCREMENT NOT NULL,
   fk_usuario INT NOT NULL,
   fk_produto INT NOT NULL,
   quantidade_produto INT NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS carrinho (
 );
 
 CREATE TABLE IF NOT EXISTS inscricao (
-  fk_usuario INT NOT NULL,
+  fk_usuario INT AUTO_INCREMENT NOT NULL,
   fk_curso INT NOT NULL,
   codigo_inscricao VARCHAR(100) NOT NULL,
   PRIMARY KEY (fk_usuario, fk_curso),
@@ -175,14 +175,14 @@ CREATE TABLE IF NOT EXISTS inscricao (
 );
 
 CREATE TABLE IF NOT EXISTS atividade (
-  id_atividade INT NOT NULL,
+  id_atividade INT AUTO_INCREMENT NOT NULL,
   nota INT NOT NULL,
   temp_duracao TIME NOT NULL,
   PRIMARY KEY (id_atividade)
   );
 
 CREATE TABLE IF NOT EXISTS modulo (
-  fk_curso INT NOT NULL,
+  fk_curso INT AUTO_INCREMENT NOT NULL,
   fk_atividade INT NOT NULL,
   qtd_atividade_feita INT NOT NULL,
   qtd_atividade_total INT NOT NULL,
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS modulo (
 );
 
 CREATE TABLE IF NOT EXISTS classificacao (
-  id_classificacao INT NOT NULL,
+  id_classificacao INT AUTO_INCREMENT NOT NULL,
   fk_usuario INT NOT NULL,
   PRIMARY KEY (id_classificacao),
   INDEX fk_classificacao_usuario1_idx (fk_usuario ASC) VISIBLE,
@@ -206,6 +206,11 @@ CREATE TABLE IF NOT EXISTS classificacao (
   CONSTRAINT fk_classificacao_pontuacao1
   FOREIGN KEY (fk_pontuacao) REFERENCES pontuacao (id_pontuacao)
 );
+
+CREATE TABLE IF NOT EXISTS pedido (
+id_pedido INT NOT NULL,
+
+
 
 /*
 INSERTS
