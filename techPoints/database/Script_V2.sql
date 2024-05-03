@@ -76,7 +76,7 @@ Permissionamento
 */
 
 CREATE TABLE IF NOT EXISTS endereco (
-  id_endereco INT NOT NULL,
+  id_endereco INT AUTO_INCREMENT NOT NULL,
   estado CHAR(2) NOT NULL,
   cidade VARCHAR(100) NOT NULL,
   CEP CHAR(8) NOT NULL,
@@ -85,13 +85,13 @@ CREATE TABLE IF NOT EXISTS endereco (
   );
 
 CREATE TABLE IF NOT EXISTS usuario (
-  id_usuario INT NOT NULL,
+  id_usuario INT AUTO_INCREMENT NOT NULL,
   nome_usuario VARCHAR(100) NOT NULL,
   CPF CHAR(11),
   senha VARCHAR(200) NOT NULL COMMENT 'Armazenada de forma criptografada',
   primeiro_nome VARCHAR(100),
   sobrenome VARCHAR(100) ,
-  email VARCHAR(45) NOT NULL,
+  email VARCHAR(100) NOT NULL,
   imagem_perfil VARCHAR(200),
   data_criacao DATETIME,
   deletado TINYINT NOT NULL,
@@ -232,15 +232,20 @@ INSERT INTO ponto (qtd_ponto, fk_tipo_ponto, fk_curso) VALUES
 (15, 3, 3); 
 
 INSERT INTO tipo_acao (Inserir, Deletar, Atualizar) VALUES 
-(1, 1, 1); 
+(1, 1, 1),
+(1,1,1); 
 
 INSERT INTO endereco (id_endereco, estado, cidade, CEP, rua) VALUES 
-(1, 'SP', 'São Paulo', '01000-000', 'Avenida Paulista'),
-(2, 'RJ', 'Rio de Janeiro', '20000-000', 'Rua dos Andradas');
+(1, 'SP', 'São Paulo', '01000000', 'Avenida Paulista'),
+(2, 'RJ', 'Rio de Janeiro', '20000000', 'Rua dos Andradas');
 
-INSERT INTO usuario (nome_usuario, CPF, senha, primeiro_nome, sobrenome, email, imagem_perfil, data_criacao, deletado, fk_pontuacao, fk_tipo_usuario, fk_endereco) VALUES 
+INSERT INTO tipo_usuario (nome, fk_tipo_acao) VALUES
+('Administro', 1),
+('Cliente', 2);
+
+INSERT INTO usuario (nome_usuario, CPF, senha, primeiro_nome, sobrenome, email, data_criacao, deletado, fk_pontuacao, fk_tipo_usuario, fk_endereco) VALUES 
 ('admin', '12345678901', 'senha_admin', 'Admin', 'Admin', 'admin@example.com', NULL, NOW(), 0, 1, 1, 1),
-('usuario1', '98765432101', 'senha_usuario1', 'Usuário', 'Um', 'usuario1@example.com', NULL, NOW(), 0, 2, 2, 2);
+('usuario1', '98765432101', 'senha_usuario1', 'Usuário', 'Um', 'usuario1@example.com', NULL, NOW(), 0, 1, 1, 2);
 
 INSERT INTO redefinicao_senha (codigo_redefinicao, data_criacao, data_expiracao, valido, fk_usuario) VALUES 
 ('ABCD1234', NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY), 1, 2);
@@ -280,4 +285,4 @@ INSERT INTO classificacao (fk_usuario) VALUES
 SELECTS
 */
 
-SELECT * FROM classificacao;
+SELECT * FROM usuario;
