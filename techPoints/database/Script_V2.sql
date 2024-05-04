@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS Tech4All;
 USE Tech4All ;
 
@@ -96,7 +97,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   deletado TINYINT NOT NULL,
   data_deletado DATETIME,
   data_atualizacao DATETIME,
-  fk_pontuacao INT NOT NULL,
+  fk_pontuacao INT,
   fk_tipo_usuario INT NOT NULL,
   fk_endereco INT NOT NULL,
   PRIMARY KEY (id_usuario),
@@ -152,7 +153,7 @@ CREATE TABLE IF NOT EXISTS carrinho (
   fk_usuario INT NOT NULL,
   fk_produto INT NOT NULL,
   quantidade_produto INT NOT NULL,
-  PRIMARY KEY (fk_usuario, fk_produto),
+  PRIMARY KEY (id_carrinho, fk_usuario, fk_produto),
   INDEX fk_usuario_has_produto_produto1_idx (fk_produto ASC) VISIBLE,
   INDEX fk_usuario_has_produto_usuario1_idx (fk_usuario ASC) VISIBLE,
   CONSTRAINT fk_usuario_has_produto_usuario1
@@ -186,7 +187,7 @@ CREATE TABLE IF NOT EXISTS modulo (
   fk_atividade INT NOT NULL,
   qtd_atividade_feita INT NOT NULL,
   qtd_atividade_total INT NOT NULL,
-  numero_modulo VARCHAR(4) NULL,
+  nome_modulo VARCHAR(45),
   PRIMARY KEY (fk_curso, fk_atividade),
   INDEX fk_curso_has_atividade_atividade1_idx (fk_atividade ASC) VISIBLE,
   INDEX fk_curso_has_atividade_curso1_idx (fk_curso ASC) VISIBLE,
@@ -199,6 +200,7 @@ CREATE TABLE IF NOT EXISTS modulo (
 CREATE TABLE IF NOT EXISTS classificacao (
   id_classificacao INT AUTO_INCREMENT NOT NULL,
   fk_usuario INT NOT NULL,
+  fk_pontuacao INT NOT NULL,
   PRIMARY KEY (id_classificacao),
   INDEX fk_classificacao_usuario1_idx (fk_usuario ASC) VISIBLE,
   CONSTRAINT fk_classificacao_usuario1
@@ -207,9 +209,27 @@ CREATE TABLE IF NOT EXISTS classificacao (
   FOREIGN KEY (fk_pontuacao) REFERENCES pontuacao (id_pontuacao)
 );
 
-CREATE TABLE IF NOT EXISTS pedido (
-id_pedido INT NOT NULL,
+CREATE TABLE IF NOT EXISTS status_pedido (
+id_status_pedido INT AUTO_INCREMENT NOT NULL,
+nome_status VARCHAR(45),
+descricao_status VARCHAR(100),
+PRIMARY KEY (id_status_pedido)
+);
 
+CREATE TABLE IF NOT EXISTS pedido (
+id_pedido INT AUTO_INCREMENT NOT NULL,
+fk_usuario INT NOT NULL,
+fk_carrinho INT NOT NULL,
+descricao_pedido VARCHAR(100),
+fk_status_pedido INT NOT NULL,
+PRIMARY KEY (id_pedido),
+CONSTRAINT fk_pedido_usuario
+FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario),
+CONSTRAINT fk_pedido_carrinho 
+FOREIGN KEY (fk_carrinho) REFERENCES carrinho (id_carrinho),
+CONSTRAINT fk_pedido_status_pedido
+FOREIGN KEY (fk_status_pedido) REFERENCES status_pedido (id_status_pedido)
+);
 
 
 /*
@@ -240,20 +260,34 @@ INSERT INTO tipo_acao (Inserir, Deletar, Atualizar) VALUES
 (1, 1, 1),
 (1,1,1); 
 
-INSERT INTO endereco (id_endereco, estado, cidade, CEP, rua) VALUES 
-(1, 'SP', 'São Paulo', '01000000', 'Avenida Paulista'),
-(2, 'RJ', 'Rio de Janeiro', '20000000', 'Rua dos Andradas');
+INSERT INTO endereco (estado, cidade, CEP, rua) VALUES 
+('SP', 'São Paulo', '01000000', 'Avenida Paulista'),
+( 'RJ', 'Rio de Janeiro', '20000000', 'Rua dos Andradas');
 
 INSERT INTO tipo_usuario (nome, fk_tipo_acao) VALUES
 ('Administro', 1),
 ('Cliente', 2);
 
+/*
+ -- Melhor jogar isso para o Back-End
+INSERT INTO pontuacao (fk_pontos, fk_tipo_ponto, total_pontos_usuario, data_criacao)
+VALUES (
+    (SELECT id_ponto FROM ponto WHERE usuario_id = 'ID_DO_USUARIO'), -- Subconsulta para obter o ID dos pontos do usuário
+    1, -- Exemplo de fk_tipo_ponto
+    (SELECT SUM(pontos) FROM ponto WHERE usuario_id = 'ID_DO_USUARIO'), -- Subconsulta para calcular a soma dos pontos do usuário
+    NOW() -- Data de criação
+);
+*/
+
+INSERT INTO pontuacao (fk_pontos, fk_tipo_ponto, total_pontos_usuario, data_criacao) 
+VALUES (1, 1, '100', '2024-04-10 08:00:00');
+
 INSERT INTO usuario (nome_usuario, CPF, senha, primeiro_nome, sobrenome, email, data_criacao, deletado, fk_pontuacao, fk_tipo_usuario, fk_endereco) VALUES 
-('admin', '12345678901', 'senha_admin', 'Admin', 'Admin', 'admin@example.com', NULL, NOW(), 0, 1, 1, 1),
-('usuario1', '98765432101', 'senha_usuario1', 'Usuário', 'Um', 'usuario1@example.com', NULL, NOW(), 0, 1, 1, 2);
+('admin', '12345678901', 'senha_admin', 'Admin', 'Admin', 'admin@example.com', NOW(), 0, 1, 1, 1),
+('usuario1', '98765432101', 'senha_usuario1', 'Usuário', 'Um', 'usuario1@example.com',NOW(), 0, 1, 1, 2);
 
 INSERT INTO redefinicao_senha (codigo_redefinicao, data_criacao, data_expiracao, valido, fk_usuario) VALUES 
-('ABCD1234', NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY), 1, 2);
+('ABCD1234', NOW(), DATE_ADD(NOW(), INTERVAL 1 DAY), 1, 1);
 
 INSERT INTO categoria_produto (nome) VALUES 
 ('Eletrônicos'),
@@ -278,16 +312,19 @@ INSERT INTO atividade (nota, temp_duracao) VALUES
 (90, '01:45:00'),
 (75, '03:00:00');
 
-INSERT INTO modulo (fk_curso, fk_atividade, qtd_atividade_feita, qtd_atividade_total, numero_modulo) VALUES 
+INSERT INTO modulo (fk_curso, fk_atividade, qtd_atividade_feita, qtd_atividade_total, nome_modulo) VALUES 
 (1, 1, 1, 2, 'Módulo 1'),
 (1, 2, 0, 1, 'Módulo 2'),
 (3, 3, 1, 1, 'Módulo 1');
 
-INSERT INTO classificacao (fk_usuario) VALUES 
-(2);
+INSERT INTO classificacao (fk_usuario, fk_pontuacao) VALUES 
+(2, 1);
+
 
 /*
 SELECTS
 */
 
 SELECT * FROM usuario;
+SELECT * FROM classificacao;
+SELECT * FROM pontuacao;
