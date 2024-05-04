@@ -14,22 +14,28 @@ data class Produto (
 
     @field:Size(max = 45)
     @field:NotBlank
-    var nome:String,
+    var nome:String?= null,
 
     @field:NotNull
     @field:Positive
-    var valorPontos:Int,
+    var valorPontos:Int? = null,
 
     @field:Size(max = 100)
-    var descricao:String?,
+    var descricao:String? = null,
 
     @field:Positive
     @field:NotNull
-    var quantidade:Int,
+    var quantidade:Int? = null,
 
     @field:NotNull
-    var disponivel:Boolean,
+    var disponivel:Boolean? = null,
 
     @field:ManyToOne
-    var categoriaProduto: CategoriaProduto
-)
+    var categoriaProduto: CategoriaProduto? = null
+) {
+constructor(
+    paramId: Int,
+    paramCategoriaProduto:CategoriaProduto
+):
+this(id = paramId, categoriaProduto = paramCategoriaProduto)
+}

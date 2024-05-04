@@ -1,20 +1,15 @@
 package tech4All.crudProdutosTroca.controller
 
 import jakarta.validation.Valid
-import org.apache.coyote.Response
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import tech4All.crudProdutosTroca.domain.Produto
 import tech4All.crudProdutosTroca.repository.ProdutoRepository
 
 @RestController
 @RequestMapping("/produtos")
 class ProdutoController (
-    val produtoRepository: ProdutoRepository
+    val produtoRepository: ProdutoRepository,
 ) {
     @PostMapping
     fun cadastrarProduto(@RequestBody @Valid novoProduto: Produto): ResponseEntity<Produto> {
@@ -32,5 +27,30 @@ class ProdutoController (
         }
 
         return ResponseEntity.status(200).body(listaProdutos);
+    }
+
+    @PutMapping("/atualizar-categoria-produto/{id}")
+    fun atualizarProduto(@PathVariable id:Int, @RequestBody @Valid produtoNovo: Produto): ResponseEntity<Produto> {
+
+        val produtoAtualizado = Produto (
+            id = id,
+            nome = produtoNovo.nome,
+            valorPontos = produtoNovo.valorPontos,
+            descricao = produtoNovo.descricao,
+            quantidade = produtoNovo.quantidade,
+            disponivel = produtoNovo.disponivel,
+            categoriaProduto = produtoNovo.categoriaProduto
+        )
+        produtoRepository.save(produtoAtualizado);
+
+        return ResponseEntity.status(200).body(produtoAtualizado);
+    }
+
+    @DeleteMapping("/deletar/{id}")
+    fun deletarProduto(@PathVariable id: Int):ResponseEntity<Void> {
+
+        produtoRepository.deleteById(id);
+
+        return ResponseEntity.status(200).build();
     }
 }
