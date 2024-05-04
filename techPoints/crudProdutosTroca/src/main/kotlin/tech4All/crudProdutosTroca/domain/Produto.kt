@@ -18,7 +18,7 @@ data class Produto (
 
     @field:NotNull
     @field:Positive
-    var valorPontos:Double,
+    var valorPontos:Int,
 
     @field:Size(max = 100)
     var descricao:String?,
@@ -31,6 +31,5 @@ data class Produto (
     var disponivel:Boolean,
 
     @field:ManyToOne
-    @field:NotBlank
     var categoriaProduto: CategoriaProduto
 )
