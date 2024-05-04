@@ -1,6 +1,7 @@
 package TechForAll.techPoints.controller
 
 import TechForAll.techPoints.dominio.Endereco
+import TechForAll.techPoints.dominio.EnderecoDTO
 import TechForAll.techPoints.repository.EnderecoRepository
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -9,6 +10,7 @@ import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/enderecos")
@@ -63,7 +65,6 @@ class EnderecoController {
         return ResponseEntity.status(404).build()
     }
 
-
     @Operation(summary = "Atualizar endereço pelo ID", description = "Retorna o endereço atualizado")
     @ApiResponses(
         value = [
@@ -71,12 +72,21 @@ class EnderecoController {
             ApiResponse(responseCode = "404", description = "Endereço não encontrado")
         ]
     )
-    @PutMapping("/atualizar/{idEndereco}")
-    fun put(@PathVariable idEndereco: Int,@RequestBody novoEndereco: Endereco): ResponseEntity<Endereco> {
+    @PatchMapping("/atualizar/{idEndereco}")
+    fun patch(@PathVariable idEndereco: Int, @RequestBody enderecoDTO: EnderecoDTO): ResponseEntity<Endereco> {
         if (repository.existsById(idEndereco)) {
-            novoEndereco.id = idEndereco
-            repository.save(novoEndereco)
-            return ResponseEntity.status(200).body(novoEndereco)
+            val enderecoExistente = repository.findById(idEndereco).get()
+
+            enderecoDTO.cep?.let { enderecoExistente.cep = it }
+            enderecoDTO.cidade?.let { enderecoExistente.cidade = it }
+            enderecoDTO.estado?.let { enderecoExistente.estado = it }
+            //Essas linhas de código verificam se os campos cep,
+            // cidade e estado em enderecoDTO não são nulos e, se não forem,
+            // atribuem esses valores correspondentes às propriedades
+            enderecoExistente.dataAtualizacao = LocalDateTime.now()
+
+            repository.save(enderecoExistente)
+            return ResponseEntity.status(200).body(enderecoExistente)
         }
         return ResponseEntity.status(404).build()
     }

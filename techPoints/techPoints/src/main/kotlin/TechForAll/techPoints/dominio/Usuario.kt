@@ -20,7 +20,7 @@ data class Usuario(
 
     @Column(name = "CPF", length = 11)
     @Size(min = 11, max = 11, message = "CPF deve conter exatamente 11 caracteres")
-    var cpf: String? = null,
+    var cpf: String,
 
     @Column(name = "senha", nullable = false, length = 200)
     @Pattern(
@@ -30,17 +30,17 @@ data class Usuario(
     var senha: String,
 
     @Column(name = "primeiro_nome", length = 100)
-    var primeiroNome: String? = null,
+    var primeiroNome: String?,
 
     @Column(name = "sobrenome", length = 100)
-    var sobrenome: String? = null,
+    var sobrenome: String?,
 
     @Column(name = "email", nullable = false, length = 45)
     @Email
     var email: String,
 
     @Column(name = "imagem_perfil", length = 20 * 1024 * 1024)
-    var imagemPerfil: ByteArray? = null,
+    var imagemPerfil: ByteArray?,
 
     @Column(name = "data_criacao")
     var dataCriacao: LocalDateTime = LocalDateTime.now(),
@@ -49,7 +49,7 @@ data class Usuario(
     var deletado: Boolean = false,
 
     @Column(name = "data_deletado")
-    var dataDeletado: LocalDateTime? = null,
+    var dataDeletado: LocalDateTime?,
 
     @Column(name = "data_atualizacao")
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
@@ -60,5 +60,5 @@ data class Usuario(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
-    var endereco: Endereco? = null
-){}
+    var endereco: Endereco
+)

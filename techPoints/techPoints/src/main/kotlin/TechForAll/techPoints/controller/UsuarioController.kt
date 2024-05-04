@@ -14,17 +14,17 @@ import java.time.LocalDateTime
 class UsuarioController {
     @Autowired
     lateinit var repository: UsuarioRepository
-
     @PostMapping("/cadastro")
-    fun post(@RequestBody @Valid novoUsuario: Usuario): ResponseEntity<UsuarioDTO> {
-        if (repository.findByEmail(novoUsuario.email) != null) {
+    fun post(@RequestBody @Valid novoUsuario: Usuario): ResponseEntity<Any> {
+        val usuarioExistente = repository.existsByEmail(novoUsuario.email)
+
+        if (usuarioExistente) {
             return ResponseEntity.status(400).build()
         }
-        repository.save(novoUsuario)
-        val novoUsuarioDTO = usuarioParaDTO(novoUsuario)
+        val usuarioSalvo = repository.save(novoUsuario)
+        val novoUsuarioDTO = usuarioParaDTO(usuarioSalvo)
         return ResponseEntity.status(201).body(novoUsuarioDTO)
     }
-
     @PostMapping("/deletar")
     fun softDelete(@RequestBody @Valid usuario: Usuario): ResponseEntity<Any> {
         if (repository.findByEmailAndSenha(usuario.email, usuario.senha) == null) {
