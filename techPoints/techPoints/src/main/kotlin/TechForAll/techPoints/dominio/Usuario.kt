@@ -54,9 +54,9 @@ data class Usuario(
     @Column(name = "data_atualizacao")
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "fk_pontuacao", referencedColumnName = "id_pontuacao")
-//    var pontuacao: Pontuacao? = null,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_pontuacao", referencedColumnName = "id_pontuacao")
+    var pontuacao: Pontuacao? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
