@@ -20,8 +20,6 @@ data class CategoriaProduto (
     var nome:String,
 
     @field: Size(max = 100)
-    var descricaoProduto: String?
-
-
+    var descricaoCategoria: String?
 
 )
