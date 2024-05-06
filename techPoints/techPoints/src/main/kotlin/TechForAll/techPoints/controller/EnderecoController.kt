@@ -80,6 +80,7 @@ class EnderecoController {
             enderecoDTO.cep?.let { enderecoExistente.cep = it }
             enderecoDTO.cidade?.let { enderecoExistente.cidade = it }
             enderecoDTO.estado?.let { enderecoExistente.estado = it }
+            enderecoDTO.rua?.let { enderecoExistente.rua = it }
             //Essas linhas de código verificam se os campos cep,
             // cidade e estado em enderecoDTO não são nulos e, se não forem,
             // atribuem esses valores correspondentes às propriedades
