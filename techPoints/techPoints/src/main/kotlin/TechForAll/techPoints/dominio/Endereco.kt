@@ -30,6 +30,11 @@ data class Endereco (
     @Column(name = "estado")
     var estado: String,
 
+    @NotNull
+    @Size(min = 2, max = 100)
+    @Column(name = "rua")
+    var rua: String,
+
     @Column(name = "data_atualizacao")
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 )
