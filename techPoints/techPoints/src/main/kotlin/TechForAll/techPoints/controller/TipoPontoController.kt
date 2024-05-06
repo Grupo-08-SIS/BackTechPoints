@@ -28,7 +28,7 @@ class TipoPontoController {
     fun post(@RequestBody @Valid novoTipoPonto: TipoPonto): ResponseEntity<Int> {
         repository.save(novoTipoPonto)
         return ResponseEntity.status(201).body(novoTipoPonto.idTipoPonto)
-    } // retorna o id do endereço para o javascript mandar este id no body da criação do usuario
+    }
 
     @Operation(summary = "Listar todos os tipos de pontos",
             description = "Retorna uma lista de todos os tipos de pontos cadastrados")

@@ -39,6 +39,9 @@ data class Usuario(
     @Email
     var email: String,
 
+    @Column(name = "autenticado", nullable = false)
+    var autenticado: Boolean?,
+
     @Column(name = "imagem_perfil", length = 20 * 1024 * 1024)
     var imagemPerfil: ByteArray?,
 
@@ -56,9 +59,10 @@ data class Usuario(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_pontuacao", referencedColumnName = "id_pontuacao")
-    var pontuacao: Pontuacao? = null,
+    var pontuacao: Pontuacao?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
     var endereco: Endereco
+
 )

@@ -127,13 +127,27 @@ class UsuarioController {
         val senha = loginData["senha"]
 
         if (email != null && senha != null) {
-            val user = usuarioRepository.findByEmail(email)
-            if (user != null && senha == user.senha) {
+            val usuario = usuarioRepository.findByEmail(email)
+            if (usuario != null && senha == usuario.senha) {
+                usuario.autenticado = true
+                usuarioRepository.save(usuario)
                 return ResponseEntity.status(200).build()
             }
         }
         return ResponseEntity.status(401).build()
-    } //falta fazer um login bom com autenticação
+    } //login temporario
+
+
+    @PostMapping("/logoff/{idUsuario}")
+    fun logoff(@RequestParam idUsuario: Int): ResponseEntity<Any> {
+        if (usuarioRepository.existsById(idUsuario)) {
+            var usuario = usuarioRepository.findById(idUsuario).get()
+            usuario.autenticado = false
+            usuarioRepository.save(usuario)
+            return ResponseEntity.status(200).build()
+        }
+        return ResponseEntity.status(404).build()
+    } //logoff temporario
 
     @Operation(summary = "Buscar usuário pelo email", description = "Retorna o usuário correspondente ao email fornecido")
     @ApiResponses(

@@ -18,6 +18,6 @@ class Pontuacao(
                 @JoinColumn(name = "fk_tipo_ponto", referencedColumnName = "id_tipo_ponto")
                 var tipoPonto : TipoPonto? = null,
 
-                @Column(name = "total_pontos_usuario", length = 60)
-                var total_pontos_usuario: String,
+                @Column(name = "total_pontos_usuario")
+                var totalPontosUsuario: Int,
         )
