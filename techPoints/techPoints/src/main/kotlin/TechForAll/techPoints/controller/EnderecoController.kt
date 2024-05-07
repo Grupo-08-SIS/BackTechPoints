@@ -26,9 +26,9 @@ class EnderecoController {
         ]
     )
     @PostMapping("/cadastro")
-    fun post(@RequestBody @Valid novoEndereco: Endereco): ResponseEntity<Int> {
+    fun post(@RequestBody @Valid novoEndereco: Endereco): ResponseEntity<Any> {
         repository.save(novoEndereco)
-        return ResponseEntity.status(201).body(novoEndereco.id)
+        return ResponseEntity.status(201).body(novoEndereco)
     } // retorna o id do endereço para o javascript mandar este id no body da criação do usuario
 
 

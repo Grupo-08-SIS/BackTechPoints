@@ -13,11 +13,12 @@ data class Classificacao(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_usuario")
     val usuario: Usuario,
+    @Column(name = "total_pontos")
+    val totalPontos: Int,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_pontuacao")
-    val pontuacao: Pontuacao,
+    val pontuacao: Pontuacao
 
-    @Column(name = "total_pontos")
-    val totalPontos: Int
+
 )

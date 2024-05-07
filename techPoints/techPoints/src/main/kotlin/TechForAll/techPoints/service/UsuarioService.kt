@@ -49,7 +49,7 @@ class UsuarioService(
         val message = SimpleMailMessage()
         message.setTo(emailCadastrar)
         message.setSubject("Recuperação de Senha")
-        message.setText("Olá!\n\nPara redefinir sua senha, use o seguinte código: $token\n\nAtenciosamente,\nSua Aplicação")
+        message.setText("Olá!\n\nPara redefinir sua senha do Tech4Points, use o seguinte código: $token\n\nAtenciosamente,\nEquipe Tech4All")
 
         emailSender.send(message)
     }

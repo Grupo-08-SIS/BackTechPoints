@@ -10,31 +10,31 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "endereco")
 data class Endereco (
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_endereco")
+    @field:Id
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+    @field:Column(name = "id_endereco")
     var id: Int,
 
-    @NotNull
-    @Size(min = 9, max = 9)
-    @Column(name = "cep")
+    @field:NotNull
+    @field:Size(min = 9, max = 9)
+    @field:Column(name = "cep")
     var cep: String,
 
-    @NotNull
-    @Size(min = 2, max = 100)
-    @Column(name = "cidade")
+    @field:NotNull
+    @field:Size(min = 2, max = 100)
+    @field:Column(name = "cidade")
     var cidade: String,
 
-    @NotNull
-    @Size(min = 2, max = 2)
-    @Column(name = "estado")
+    @field:NotNull
+    @field:Size(min = 2, max = 2)
+    @field:Column(name = "estado")
     var estado: String,
 
-    @NotNull
-    @Size(min = 2, max = 100)
-    @Column(name = "rua")
+    @field:NotNull
+    @field:Size(min = 2, max = 100)
+    @field:Column(name = "rua")
     var rua: String,
 
-    @Column(name = "data_atualizacao")
+    @field:Column(name = "data_atualizacao")
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 )

@@ -11,6 +11,12 @@ class TipoPonto(
         var idTipoPonto: Int,
 
         @Column(name = "nome", nullable = false, length = 100)
-        var nome: String
+        var nome: String,
+
+        @Column(name = "fk_curso")
+        var fkCurso: Int?,
+
+        @Column(name = "valido")
+        var valido: Boolean = true
 
 )

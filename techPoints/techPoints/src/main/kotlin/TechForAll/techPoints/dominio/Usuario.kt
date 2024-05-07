@@ -35,11 +35,11 @@ data class Usuario(
     @Column(name = "sobrenome", length = 100)
     var sobrenome: String?,
 
-    @Column(name = "email", nullable = false, length = 45)
+    @Column(name = "email", length = 45)
     @Email
     var email: String,
 
-    @Column(name = "autenticado", nullable = false)
+    @Column(name = "autenticado")
     var autenticado: Boolean?,
 
     @Column(name = "imagem_perfil", length = 20 * 1024 * 1024)
@@ -58,11 +58,7 @@ data class Usuario(
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_pontuacao", referencedColumnName = "id_pontuacao")
-    var pontuacao: Pontuacao?,
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
-    var endereco: Endereco
+    var endereco: Endereco?
 
 )

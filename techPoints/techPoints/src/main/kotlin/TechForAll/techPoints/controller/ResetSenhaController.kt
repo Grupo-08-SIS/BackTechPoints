@@ -26,11 +26,16 @@ class ResetSenhaController (private var usuarioService: UsuarioService)
         description = "Endpoint para solicitar troca de senha.")
     @ApiResponses(value = [
         ApiResponse(responseCode = "200", description = "Troca de senha solicitada com sucesso."),
-        ApiResponse(responseCode = "400", description = "Erro ao solicitar troca de senha.")
+        ApiResponse(responseCode = "400", description = "Erro ao solicitar troca de senha."),
+        ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     ])
     @PostMapping("/solicitar-troca")
     fun solicitarTrocaSenha(@RequestParam("email") emailUser: String): ResponseEntity<Any> {
-        return usuarioService.senhaReset(emailUser)
+        var verificar = usuarioRepository.existsByEmail(emailUser)
+        if (verificar == true){
+            return usuarioService.senhaReset(emailUser)
+        }
+       return ResponseEntity.status(404).build()
     }
 
     @Operation(summary = "Verificar token de redefinição de senha",
@@ -43,7 +48,7 @@ class ResetSenhaController (private var usuarioService: UsuarioService)
     fun verificarToken(@RequestParam("codigo") codigoRedefinicao: String, @RequestParam("email") emailUser: String): ResponseEntity<Any> {
         val existeRedefinicao = senhaRepository.existsByTokenAndEmailAndValidoAndDataExpiracaoAfter(codigoRedefinicao, emailUser)
         return if (existeRedefinicao == true) {
-            ResponseEntity.ok().build()
+            ResponseEntity.status(200).build()
         } else {
             ResponseEntity.status(400).body("Não há uma redefinição de senha válida para o email e token fornecidos")
         }

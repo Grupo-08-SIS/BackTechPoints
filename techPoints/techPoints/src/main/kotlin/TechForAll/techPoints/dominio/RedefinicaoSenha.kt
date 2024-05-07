@@ -1,6 +1,7 @@
 package TechForAll.techPoints.dominio
 
 import jakarta.persistence.*
+import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 @Entity
@@ -12,6 +13,7 @@ data class RedefinicaoSenha(
     val idRedefinicaoSenha: Int?,
 
     @Column(name = "codigo_redefinicao")
+    @Size(max = 8)
     val codigoRedefinicao: String,
 
     @Column(name = "data_criacao")
