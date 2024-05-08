@@ -69,6 +69,7 @@ class UsuarioService(
             primeiroNome = usuario.primeiroNome,
             sobrenome = usuario.sobrenome,
             email = usuario.email,
+            autenticado = usuario.autenticado,
             dataCriacao = usuario.dataCriacao,
             deletado = usuario.deletado,
             dataDeletado = usuario.dataDeletado,

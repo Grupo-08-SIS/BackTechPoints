@@ -9,6 +9,7 @@ data class UsuarioDTO(
     val primeiroNome: String?,
     val sobrenome: String?,
     val email: String,
+    var autenticado: Boolean?,
     val dataCriacao: LocalDateTime?,
     val deletado: Boolean,
     val dataDeletado: LocalDateTime?,

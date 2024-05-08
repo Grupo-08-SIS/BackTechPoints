@@ -8,7 +8,7 @@ class TipoPonto(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "id_tipo_ponto")
-        var idTipoPonto: Int,
+        var idTipoPonto: Int? = null,
 
         @Column(name = "nome", nullable = false, length = 100)
         var nome: String,

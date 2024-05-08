@@ -5,29 +5,23 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "pontuacao")
-class Pontuacao(
-                @Id
-                @GeneratedValue(strategy = GenerationType.IDENTITY)
-                @Column(name = "id_pontuacao")
-                var idPontuacao: Int,
+data class Pontuacao(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val idPontuacao: Int? = null,
 
-                @ManyToOne(fetch = FetchType.LAZY)
-                @JoinColumn(name = "fk_usuario", referencedColumnName = "id_usuario")
-                var usuario: Usuario?,
+    @Column(name = "fk_usuario", nullable = false)
+    val fkUsuario: Int?,
 
-                @ManyToOne(fetch = FetchType.LAZY)
-                @JoinColumn(name = "fk_pontos", referencedColumnName = "id_ponto")
-                var ponto: Ponto? = null,
+    @Column(name = "fk_pontos", nullable = false)
+    val fkPonto: Int?,
 
+    @Column(name = "fk_tipo_ponto", nullable = false)
+    val fkTipoPonto: Int?,
 
-                @ManyToOne(fetch = FetchType.LAZY)
-                @JoinColumn(name = "fk_tipo_ponto", referencedColumnName = "id_tipo_ponto")
-                var tipoPonto : TipoPonto? = null,
+    @Column(name = "total_pontos_usuario")
+    val totalPontosUsuario: Int? = null,
 
-
-                @Column(name = "total_pontos_usuario")
-                var totalPontosUsuario: Int,
-
-                @Column(name = "data_atualizacao")
-                var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
-        )
+    @Column(name = "data_atualizacao")
+    var dataAtualizacao: LocalDateTime? = null
+)
