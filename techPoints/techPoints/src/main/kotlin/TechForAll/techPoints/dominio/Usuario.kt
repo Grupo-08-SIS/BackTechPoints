@@ -1,6 +1,5 @@
 package TechForAll.techPoints.dominio
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Pattern
@@ -59,6 +58,9 @@ data class Usuario(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
-    var endereco: Endereco?
+    var endereco: Endereco?,
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_tipo_usuario", referencedColumnName = "id_tipo_usuario")
+    var tipoUsuario: TipoUsuario?,
 )
