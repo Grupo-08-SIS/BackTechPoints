@@ -1,4 +1,4 @@
-package TechForAll.techPoints.dominio
+package TechForAll.techPoints.dto
 
 data class EnderecoDTO(
     val cep: String?,

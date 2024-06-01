@@ -2,6 +2,7 @@ package TechForAll.techPoints.controller
 
 import TechForAll.techPoints.repository.RedefinicaoSenhaRepository
 import TechForAll.techPoints.repository.UsuarioRepository
+import TechForAll.techPoints.service.ResetSenhaService
 import TechForAll.techPoints.service.UsuarioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -13,7 +14,7 @@ import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/reset-senha")
-class ResetSenhaController (private var usuarioService: UsuarioService)
+class ResetSenhaController (private var resetService: ResetSenhaService)
 {
     @Autowired
     lateinit var usuarioRepository: UsuarioRepository
@@ -33,7 +34,7 @@ class ResetSenhaController (private var usuarioService: UsuarioService)
     fun solicitarTrocaSenha(@RequestParam("email") emailUser: String): ResponseEntity<Any> {
         var verificar = usuarioRepository.existsByEmail(emailUser)
         if (verificar == true){
-            return usuarioService.senhaReset(emailUser)
+            return resetService.senhaReset(emailUser)
         }
        return ResponseEntity.status(404).build()
     }

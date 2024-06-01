@@ -1,68 +1,150 @@
 package TechForAll.techPoints.service
 
-import TechForAll.techPoints.dominio.RedefinicaoSenha
+import TechForAll.techPoints.dominio.Endereco
+import TechForAll.techPoints.dominio.TipoUsuario
 import TechForAll.techPoints.dominio.Usuario
-import TechForAll.techPoints.dominio.UsuarioDTO
-import TechForAll.techPoints.repository.RedefinicaoSenhaRepository
+import TechForAll.techPoints.dto.UsuarioDTOInput
+import TechForAll.techPoints.dto.UsuarioDTOOutput
+import TechForAll.techPoints.repository.EnderecoRepository
+import TechForAll.techPoints.repository.TipoUsuarioRepository
 import TechForAll.techPoints.repository.UsuarioRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
-import org.springframework.mail.SimpleMailMessage
-import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.NoSuchElementException
 
 @Service
-class UsuarioService(
-    private val emailSender: JavaMailSender,
-    private val redefinicaoSenhaRepository: RedefinicaoSenhaRepository
+class UsuarioService @Autowired constructor(
+    private val usuarioRepository: UsuarioRepository,
+    private val enderecoRepository: EnderecoRepository,
+    private val tipoUsuarioRepository: TipoUsuarioRepository
 ) {
 
-    fun senhaReset(emailUser: String): ResponseEntity<Any> {
-        // Busca os dados necessários usando a consulta personalizada
-        val trocasSenhaAtivas = redefinicaoSenhaRepository.findByEmailAndValidoAndDataExpiracaoAfter(emailUser, LocalDateTime.now())
-
-        if (trocasSenhaAtivas.isNotEmpty()) {
-            return ResponseEntity.status(409).body("Uma troca de senha já está em andamento para este usuário.")
-        } else {
-            val codigoRecuperacao = gerarResetCode()
-            val dataCriacao = LocalDateTime.now()
-            val dataExpiracao = calcularValidade()
-            val emailCadastrar: String = emailUser
-            val redefinicaoSenha = RedefinicaoSenha(
-                idRedefinicaoSenha = null,
-                codigoRedefinicao = codigoRecuperacao,
-                dataCriacao = dataCriacao,
-                dataExpiracao = dataExpiracao,
-                valido = true,
-                emailRedefinicao = emailCadastrar
-            )
-            redefinicaoSenhaRepository.save(redefinicaoSenha)
-            enviarEmailRecuperacaoSenha(emailCadastrar, codigoRecuperacao)
-            return ResponseEntity.status(200).build()
+    fun cadastrarUsuario(usuarioDTO: UsuarioDTOInput): UsuarioDTOOutput {
+        if (usuarioRepository.existsByEmail(usuarioDTO.email)) {
+            throw IllegalArgumentException("Email já cadastrado")
         }
+        val tipo: TipoUsuario = tipoUsuarioRepository.findById(usuarioDTO.idTipo)
+            .orElseThrow { IllegalArgumentException("Tipo não encontrado com o ID: ${usuarioDTO.idTipo}") }
+
+        val endereco: Endereco? = enderecoRepository.findById(usuarioDTO.idEndereco)
+            .orElseThrow { IllegalArgumentException("Endereço não encontrado com o ID: ${usuarioDTO.idEndereco}") }
+
+        val usuario = Usuario(
+            idUsuario = usuarioDTO.idUsuario ?: 0, //autoincrementa no banco de forma correta
+            nomeUsuario = usuarioDTO.nomeUsuario,
+            cpf = usuarioDTO.cpf!!,
+            senha = usuarioDTO.senha,
+            primeiroNome = usuarioDTO.primeiroNome,
+            sobrenome = usuarioDTO.sobrenome,
+            email = usuarioDTO.email,
+            autenticado = usuarioDTO.autenticado,
+            dataDeletado = usuarioDTO.dataDeletado,
+            imagemPerfil = null,
+            endereco = endereco,
+            tipoUsuario = tipo
+
+        )
+
+        val usuarioSalvo = usuarioRepository.save(usuario)
+        return usuarioParaDTOOutput(usuarioSalvo)
+    }
+
+    fun softDeleteUsuario(email: String, senha: String) {
+        val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
+            ?: throw IllegalArgumentException("Credenciais inválidas")
+
+        usuario.deletado = true
+        usuario.dataDeletado = LocalDateTime.now()
+        usuario.dataAtualizacao = LocalDateTime.now()
+        usuarioRepository.save(usuario)
+    }
+
+    fun hardDeleteUsuario(email: String, senha: String) {
+        val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
+            ?: throw NoSuchElementException("Usuário não encontrado")
+
+        val endereco = usuario.endereco
+        usuario.endereco = null
+        usuarioRepository.save(usuario)
+
+        usuarioRepository.delete(usuario)
+        endereco?.let { enderecoRepository.delete(it) }
+    }
+
+    fun listarUsuarios(): List<UsuarioDTOOutput> {
+        return usuarioRepository.findAll().map { usuarioParaDTOOutput(it) }
+    }
+
+    fun buscarUsuarioPorId(idUsuario: Int): UsuarioDTOOutput {
+        val usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+        return usuarioParaDTOOutput(usuario)
+    }
+
+    fun loginUsuario(email: String, senha: String) {
+        val usuario = usuarioRepository.findByEmail(email)
+            ?: throw IllegalArgumentException("Credenciais inválidas")
+
+        if (senha != usuario.senha) {
+            throw IllegalArgumentException("Credenciais inválidas")
+        }
+
+        usuario.autenticado = true
+        usuarioRepository.save(usuario)
+    }
+
+    fun logoffUsuario(idUsuario: Int) {
+        val usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+
+        usuario.autenticado = false
+        usuarioRepository.save(usuario)
+    }
+
+    fun buscarUsuarioPorEmail(email: String): UsuarioDTOOutput {
+        val usuario = usuarioRepository.findByEmail(email)
+            ?: throw NoSuchElementException("Usuário não encontrado")
+        return usuarioParaDTOOutput(usuario)
+    }
+
+    fun atualizarUsuario(idUsuario: Int, atualizacao: Map<String, Any>): UsuarioDTOOutput {
+        val usuarioExistente = usuarioRepository.findById(idUsuario)
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+
+        atualizacao["nomeUsuario"]?.let { usuarioExistente.nomeUsuario = it as String }
+        atualizacao["cpf"]?.let { usuarioExistente.cpf = it as String }
+        atualizacao["primeiroNome"]?.let { usuarioExistente.primeiroNome = it as String }
+        atualizacao["sobrenome"]?.let { usuarioExistente.sobrenome = it as String }
+        atualizacao["email"]?.let { usuarioExistente.email = it as String }
+
+        usuarioExistente.dataAtualizacao = LocalDateTime.now()
+        val usuarioAtualizado = usuarioRepository.save(usuarioExistente)
+        return usuarioParaDTOOutput(usuarioAtualizado)
     }
 
 
-    fun enviarEmailRecuperacaoSenha(emailCadastrar: String, token: String) {
-        val message = SimpleMailMessage()
-        message.setTo(emailCadastrar)
-        message.setSubject("Recuperação de Senha")
-        message.setText("Olá!\n\nPara redefinir sua senha do Tech4Points, use o seguinte código: $token\n\nAtenciosamente,\nEquipe Tech4All")
+    fun atualizarImagemUsuario(idUsuario: Int, novaFoto: ByteArray) {
+        if (novaFoto.isEmpty()) {
+            throw IllegalArgumentException("Requisição inválida")
+        }
 
-        emailSender.send(message)
+        val usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+
+        usuario.imagemPerfil = novaFoto
+        usuarioRepository.save(usuario)
     }
 
-    fun gerarResetCode(): String {
-        return UUID.randomUUID().toString().substring(0, 8)
-    }
+    fun obterImagemPerfil(idUsuario: Int): ByteArray {
+        val usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
-    fun calcularValidade(): LocalDateTime {
-        return LocalDateTime.now().plusHours(24)
+        return usuario.imagemPerfil ?: throw NoSuchElementException("Imagem de perfil não encontrada")
     }
-    fun usuarioParaDTO(usuario: Usuario): UsuarioDTO {
-        return UsuarioDTO(
+    private fun usuarioParaDTOOutput(usuario: Usuario): UsuarioDTOOutput {
+        return UsuarioDTOOutput(
             idUsuario = usuario.idUsuario,
             nomeUsuario = usuario.nomeUsuario,
             cpf = usuario.cpf,
@@ -74,7 +156,7 @@ class UsuarioService(
             deletado = usuario.deletado,
             dataDeletado = usuario.dataDeletado,
             dataAtualizacao = usuario.dataAtualizacao,
-            endereco = usuario.endereco
+            endereco = usuario.endereco!!
         )
     }
 }
