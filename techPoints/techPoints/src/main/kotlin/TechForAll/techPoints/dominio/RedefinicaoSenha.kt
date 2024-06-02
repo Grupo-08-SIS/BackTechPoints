@@ -25,6 +25,10 @@ data class RedefinicaoSenha(
     @Column(name = "valido")
     val valido: Boolean,
 
-    @Column(name = "emailRedefinicao")
+    @Column(name = "email_redefinicao")
     val emailRedefinicao: String,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_usuario", referencedColumnName = "id_usuario")
+    var fkUsuario: Usuario?
 )

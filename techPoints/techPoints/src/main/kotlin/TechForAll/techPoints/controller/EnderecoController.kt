@@ -9,43 +9,55 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-
 
 @RestController
 @RequestMapping("/enderecos")
-class EnderecoController {
+@Validated
+class EnderecoController @Autowired constructor(
+    private val service: EnderecoService
+) {
 
-    @Autowired
-    lateinit var service: EnderecoService
-
-    @Operation(summary = "Cadastrar um novo endereço", description = "Retorna o ID do endereço cadastrado")
+    @Operation(summary = "Cadastrar um novo endereço", description = "Retorna os detalhes do endereço cadastrado")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "Endereço cadastrado com sucesso"),
-            ApiResponse(responseCode = "400", description = "Requisição inválida")
+            ApiResponse(responseCode = "400", description = "Requisição inválida"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
     @PostMapping("/cadastro")
     fun post(@RequestBody @Valid novoEndereco: Endereco): ResponseEntity<Any> {
-        val enderecoCadastrado = service.cadastrarEndereco(novoEndereco)
-        return ResponseEntity.status(201).body(enderecoCadastrado)
+        return try {
+            val enderecoCadastrado = service.cadastrarEndereco(novoEndereco)
+            ResponseEntity.status(201).body(enderecoCadastrado)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(400).body(mapOf("message" to e.message))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+        }
     }
 
     @Operation(summary = "Listar todos os endereços", description = "Retorna uma lista de todos os endereços cadastrados")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Lista de endereços retornada com sucesso"),
-            ApiResponse(responseCode = "204", description = "Nenhum endereço encontrado")
+            ApiResponse(responseCode = "204", description = "Nenhum endereço encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
     @GetMapping("/listar")
-    fun listar(): ResponseEntity<List<Endereco>> {
-        val enderecos = service.listarEnderecos()
-        return if (enderecos.isNotEmpty()) {
-            ResponseEntity.status(200).body(enderecos)
-        } else {
-            ResponseEntity.status(204).build()
+    fun listar(): ResponseEntity<Any> {
+        return try {
+            val enderecos = service.listarEnderecos()
+            if (enderecos.isNotEmpty()) {
+                ResponseEntity.status(200).body(enderecos)
+            } else {
+                ResponseEntity.status(204).build()
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
 
@@ -53,33 +65,39 @@ class EnderecoController {
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Endereço encontrado com sucesso"),
-            ApiResponse(responseCode = "404", description = "Endereço não encontrado")
+            ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
     @GetMapping("/buscar/{idEndereco}")
-    fun get(@PathVariable idEndereco: Int): ResponseEntity<Endereco> {
-        val enderecoEncontrado = service.buscarEnderecoPorId(idEndereco)
-        return if (enderecoEncontrado.isPresent) {
-            ResponseEntity.status(200).body(enderecoEncontrado.get())
-        } else {
-            ResponseEntity.status(404).build()
+    fun buscar(@PathVariable idEndereco: Int): ResponseEntity<Any> {
+        return try {
+            val enderecoEncontrado = service.buscarEnderecoPorId(idEndereco)
+            ResponseEntity.status(200).body(enderecoEncontrado)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
 
-    @Operation(summary = "Atualizar endereço pelo ID", description = "Retorna o endereço atualizado")
+    @Operation(summary = "Atualizar endereço pelo ID", description = "Atualiza e retorna o endereço correspondente ao ID fornecido")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Endereço atualizado com sucesso"),
-            ApiResponse(responseCode = "404", description = "Endereço não encontrado")
+            ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
     @PatchMapping("/atualizar/{idEndereco}")
-    fun patch(@PathVariable idEndereco: Int, @RequestBody enderecoDTO: EnderecoDTO): ResponseEntity<Endereco> {
-        val enderecoAtualizado = service.atualizarEndereco(idEndereco, enderecoDTO)
-        return if (enderecoAtualizado.isPresent) {
-            ResponseEntity.status(200).body(enderecoAtualizado.get())
-        } else {
-            ResponseEntity.status(404).build()
+    fun patch(@PathVariable idEndereco: Int, @RequestBody enderecoDTO: EnderecoDTO): ResponseEntity<Any> {
+        return try {
+            val enderecoAtualizado = service.atualizarEndereco(idEndereco, enderecoDTO)
+            ResponseEntity.status(200).body(enderecoAtualizado)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
 }
