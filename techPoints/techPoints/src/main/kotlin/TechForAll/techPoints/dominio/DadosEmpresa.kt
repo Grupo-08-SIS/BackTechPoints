@@ -19,7 +19,7 @@ data class DadosEmpresa (
     @Column(name = "setor_industria", nullable = false, length = 100)
     var setorIndustria: String,
 
-    @Column(name = "cargo_industria", nullable = false, length = 100)
+    @Column(name = "cargo_usuario", nullable = false, length = 100)
     var cargoUsuario: String,
 
     @Column(name = "e-mail_corporativo", nullable = false, length = 100)
