@@ -28,7 +28,7 @@ class DadoEmpresaService @Autowired constructor(
             emailCorporativo = dadoEmpresaDTO.emailCorporativo,
             telefoneContato = dadoEmpresaDTO.telefoneContato,
             cnpj = dadoEmpresaDTO.cnpj,
-            dataAtualizacao = LocalDateTime.now(),
+            dataAtualizacao = null,
             fkUsuario = usuario
         )
 
