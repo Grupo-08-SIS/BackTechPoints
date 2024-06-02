@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tipo_acao (
 CREATE TABLE IF NOT EXISTS tipo_usuario (
   id_tipo_usuario INT NOT NULL,
   nome VARCHAR(45) NULL,
-  fk_tipoAcao INT NOT NULL,
+  fk_tipoAcao INT NULL,
   PRIMARY KEY (id_tipo_usuario),
   CONSTRAINT fk_tipoAcao FOREIGN KEY (fk_tipoAcao) REFERENCES tipo_acao (id_tipoAcao)
 );
@@ -110,14 +110,14 @@ CREATE TABLE IF NOT EXISTS pontuacao (
 -- Table `mydb`.`redefinicao_senha`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS redefinicao_senha (
-  id_redefinicao_senha INT NOT NULL,
+  id_redefinicao_senha INT AUTO_INCREMENT PRIMARY KEY,
   codigo_redefinicao VARCHAR(8) NULL,
   data_criacao DATETIME NULL,
   data_expiracao DATETIME NOT NULL,
   valido TINYINT NOT NULL,
+  email_redefinicao VARCHAR(45) NOT NULL,
   fk_usuario INT NOT NULL,
-  PRIMARY KEY (id_redefinicao_senha),
-  CONSTRAINT fk_redefinicao_senha_usuario1 FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario)
+  CONSTRAINT fk_usuario FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario)
 );
 
 -- -----------------------------------------------------
@@ -285,4 +285,20 @@ INSERT INTO tipo_usuario (id_tipo_usuario, nome, fk_tipoAcao) VALUES
 (1, 'ADM', 1),
 (2, 'ALUNO', 2),
 (3, 'RH', 3);
+
+ALTER TABLE usuario DROP FOREIGN KEY fk_endereco;
+
+ALTER TABLE usuario
+ADD CONSTRAINT fk_endereco
+FOREIGN KEY (fk_endereco) REFERENCES endereco(id_endereco)
+ON DELETE CASCADE;
+
+ALTER TABLE redefinicao_senha DROP FOREIGN KEY fk_usuario;
+
+ALTER TABLE redefinicao_senha
+ADD CONSTRAINT fk_usuario
+FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario)
+ON DELETE CASCADE;
+
+
 
