@@ -6,37 +6,40 @@ import TechForAll.techPoints.repository.EnderecoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 
 @Service
-class EnderecoService {
-
-    @Autowired
-    lateinit var repository: EnderecoRepository
+class EnderecoService @Autowired constructor(
+    private val repository: EnderecoRepository
+) {
 
     fun cadastrarEndereco(novoEndereco: Endereco): Endereco {
         return repository.save(novoEndereco)
     }
 
     fun listarEnderecos(): List<Endereco> {
-        return repository.findAll()
-    }
-
-    fun buscarEnderecoPorId(idEndereco: Int): Optional<Endereco> {
-        return repository.findById(idEndereco)
-    }
-
-    fun atualizarEndereco(idEndereco: Int, enderecoDTO: EnderecoDTO): Optional<Endereco> {
-        val enderecoExistente = repository.findById(idEndereco)
-        if (enderecoExistente.isPresent) {
-            val endereco = enderecoExistente.get()
-            enderecoDTO.cep?.let { endereco.cep = it }
-            enderecoDTO.cidade?.let { endereco.cidade = it }
-            enderecoDTO.estado?.let { endereco.estado = it }
-            enderecoDTO.rua?.let { endereco.rua = it }
-            endereco.dataAtualizacao = LocalDateTime.now()
-            return Optional.of(repository.save(endereco))
+        val enderecos = repository.findAll()
+        if (enderecos.isEmpty()) {
+            throw NoSuchElementException("Nenhum endereço encontrado")
         }
-        return Optional.empty()
+        return enderecos
+    }
+
+    fun buscarEnderecoPorId(idEndereco: Int): Endereco {
+        return repository.findById(idEndereco)
+            .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
+    }
+
+    fun atualizarEndereco(idEndereco: Int, enderecoDTO: EnderecoDTO): Endereco {
+        val enderecoExistente = repository.findById(idEndereco)
+            .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
+
+        enderecoDTO.cep?.let { enderecoExistente.cep = it }
+        enderecoDTO.cidade?.let { enderecoExistente.cidade = it }
+        enderecoDTO.estado?.let { enderecoExistente.estado = it }
+        enderecoDTO.rua?.let { enderecoExistente.rua = it }
+        enderecoExistente.dataAtualizacao = LocalDateTime.now()
+
+        return repository.save(enderecoExistente)
     }
 }

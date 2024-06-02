@@ -56,7 +56,7 @@ data class Usuario(
     @Column(name = "data_atualizacao")
     var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "fk_endereco", referencedColumnName = "id_endereco")
     var endereco: Endereco?,
 

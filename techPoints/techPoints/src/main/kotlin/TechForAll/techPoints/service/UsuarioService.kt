@@ -11,7 +11,6 @@ import TechForAll.techPoints.repository.UsuarioRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.*
 import kotlin.NoSuchElementException
 
 @Service
@@ -62,16 +61,11 @@ class UsuarioService @Autowired constructor(
     }
 
     fun hardDeleteUsuario(email: String, senha: String) {
-        val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
-            ?: throw NoSuchElementException("Usuário não encontrado")
-
-        val endereco = usuario.endereco
-        usuario.endereco = null
-        usuarioRepository.save(usuario)
-
+        val usuario: Usuario = usuarioRepository.findByEmailAndSenha(email, senha) // nao ta disparando credenciais invalidas
+            ?: throw NoSuchElementException("Usuário não encontrado") //arrumar
+        println(usuario)
         usuarioRepository.delete(usuario)
-        endereco?.let { enderecoRepository.delete(it) }
-    }
+    }//funcionando porem esta disparando um erro 500
 
     fun listarUsuarios(): List<UsuarioDTOOutput> {
         return usuarioRepository.findAll().map { usuarioParaDTOOutput(it) }
@@ -85,7 +79,6 @@ class UsuarioService @Autowired constructor(
 
     fun loginUsuario(email: String, senha: String) {
         val usuario = usuarioRepository.findByEmail(email)
-            ?: throw IllegalArgumentException("Credenciais inválidas")
 
         if (senha != usuario.senha) {
             throw IllegalArgumentException("Credenciais inválidas")
@@ -105,7 +98,9 @@ class UsuarioService @Autowired constructor(
 
     fun buscarUsuarioPorEmail(email: String): UsuarioDTOOutput {
         val usuario = usuarioRepository.findByEmail(email)
-            ?: throw NoSuchElementException("Usuário não encontrado")
+        if (usuario == null) {
+            throw NoSuchElementException("Usuário não encontrado") //nao consigo disparar isso, sempre da erro 500
+        }
         return usuarioParaDTOOutput(usuario)
     }
 
@@ -139,9 +134,11 @@ class UsuarioService @Autowired constructor(
 
     fun obterImagemPerfil(idUsuario: Int): ByteArray {
         val usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
-
-        return usuario.imagemPerfil ?: throw NoSuchElementException("Imagem de perfil não encontrada")
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") } //nao ta funcionando, disparando smepre erro 500
+        if (usuario.imagemPerfil == null) {
+            throw NoSuchElementException("Imagem de perfil não encontrada")
+        } //nao ta disparando
+        return usuario.imagemPerfil!!
     }
     private fun usuarioParaDTOOutput(usuario: Usuario): UsuarioDTOOutput {
         return UsuarioDTOOutput(

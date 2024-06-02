@@ -38,6 +38,9 @@ class UsuarioController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         }
+        catch (e: IllegalArgumentException) {
+            ResponseEntity.status(500).body(mapOf("message" to e.message))
+        }
     }
 
     @Operation(summary = "Soft delete de um usuário", description = "Marca o usuário como deletado, sem remover do banco")
@@ -136,7 +139,7 @@ class UsuarioController @Autowired constructor(
             val usuarioDTO = usuarioService.buscarUsuarioPorId(idUsuario)
             ResponseEntity.status(200).body(usuarioDTO)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).build()
+            ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
@@ -206,7 +209,7 @@ class UsuarioController @Autowired constructor(
             val usuarioDTO = usuarioService.buscarUsuarioPorEmail(email)
             ResponseEntity.status(200).body(usuarioDTO)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).build()
+            ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
@@ -229,7 +232,7 @@ class UsuarioController @Autowired constructor(
             val usuarioDTO = usuarioService.atualizarUsuario(idUsuario, atualizacao)
             ResponseEntity.status(200).body(usuarioDTO)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).build()
+            ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
@@ -280,7 +283,7 @@ class UsuarioController @Autowired constructor(
             val imagemPerfil = usuarioService.obterImagemPerfil(idUsuario)
             val byteArrayResource = ByteArrayResource(imagemPerfil)
             ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.IMAGE_JPEG)
                 .contentLength(imagemPerfil.size.toLong())
                 .body(byteArrayResource)
         } catch (e: NoSuchElementException) {
