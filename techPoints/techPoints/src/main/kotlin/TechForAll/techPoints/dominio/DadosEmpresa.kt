@@ -32,7 +32,7 @@ data class DadosEmpresa (
     var cnpj: String,
 
     @Column(name = "data_atualizacao")
-    var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
+    var dataAtualizacao: LocalDateTime?,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_usuario", referencedColumnName = "id_usuario")
