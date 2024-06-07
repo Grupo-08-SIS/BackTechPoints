@@ -18,6 +18,7 @@ class UsuarioService @Autowired constructor(
     private val usuarioRepository: UsuarioRepository,
     private val enderecoRepository: EnderecoRepository,
     private val tipoUsuarioRepository: TipoUsuarioRepository
+
 ) {
 
     fun cadastrarUsuario(usuarioDTO: UsuarioDTOInput): UsuarioDTOOutput {
@@ -145,6 +146,7 @@ class UsuarioService @Autowired constructor(
             idUsuario = usuario.idUsuario,
             nomeUsuario = usuario.nomeUsuario,
             cpf = usuario.cpf,
+            senha = usuario.senha,
             primeiroNome = usuario.primeiroNome,
             sobrenome = usuario.sobrenome,
             email = usuario.email,
@@ -156,4 +158,5 @@ class UsuarioService @Autowired constructor(
             endereco = usuario.endereco!!
         )
     }
+
 }

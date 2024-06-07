@@ -204,7 +204,7 @@ ENGINE = InnoDB;
 -- Table `mydb`.`dados_empresa`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`dados_empresa` (
-  `id_empresa` INT NOT NULL,
+  `id_empresa` INT AUTO_INCREMENT PRIMARY KEY,
   `nome_empresa` VARCHAR(45) NULL,
   `setor_industria` VARCHAR(45) NULL,
   `cargo_usuario` VARCHAR(45) NULL,
@@ -213,7 +213,6 @@ CREATE TABLE IF NOT EXISTS `mydb`.`dados_empresa` (
   `e-mail_corporativo` VARCHAR(45) NULL,
   `telefone_contato_corporativo` CHAR(11) NULL,
   `fk_usuario` INT NOT NULL,
-  PRIMARY KEY (`id_empresa`),
   INDEX `fk_dados_empresa_usuario1_idx` (`fk_usuario` ASC) VISIBLE,
   CONSTRAINT `fk_dados_empresa_usuario1`
     FOREIGN KEY (`fk_usuario`)

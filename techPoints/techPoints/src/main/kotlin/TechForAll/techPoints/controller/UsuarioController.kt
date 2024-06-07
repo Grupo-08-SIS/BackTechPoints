@@ -33,12 +33,11 @@ class UsuarioController @Autowired constructor(
     @PostMapping("/cadastro")
     fun post(@RequestBody @Valid usuarioDTOInput: UsuarioDTOInput): ResponseEntity<Any> {
         return try {
-            val usuario = usuarioService.cadastrarUsuario(usuarioDTOInput)
-            ResponseEntity.status(201).body(usuarioDTOInput)
+            val usuarioDTOOutput = usuarioService.cadastrarUsuario(usuarioDTOInput)
+            ResponseEntity.status(201).body(usuarioDTOOutput)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
-        }
-        catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to e.message))
         }
     }
