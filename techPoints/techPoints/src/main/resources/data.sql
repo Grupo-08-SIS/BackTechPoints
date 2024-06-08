@@ -1,92 +1,293 @@
-CREATE TABLE IF NOT EXISTS categoria_curso (
-  id_categoria_curso INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(45) NOT NULL
-);
+SELECT * FROM mydb.usuario;
 
-CREATE TABLE IF NOT EXISTS curso (
-  id_curso INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(45) NOT NULL,
-  qtd_horas INT NOT NULL,
-  fk_categoria_curso INT NOT NULL,
-  CONSTRAINT fk_curso_categoria_curso1 FOREIGN KEY (fk_categoria_curso) REFERENCES categoria_curso (id_categoria_curso)
-);
+SELECT * FROM mydb.endereco;
 
- CREATE TABLE IF NOT EXISTS atividade (
-   id_atividade INT AUTO_INCREMENT NOT NULL,
-   nota INT NOT NULL,
-   temp_duracao TIME NOT NULL,
-   PRIMARY KEY (id_atividade)
-   );
+select * from mydb.redefinicao_senha;
 
- CREATE TABLE IF NOT EXISTS modulo (
-   id_modulo INT AUTO_INCREMENT PRIMARY KEY,
-   fk_curso INT NOT NULL,
-   fk_atividade INT NOT NULL,
-   qtd_atividade_feita INT NOT NULL,
-   qtd_atividade_total INT NOT NULL,
-   nome_modulo VARCHAR(45),
-   CONSTRAINT fk_modulo_curso FOREIGN KEY (fk_curso) REFERENCES curso (id_curso),
-   CONSTRAINT fk_modulo_atividade FOREIGN KEY (fk_atividade) REFERENCES atividade (id_atividade)
- );
+select * from mydb.tipo_usuario;
 
-INSERT INTO tipo_ponto (nome, fk_curso, valido) VALUES
-('Presença', 1, true),
-('Avaliação', 2, true),
-('Participação', 3, true),
-('Entrega de Tarefa', 4, true);
+select * from mydb.dados_empresa;
 
-INSERT INTO categoria_curso (nome) VALUES
-('Tecnologia da Informação'),
-('Design Gráfico'),
-('Marketing Digital'),
-('Programação');
+SELECT p.data_atualizacao, p.fk_ponto, p.total_pontos_usuario
+FROM pontuacao p
+WHERE p.fk_usuario = 1;
 
-INSERT INTO curso (nome, qtd_horas, fk_categoria_curso) VALUES
-('Desenvolvimento Web', 80, 1),
-('Photoshop Avançado', 40, 2),
-('Marketing de Conteúdo', 60, 3),
-('Python para Iniciantes', 40, 1),
-('UI/UX Design Essentials', 30, 2);
+SELECT p.fk_ponto, SUM(p.total_pontos_usuario)
+FROM pontuacao p
+WHERE p.fk_usuario = 1
+GROUP BY p.fk_ponto;
 
-INSERT INTO ponto (qtd_ponto, fk_tipo_ponto) VALUES
-(10, 1),
-(20, 2),
-(15, 3),
-(15, 3),
-(25, 2);
+DELETE FROM pontuacao WHERE fk_usuario = 1;
 
-INSERT INTO categoria_produto (nome) VALUES
-('Eletrônicos'),
-('Livros'),
-('Roupas'),
-('Alimentos'),
-('Brinquedos');
+-- Inserindo novos registros de pontuação para refletir a distribuição diária
+-- Semana 1
+INSERT INTO pontuacao (fk_usuario, fk_ponto, total_pontos_usuario, data_atualizacao) VALUES
+(1, 1, 100, '2024-06-03'),
+(1, 2, 50, '2024-06-03'),
+(1, 1, 50, '2024-06-04'),
+(1, 2, 70, '2024-06-04'),
+(1, 1, 80, '2024-06-05'),
+(1, 2, 100, '2024-06-05'),
+(1, 1, 120, '2024-06-06'),
+(1, 2, 80, '2024-06-06'),
+(1, 1, 150, '2024-06-07'),
+(1, 2, 120, '2024-06-07'),
+(1, 1, 200, '2024-06-08'),
+(1, 2, 150, '2024-06-08'),
+(1, 1, 180, '2024-06-09'),
+(1, 2, 200, '2024-06-09');
 
-INSERT INTO produto (nome, valor_pontos, descricao, quantidade, disponivel, categoria_produto_id) VALUES
-('Smartphone', 500.00, 'Modelo X', 10, 1, 1),
-('A Guerra dos Tronos', 150.00, 'Livro da série', 20, 1, 2),
-('Camiseta Preta', 80.00, 'Tamanho M', 30, 1, 3),
-('Fone de Ouvido Bluetooth', 200.00, 'Modelo Y', 15, 1, 1),
-('Cesta de Café da Manhã', 100.00, 'Variada', 10, 1, 2),
-('Boneca de Pelúcia', 50.00, 'Tamanho Grande', 20, 1, 3);
 
-INSERT INTO atividade (nota, temp_duracao) VALUES
-(80, '02:30:00'),
-(90, '01:45:00'),
-(75, '03:00:00'),
-(70, '02:15:00'),
-(85, '01:50:00');
+-- dash linha
+SELECT
+    p.data_atualizacao AS data,
+    c.nome AS curso,
+    SUM(p.total_pontos_usuario) AS total_pontos
+FROM
+    pontuacao p
+JOIN
+    usuario u ON p.fk_usuario = u.id_usuario
+JOIN
+    inscricao i ON u.id_usuario = i.fk_usuario
+JOIN
+    curso c ON i.fk_curso = c.id_curso
+WHERE
+    p.fk_usuario = 1
+    AND YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(NOW(), 1)
+GROUP BY
+    p.data_atualizacao,
+    c.nome
+ORDER BY
+    p.data_atualizacao;
 
-INSERT INTO modulo (fk_curso, fk_atividade, qtd_atividade_feita, qtd_atividade_total, nome_modulo) VALUES
-(1, 1, 1, 2, 'Introdução à Linguagem Python'),
-(1, 2, 0, 1, 'Princípios de Design de Interface'),
-(3, 3, 1, 1, 'Estratégias de Marketing de Conteúdo'),
-(4, 4, 1, 2, 'Lógica de Programação'),
-(5, 5, 0, 1, 'Design Responsivo');
+ -- dash coluna
 
-INSERT INTO pontuacao (fk_pontos, fk_tipo_ponto, fk_usuario, total_pontos_usuario, data_atualizacao)
-VALUES
-(1, 1, 1, '100', '2024-04-10 08:00:00'),
-(2, 2, 2, '150', '2024-04-15 10:30:00'),
-(3, 3, 3, '200', '2024-04-20 14:45:00'),
-(4, 1, 4, '180', '2024-04-25 09:15:00');
+ SELECT
+    DATE_FORMAT(p.data_atualizacao, '%Y-%m') AS mes,
+    c.nome AS curso,
+    SUM(p.total_pontos_usuario) AS total_pontos
+FROM
+    pontuacao p
+JOIN
+    usuario u ON p.fk_usuario = u.id_usuario
+JOIN
+    inscricao i ON u.id_usuario = i.fk_usuario
+JOIN
+    curso c ON i.fk_curso = c.id_curso
+WHERE
+    p.fk_usuario = 1
+GROUP BY
+    DATE_FORMAT(p.data_atualizacao, '%Y-%m'),
+    c.nome
+ORDER BY
+    DATE_FORMAT(p.data_atualizacao, '%Y-%m');
+
+
+
+-- Atividades feitas
+    SELECT
+    c.nome AS curso,
+    SUM(m.qtd_atividade_total) AS total_atividades,
+    SUM(m.qtd_atividade_feita) AS atividades_feitas
+FROM
+    inscricao i
+JOIN
+    usuario u ON i.fk_usuario = u.id_usuario
+JOIN
+    curso c ON i.fk_curso = c.id_curso
+JOIN
+    modulo m ON c.id_curso = m.fk_curso
+WHERE
+    u.id_usuario = 1
+GROUP BY
+    c.nome, m.nome_modulo;
+
+
+
+    -- Pontos da semana atual
+SELECT
+    COALESCE(SUM(p.total_pontos_usuario), 0) AS pontos_semana_atual
+FROM
+    pontuacao p
+WHERE
+    p.fk_usuario = 1
+    AND YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(CURDATE(), 1);
+
+-- Pontos da semana passada
+SELECT
+    COALESCE(SUM(p.total_pontos_usuario), 0) AS pontos_semana_passada
+FROM
+    pontuacao p
+WHERE
+    p.fk_usuario = 1
+    AND YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(CURDATE() - INTERVAL 1 WEEK, 1);
+
+-- Comparando os pontos das semanas
+SELECT
+    u.id_usuario,
+    u.nome_usuario,
+    COALESCE(atual.pontos_semana_atual, 0) AS pontos_semana_atual,
+    COALESCE(passada.pontos_semana_passada, 0) AS pontos_semana_passada,
+    COALESCE(atual.pontos_semana_atual, 0) - COALESCE(passada.pontos_semana_passada, 0) AS diferenca_pontos
+FROM
+    usuario u
+LEFT JOIN
+    (
+        SELECT
+            p.fk_usuario,
+            SUM(p.total_pontos_usuario) AS pontos_semana_atual
+        FROM
+            pontuacao p
+        WHERE
+            YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(CURDATE(), 1)
+        GROUP BY
+            p.fk_usuario
+    ) AS atual
+ON
+    u.id_usuario = atual.fk_usuario
+LEFT JOIN
+    (
+        SELECT
+            p.fk_usuario,
+            SUM(p.total_pontos_usuario) AS pontos_semana_passada
+        FROM
+            pontuacao p
+        WHERE
+            YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(CURDATE() - INTERVAL 1 WEEK, 1)
+        GROUP BY
+            p.fk_usuario
+    ) AS passada
+ON
+    u.id_usuario = passada.fk_usuario;
+
+
+
+    -- view
+CREATE VIEW pontuacao_usuario_semana AS
+SELECT
+    u.id_usuario,
+    u.nome_usuario,
+    COALESCE(atual.pontos_semana_atual, 0) AS pontos_semana_atual,
+    COALESCE(passada.pontos_semana_passada, 0) AS pontos_semana_passada,
+    COALESCE(atual.pontos_semana_atual, 0) - COALESCE(passada.pontos_semana_passada, 0) AS diferenca_pontos
+FROM
+    usuario u
+LEFT JOIN
+    (
+        SELECT
+            p.fk_usuario,
+            SUM(p.total_pontos_usuario) AS pontos_semana_atual
+        FROM
+            pontuacao p
+        WHERE
+            YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(CURDATE(), 1)
+        GROUP BY
+            p.fk_usuario
+    ) AS atual
+ON
+    u.id_usuario = atual.fk_usuario
+LEFT JOIN
+    (
+        SELECT
+            p.fk_usuario,
+            SUM(p.total_pontos_usuario) AS pontos_semana_passada
+        FROM
+            pontuacao p
+        WHERE
+            YEARWEEK(p.data_atualizacao, 1) = YEARWEEK(CURDATE() - INTERVAL 1 WEEK, 1)
+        GROUP BY
+            p.fk_usuario
+    ) AS passada
+ON
+    u.id_usuario = passada.fk_usuario;
+
+    -- Dash aluno progresso
+    SELECT
+    SEC_TO_TIME(SUM(TIME_TO_SEC(se.duracao))) AS total_estudado,
+    SEC_TO_TIME(TIME_TO_SEC(me.meta_semanal)) AS meta_semanal,
+    ROUND(
+        (SUM(TIME_TO_SEC(se.duracao)) / TIME_TO_SEC(me.meta_semanal)) * 100,
+        2
+    ) AS progresso_percentual
+FROM
+    sessoes_estudo se
+JOIN
+    metas_estudo me ON se.fk_usuario = me.fk_usuario
+WHERE
+    se.fk_usuario = 1
+    AND YEARWEEK(se.data, 1) = YEARWEEK(CURDATE(), 1);
+
+
+-- Dash RH
+SELECT
+    u.id_usuario,
+    u.nome_usuario,
+    u.primeiro_nome,
+    u.sobrenome,
+    u.email,
+    c.nome AS nome_curso,
+    e.cidade
+FROM
+    usuario u
+JOIN
+    inscricao i ON u.id_usuario = i.fk_usuario
+JOIN
+    curso c ON i.fk_curso = c.id_curso
+JOIN
+    endereco e ON u.fk_endereco = e.id_endereco
+WHERE
+    c.nome = 'Nome do Curso'
+    AND e.cidade = 'Nome da Cidade';
+
+
+
+
+
+-- http://localhost:8080/grafico/pontosPorCursoAoMes/2
+select
+        date_format(p1_0.data_atualizacao, '%Y-%m'),
+        c1_0.nome,
+        sum(p1_0.total_pontos_usuario)
+    from
+        pontuacao p1_0
+    join
+        usuario u1_0
+            on u1_0.id_usuario=p1_0.fk_usuario
+    join
+        inscricao i1_0
+            on u1_0.id_usuario=i1_0.fk_usuario
+    join
+        curso c1_0
+            on c1_0.id_curso=i1_0.fk_curso
+    where
+        u1_0.id_usuario=1
+    group by
+        date_format(p1_0.data_atualizacao, '%Y-%m'),
+        c1_0.nome
+    order by
+        date_format(p1_0.data_atualizacao, '%Y-%m');
+
+-- http://localhost:8080/grafico/pontosAoLongoDoTempo/0
+select
+        p1_0.data_atualizacao,
+        c1_0.nome,
+        sum(p1_0.total_pontos_usuario)
+    from
+        pontuacao p1_0
+    join
+        usuario u1_0
+            on u1_0.id_usuario=p1_0.fk_usuario
+    join
+        inscricao i1_0
+            on u1_0.id_usuario=i1_0.fk_usuario
+    join
+        curso c1_0
+            on c1_0.id_curso=i1_0.fk_curso
+    where
+        u1_0.id_usuario=1
+        and yearweek(p1_0.data_atualizacao, 1)=yearweek(now(), 1)
+    group by
+        p1_0.data_atualizacao,
+        c1_0.nome
+    order by
+        p1_0.data_atualizacao;
