@@ -1,5 +1,7 @@
 package TechForAll.techPoints.dto
 
+
+
 data class PontosSemanaDTO(
     val idUsuario: Int,
     val nomeUsuario: String,

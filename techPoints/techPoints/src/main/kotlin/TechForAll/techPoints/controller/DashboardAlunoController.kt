@@ -92,7 +92,7 @@ class DashboardAlunoController @Autowired constructor(
         ]
     )
     @GetMapping("/atividadesDoUsuario/{idUsuario}")
-    fun getAtividadesDoUsuario(@PathVariable idUsuario: Int): ResponseEntity<List<AtividadesUsuarioDTO>> {
+    fun getAtividadesDoUsuario(@PathVariable idUsuario: Int): ResponseEntity<List<Any>> {
         return try {
             val atividades = graficoService.getAtividadesUsuario(idUsuario)
             ResponseEntity.ok(atividades)

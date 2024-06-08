@@ -1,13 +1,14 @@
 package TechForAll.techPoints.repository
 
-import TechForAll.techPoints.dto.PontosAoLongoDoTempoDTO
+
+import TechForAll.techPoints.dominio.Pontuacao
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GraficoLinhaRepository : JpaRepository<PontosAoLongoDoTempoDTO, Int> {
+interface GraficoLinhaRepository : JpaRepository<Pontuacao, Int> {
 
     @Query("""
         SELECT
@@ -31,5 +32,5 @@ interface GraficoLinhaRepository : JpaRepository<PontosAoLongoDoTempoDTO, Int> {
         ORDER BY
             p.dataAtualizacao
     """)
-    fun findPontosAoLongoDoTempo(@Param("idUsuario") idUsuario: Int): List<PontosAoLongoDoTempoDTO>
+    fun findPontosAoLongoDoTempo(@Param("idUsuario") idUsuario: Int): List<Array<Any>>
 }

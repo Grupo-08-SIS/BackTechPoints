@@ -1,5 +1,6 @@
 package TechForAll.techPoints.repository
 
+import TechForAll.techPoints.dominio.Pontuacao
 import TechForAll.techPoints.dto.PontosPorCursoAoMesDTO
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -7,7 +8,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GraficoColunaRepository : JpaRepository<PontosPorCursoAoMesDTO, Int> {
+interface GraficoColunaRepository : JpaRepository<Pontuacao, Int> {
     @Query("""
         SELECT
             DATE_FORMAT(p.dataAtualizacao, '%Y-%m') as mes,
@@ -29,6 +30,6 @@ interface GraficoColunaRepository : JpaRepository<PontosPorCursoAoMesDTO, Int> {
         ORDER BY
             DATE_FORMAT(p.dataAtualizacao, '%Y-%m')
     """)
-    fun findPontosPorCursoAoMes(@Param("idUsuario") idUsuario: Int): List<PontosPorCursoAoMesDTO>
+    fun findPontosPorCursoAoMes(@Param("idUsuario") idUsuario: Int): List<Array<Any>>
 }
 
