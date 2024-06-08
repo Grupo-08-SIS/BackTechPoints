@@ -63,4 +63,7 @@ data class Usuario(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_tipo_usuario", referencedColumnName = "id_tipo_usuario")
     var tipoUsuario: TipoUsuario?,
+
+    @OneToMany(mappedBy = "usuario")
+    val inscricoes: List<Inscricao> = ArrayList()
 )

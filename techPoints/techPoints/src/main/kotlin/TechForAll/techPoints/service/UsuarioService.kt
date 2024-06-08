@@ -44,7 +44,6 @@ class UsuarioService @Autowired constructor(
             imagemPerfil = null,
             endereco = endereco,
             tipoUsuario = tipo
-
         )
 
         val usuarioSalvo = usuarioRepository.save(usuario)

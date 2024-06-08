@@ -6,22 +6,23 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "pontuacao")
 data class Pontuacao(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val idPontuacao: Int? = null,
+    @Column(name = "id_pontuacao")
+    val idPontuacao: Int,
 
-    @Column(name = "fk_usuario", nullable = false)
-    val fkUsuario: Int?,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_usuario")
+    val usuario: Usuario,
 
-    @Column(name = "fk_pontos", nullable = false)
-    val fkPonto: Int?,
-
-    @Column(name = "fk_tipo_ponto", nullable = false)
-    val fkTipoPonto: Int?,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_ponto")
+    val ponto: Ponto,
 
     @Column(name = "total_pontos_usuario")
-    val totalPontosUsuario: Int? = null,
+    val totalPontosUsuario: Int,
 
     @Column(name = "data_atualizacao")
-    var dataAtualizacao: LocalDateTime? = null
+    val dataAtualizacao: LocalDateTime
 )
