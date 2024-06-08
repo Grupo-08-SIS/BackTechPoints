@@ -72,4 +72,36 @@ object TestObjects {
         idUsuario = 2
     )
 
+    val pontoAoLongoDoTempoTeste1 = arrayOf(
+        LocalDateTime.of(2023, 6, 8, 12, 0, 0), "Curso A", 100L
+    )
+
+    val pontoPorCursoAoMesTeste1 = arrayOf(
+        "6", "Curso B", 200L
+    )
+
+    val pontoSemanaTeste1 = arrayOf(
+        1, "Usuario A", 50, 30, 20
+    )
+
+    val atividadesUsuarioTeste1 = arrayOf(
+        1, "Usuario B", "Curso C", "Modulo D", 10, 8
+    )
+
+    val pontoAoLongoDoTempoTeste2 = arrayOf(
+        LocalDateTime.of(2023, 7, 8, 12, 0, 0), "Curso B", 150L
+    )
+
+    val pontoPorCursoAoMesTeste2 = arrayOf(
+        "7", "Curso C", 250L
+    )
+
+    val pontoSemanaTeste2 = arrayOf(
+        2, "Usuario B", 60, 40, 20
+    )
+
+    val atividadesUsuarioTeste2 = arrayOf(
+        2, "Usuario C", "Curso D", "Modulo E", 12, 10
+    )
+
 }
