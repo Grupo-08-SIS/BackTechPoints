@@ -82,8 +82,6 @@ GROUP BY
 ORDER BY
     DATE_FORMAT(p.data_atualizacao, '%Y-%m');
 
-
-
 -- Atividades feitas
     SELECT
     c.nome AS curso,
@@ -102,6 +100,26 @@ WHERE
 GROUP BY
     c.nome, m.nome_modulo;
 
+-- VIEW
+
+    CREATE VIEW atividades_usuario AS
+SELECT
+    u.id_usuario,
+    u.nome_usuario,
+    c.nome AS curso,
+    m.nome_modulo,
+    SUM(m.qtd_atividade_total) AS total_atividades,
+    SUM(m.qtd_atividade_feita) AS atividades_feitas
+FROM
+    inscricao i
+JOIN
+    usuario u ON i.fk_usuario = u.id_usuario
+JOIN
+    curso c ON i.fk_curso = c.id_curso
+JOIN
+    modulo m ON c.id_curso = m.fk_curso
+GROUP BY
+    u.id_usuario, u.nome_usuario, c.nome, m.nome_modulo;
 
 
     -- Pontos da semana atual
@@ -159,8 +177,6 @@ LEFT JOIN
     ) AS passada
 ON
     u.id_usuario = passada.fk_usuario;
-
-
 
     -- view
 CREATE VIEW pontuacao_usuario_semana AS

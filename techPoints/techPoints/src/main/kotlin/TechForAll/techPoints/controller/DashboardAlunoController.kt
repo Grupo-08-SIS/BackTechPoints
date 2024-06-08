@@ -1,5 +1,6 @@
 package TechForAll.techPoints.controller
 
+import TechForAll.techPoints.dto.AtividadesUsuarioDTO
 import TechForAll.techPoints.service.DashboardAlunoService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -76,6 +77,27 @@ class DashboardAlunoController @Autowired constructor(
             ResponseEntity.ok(pontos)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
+        }
+    }
+
+    @Operation(
+        summary = "Obter atividades do usuário",
+        description = "Retorna as atividades feitas e totais para um usuário específico"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Dados encontrados"),
+            ApiResponse(responseCode = "404", description = "Dados não encontrados"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/atividadesDoUsuario/{idUsuario}")
+    fun getAtividadesDoUsuario(@PathVariable idUsuario: Int): ResponseEntity<List<AtividadesUsuarioDTO>> {
+        return try {
+            val atividades = graficoService.getAtividadesUsuario(idUsuario)
+            ResponseEntity.ok(atividades)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(emptyList())
         }
     }
 }
