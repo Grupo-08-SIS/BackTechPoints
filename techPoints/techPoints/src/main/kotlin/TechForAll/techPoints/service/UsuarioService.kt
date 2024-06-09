@@ -77,7 +77,7 @@ class UsuarioService @Autowired constructor(
         return usuarioParaDTOOutput(usuario)
     }
 
-    fun loginUsuario(email: String, senha: String) {
+    fun loginUsuario(email: String, senha: String) : Any {
         val usuario = usuarioRepository.findByEmail(email)
 
         if (senha != usuario.senha) {
@@ -86,6 +86,8 @@ class UsuarioService @Autowired constructor(
 
         usuario.autenticado = true
         usuarioRepository.save(usuario)
+
+        return usuarioParaDTOOutput(usuario)
     }
 
     fun logoffUsuario(idUsuario: Int) {
@@ -94,6 +96,7 @@ class UsuarioService @Autowired constructor(
 
         usuario.autenticado = false
         usuarioRepository.save(usuario)
+
     }
 
     fun buscarUsuarioPorEmail(email: String): UsuarioDTOOutput {

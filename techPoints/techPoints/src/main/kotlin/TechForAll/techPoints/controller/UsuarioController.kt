@@ -1,7 +1,6 @@
 package TechForAll.techPoints.controller
 
 import TechForAll.techPoints.dto.UsuarioDTOInput
-import TechForAll.techPoints.dto.UsuarioDTOOutput
 import TechForAll.techPoints.service.UsuarioService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -160,8 +159,8 @@ class UsuarioController @Autowired constructor(
 
         return try {
             if (email != null && senha != null) {
-                usuarioService.loginUsuario(email, senha)
-                ResponseEntity.status(200).build()
+                val user = usuarioService.loginUsuario(email, senha)
+                ResponseEntity.status(200).body(user)
             } else {
                 ResponseEntity.status(401).build()
             }

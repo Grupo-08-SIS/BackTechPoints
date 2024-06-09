@@ -1,7 +1,10 @@
 package TechForAll.techPoints.dto
 
+import java.time.LocalDate
+
 data class PontosAoLongoDoTempoDTO(
-    val data_atualizacao: String,
-    val nome: String,
-    val pontos: Int
+    var data_pontuacao: String? = null,
+    var nome: String? = null,
+    var pontos: Int? = null,
+    var usuario: Int? = null
 )

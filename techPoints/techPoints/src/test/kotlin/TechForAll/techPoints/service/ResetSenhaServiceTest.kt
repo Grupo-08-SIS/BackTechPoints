@@ -44,13 +44,13 @@
             val emailUser = "teste@gmail.com"
             val usuario = mock(Usuario::class.java)
 
-            `when`(redefinicaoSenhaRepository.findByEmailAndValidoAndDataExpiracaoAfter(anyString(), any())).thenReturn(emptyList())
+            `when`(redefinicaoSenhaRepository.findByEmailAndValidoAndDataExpiracaoAfter(anyString(), any()))
             `when`(usuarioRepository.findByEmail(anyString())).thenReturn(usuario)
             doNothing().`when`(emailSender).send(any(SimpleMailMessage::class.java))
 
             val response = resetSenhaService.senhaReset(emailUser)
             assertEquals(200, response.statusCodeValue)
-        }
+        }//falta esse
 
 
         @Test
@@ -63,7 +63,7 @@
             val response = resetSenhaService.senhaReset(emailUser)
             assertEquals(409, response.statusCodeValue)
             assertTrue(response.body.toString().contains("Uma troca de senha já está em andamento para este usuário."))
-        }
+        } //falta esse
 
 
         @Test

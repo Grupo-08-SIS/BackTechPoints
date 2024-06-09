@@ -6,8 +6,8 @@ import TechForAll.techPoints.dto.PontosPorCursoAoMesDTO
 import TechForAll.techPoints.dto.PontosSemanaDTO
 import TechForAll.techPoints.repository.*
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.sql.Date
+import java.time.LocalDate
 
 @Service
 class DashboardAlunoService(
@@ -17,16 +17,18 @@ class DashboardAlunoService(
     private val atividadesUsuarioRepository: AtividadesUsuarioRepository
 ) {
 
-    fun getPontosAoLongoDoTempo(idUsuario: Int): List<PontosAoLongoDoTempoDTO> {
-        val results = graficoLinhaRepository.findPontosAoLongoDoTempo(idUsuario)
+    fun getPontosAoLongoDoTempo(idUsuario: Int): List<Any> {
+        val results = graficoLinhaRepository.findPontosPorDiaECurso(idUsuario)
         return results.map { result ->
             PontosAoLongoDoTempoDTO(
-                data_atualizacao = (result[0] as LocalDateTime).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                nome = result[1] as String,
-                pontos = (result[2] as Long).toInt()
+                nome = result[0] as String,
+                data_pontuacao = (result[1] as java.sql.Date).toString(),
+                pontos = (result[2] as Number).toInt(),
+                usuario = (result[3] as Number).toInt()
             )
         }
     }
+
 
     fun getPontosPorCursoAoMes(idUsuario: Int): List<PontosPorCursoAoMesDTO> {
         val results = graficoColunaRepository.findPontosPorCursoAoMes(idUsuario)
