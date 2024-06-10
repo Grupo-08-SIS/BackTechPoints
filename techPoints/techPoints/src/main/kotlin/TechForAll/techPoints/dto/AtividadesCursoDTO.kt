@@ -1,8 +1,7 @@
 package TechForAll.techPoints.dto
 
-data class AtividadesUsuarioDTO(
+data class AtividadesCursoDTO(
     val idCurso: Int,
     val nomeCurso: String,
-    val totalQtdAtividades: Int,
     val totalAtividadesUsuario: Int
 )

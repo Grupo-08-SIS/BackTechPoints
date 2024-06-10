@@ -2,8 +2,7 @@ package TechForAll.techPoints.repository
 
 
 import TechForAll.techPoints.dominio.Ponto
-import TechForAll.techPoints.dominio.Pontuacao
-import TechForAll.techPoints.dto.PontosAoLongoDoTempoDTO
+
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -19,5 +18,7 @@ interface GraficoLinhaRepository : JpaRepository<Ponto, Int> {
         WHERE usuario = :idUsuario
     """, nativeQuery = true)
     fun findPontosPorDiaECurso(@Param("idUsuario") idUsuario: Int): List<Array<Any>>
+
+
 }
 

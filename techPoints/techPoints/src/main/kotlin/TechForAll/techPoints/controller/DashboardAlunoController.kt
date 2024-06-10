@@ -92,12 +92,16 @@ class DashboardAlunoController @Autowired constructor(
         ]
     )
     @GetMapping("/atividadesDoUsuario/{idUsuario}")
-    fun getAtividadesDoUsuario(@PathVariable idUsuario: Int): ResponseEntity<List<Any>> {
+    fun getAtividadesDoUsuario(@PathVariable idUsuario: Int): ResponseEntity<Any> {
         return try {
-            val atividades = graficoService.getAtividadesUsuario(idUsuario)
-            ResponseEntity.ok(atividades)
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).body(emptyList())
+            val atividades: List<AtividadesUsuarioDTO> = graficoService.getAtividadesDoUsuario(idUsuario)
+            if (atividades.isEmpty()) {
+                ResponseEntity.status(404).body("Dados não encontrados")
+            } else {
+                ResponseEntity.ok(atividades)
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body("Erro interno do servidor")
         }
     }
 }

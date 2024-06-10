@@ -1,9 +1,6 @@
 package TechForAll.techPoints.service
 
-import TechForAll.techPoints.dto.AtividadesUsuarioDTO
-import TechForAll.techPoints.dto.PontosAoLongoDoTempoDTO
-import TechForAll.techPoints.dto.PontosPorCursoAoMesDTO
-import TechForAll.techPoints.dto.PontosSemanaDTO
+import TechForAll.techPoints.dto.*
 import TechForAll.techPoints.repository.*
 import org.springframework.stereotype.Service
 import java.sql.Date
@@ -54,17 +51,26 @@ class DashboardAlunoService(
         )
     }
 
-    fun getAtividadesUsuario(idUsuario: Int): List<AtividadesUsuarioDTO> {
-        val results = atividadesUsuarioRepository.findAtividadesUsuario(idUsuario)
-        return results.map { result ->
-            AtividadesUsuarioDTO(
-                idUsuario = (result[0] as Number).toInt(),
-                nomeUsuario = result[1] as String,
-                curso = result[2] as String,
-                modulo = result[3] as String,
-                totalAtividades = (result[4] as Number).toInt(),
-                atividadesFeitas = (result[5] as Number).toInt()
-            )
+    fun getAtividadesDoUsuario(idUsuario: Int): List<AtividadesUsuarioDTO> {
+        val totalAtividadesPorCurso: List<Array<Any>> = atividadesUsuarioRepository.findTotalAtividadesPorCurso()
+        val atividadesPorCursoEUsuario: List<Array<Any>> = atividadesUsuarioRepository.findAtividadesPorCursoEUsuario(idUsuario)
+
+        val totalAtividadesMap = totalAtividadesPorCurso.associate { it[0] as Number to it[1] as Number }
+
+        return atividadesPorCursoEUsuario.mapNotNull { atividade ->
+            val idCurso = (atividade[0] as Number).toInt()
+            val nomeCurso = atividade[1] as String
+            val totalAtividadesUsuario = (atividade[2] as Number).toInt()
+            val totalQtdAtividades = totalAtividadesMap[idCurso]?.toInt()
+
+            if (totalQtdAtividades != null) {
+                AtividadesUsuarioDTO(
+                    idCurso = idCurso,
+                    nomeCurso = nomeCurso,
+                    totalQtdAtividades = totalQtdAtividades,
+                    totalAtividadesUsuario = totalAtividadesUsuario
+                )
+            } else null
         }
     }
 

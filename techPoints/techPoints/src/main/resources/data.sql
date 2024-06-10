@@ -106,7 +106,6 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS modulo (
   id_modulo INT NOT NULL,
   fk_curso INT NOT NULL,
-  qtd_atividade_feita INT NOT NULL,
   qtd_atividade_total INT NOT NULL,
   nome_modulo VARCHAR(45) NULL,
   PRIMARY KEY (id_modulo, fk_curso),
@@ -288,6 +287,22 @@ ADD CONSTRAINT fk_usuario
 FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario)
 ON DELETE CASCADE;
 
+ -- Pontos por dia e por curso
+  CREATE VIEW PontosPorDiaEporCursoPorUsuario AS
+SELECT
+    c.nome AS nome_curso,
+    p.data_pontuacao,
+    SUM(p.qtd_ponto) AS pontos_por_dia,
+    p.fk_usuario AS usuario
+FROM
+    Ponto p
+JOIN
+    Curso c ON p.fk_curso = c.id_curso
+GROUP BY
+    p.fk_curso, p.data_pontuacao, p.fk_usuario
+ORDER BY
+    p.fk_usuario, p.fk_curso, p.data_pontuacao;
+
 -- Populando a tabela tipo_acao
 INSERT INTO tipo_acao (id_tipoAcao, Inserir, Deletar, Atualizar) VALUES
 (1, 1, 1, 1),
@@ -349,28 +364,28 @@ INSERT INTO inscricao (fk_usuario, fk_curso, codigo_inscricao) VALUES
 (1, 4, 'JKL012');
 
 -- Inserir dados em `modulo` curso 1
-INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_feita, qtd_atividade_total, nome_modulo) VALUES
-(1, 1, 3, 5, 'Módulo 1: Introdução'),
-(2, 1, 4, 6, 'Módulo 1: Fundamentos'),
-(3, 1, 5, 7, 'Módulo 1: Básico');
+INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_total, nome_modulo) VALUES
+(1, 1, 9, 'Módulo 1: Introdução'),
+(2, 1, 9, 'Módulo 2: Fundamentos'),
+(3, 1, 9, 'Módulo 3: Básico');
 
 -- Inserir dados em `modulo` curso 2
-INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_feita, qtd_atividade_total, nome_modulo) VALUES
-(1, 2, 3, 5, 'Módulo 1: Introdução'),
-(2, 2, 4, 6, 'Módulo 1: Fundamentos'),
-(3, 2, 5, 7, 'Módulo 1: Básico');
+INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_total, nome_modulo) VALUES
+(1, 2, 12, 'Módulo 1: Introdução'),
+(2, 2, 20, 'Módulo 2: Fundamentos'),
+(3, 2, 10, 'Módulo 3: Básico');
 
 -- Inserir dados em `modulo` curso 3
-INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_feita, qtd_atividade_total, nome_modulo) VALUES
-(1, 3, 3, 5, 'Módulo 1: Introdução'),
-(2, 3, 4, 6, 'Módulo 1: Fundamentos'),
-(3, 3, 5, 7, 'Módulo 1: Básico');
+INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_total, nome_modulo) VALUES
+(1, 3, 9, 'Módulo 1: Introdução'),
+(2, 3, 11, 'Módulo 2: Fundamentos'),
+(3, 3, 7, 'Módulo 3: Básico');
 
 -- Inserir dados em `modulo` curso 4
-INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_feita, qtd_atividade_total, nome_modulo) VALUES
-(1, 4, 3, 5, 'Módulo 1: Introdução'),
-(2, 4, 4, 6, 'Módulo 1: Fundamentos'),
-(3, 4, 5, 7, 'Módulo 1: Básico');
+INSERT INTO modulo (id_modulo, fk_curso, qtd_atividade_total, nome_modulo) VALUES
+(1, 4, 9, 'Módulo 1: Introdução'),
+(2, 4, 10, 'Módulo 2: Fundamentos'),
+(3, 4, 11, 'Módulo 3: Básico');
 
 -- Atividades para o curso 1
 INSERT INTO atividade (nota, temp_duracao, data_entrega, fk_modulo, fk_curso) VALUES
@@ -493,6 +508,43 @@ INSERT INTO ponto (qtd_ponto, data_pontuacao, fk_referencia_gerar_pontuacao, fk_
 (18, '2024-06-13', 3, 36, 3, 4, 1);
 
 
+
+
+SELECT
+    fk_curso AS id_curso,
+    SUM(qtd_atividade_total) AS total_qtd_atividades
+FROM
+    modulo
+GROUP BY
+    fk_curso;
+
+
+SELECT
+    fk_curso AS id_curso,
+    SUM(qtd_atividade_total) AS total_qtd_atividades
+FROM
+    modulo
+GROUP BY
+    fk_curso;
+
+SELECT
+    modulo.fk_curso AS id_curso,
+    curso.nome AS nome_curso,
+    COUNT(DISTINCT atividade.id_atividade) AS total_atividades_usuario_1
+FROM
+    modulo
+INNER JOIN curso ON modulo.fk_curso = curso.id_curso
+LEFT JOIN atividade ON modulo.id_modulo = atividade.fk_modulo AND atividade.fk_curso = modulo.fk_curso
+LEFT JOIN ponto ON atividade.id_atividade = ponto.fk_atividade AND ponto.fk_usuario = 1
+WHERE
+    modulo.fk_curso IN (SELECT fk_curso FROM inscricao WHERE fk_usuario = 1)
+GROUP BY
+    modulo.fk_curso;
+
+
+
+
+
 -- pontos totais por curso
 SELECT
     fk_curso,
@@ -505,21 +557,17 @@ GROUP BY
     fk_curso;
 
 
-    -- Pontos por dia e por curso
-    SELECT
-    fk_curso,
-    data_pontuacao,
-    SUM(qtd_ponto) AS pontos_por_dia
-FROM
-    ponto
-WHERE
-    fk_usuario = 1
-GROUP BY
-    fk_curso,
-    data_pontuacao
-ORDER BY
-    fk_curso,
-    data_pontuacao;
+
+
+
+ SELECT
+        *
+    FROM
+        PontosPorDiaEporCursoPorUsuario
+    WHERE
+        usuario = 1;
+
+
 
 -- Pontos na semana passada
 SELECT
@@ -548,4 +596,7 @@ SELECT
     'diferenca_semana_atual_passada' AS semana,
     (SELECT SUM(qtd_ponto) FROM ponto WHERE fk_usuario = 1 AND data_pontuacao BETWEEN '2024-06-09' AND '2024-06-13') -
     (SELECT SUM(qtd_ponto) FROM ponto WHERE fk_usuario = 1 AND data_pontuacao BETWEEN '2024-06-02' AND '2024-06-08') AS diferenca_pontos;
+
+
+
 
