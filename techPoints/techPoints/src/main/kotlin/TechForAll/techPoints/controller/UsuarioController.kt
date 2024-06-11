@@ -273,7 +273,7 @@ class UsuarioController @Autowired constructor(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Imagem de perfil encontrada e retornada com sucesso"),
-            ApiResponse(responseCode = "404", description = "Usuário não encontrado ou imagem de perfil não encontrada"),
+            ApiResponse(responseCode = "204", description = "Usuário não encontrado ou imagem de perfil não encontrada"),
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
@@ -287,9 +287,9 @@ class UsuarioController @Autowired constructor(
                 .contentLength(imagemPerfil.size.toLong())
                 .body(byteArrayResource)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado ou imagem de perfil não encontrada"))
+            ResponseEntity.status(204).build()
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).build()
         }
     }
 

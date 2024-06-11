@@ -9,6 +9,7 @@ import TechForAll.techPoints.repository.EnderecoRepository
 import TechForAll.techPoints.repository.TipoUsuarioRepository
 import TechForAll.techPoints.repository.UsuarioRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import kotlin.NoSuchElementException
@@ -139,12 +140,12 @@ class UsuarioService @Autowired constructor(
 
     fun obterImagemPerfil(idUsuario: Int): ByteArray {
         val usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") } //nao ta funcionando, disparando smepre erro 500
-        if (usuario.imagemPerfil == null) {
-            throw NoSuchElementException("Imagem de perfil não encontrada")
-        } //nao ta disparando
-        return usuario.imagemPerfil!!
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+
+        return usuario.imagemPerfil ?: throw NoSuchElementException("Imagem de perfil não encontrada")
     }
+
+
     private fun usuarioParaDTOOutput(usuario: Usuario): UsuarioDTOOutput {
         return UsuarioDTOOutput(
             idUsuario = usuario.idUsuario,
