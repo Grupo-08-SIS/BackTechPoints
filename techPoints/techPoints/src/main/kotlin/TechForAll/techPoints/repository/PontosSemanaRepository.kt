@@ -13,10 +13,10 @@ interface PontosSemanaRepository : JpaRepository<Ponto, Int>{
         SELECT 
             u.id_usuario AS idUsuario,
             u.nome_usuario AS nomeUsuario,
-            COALESCE(SUM(CASE WHEN WEEK(p.data_pontuacao) = WEEK(CURRENT_DATE) THEN p.qtd_ponto ELSE 0 END), 0) AS pontosSemanaAtual,
-            COALESCE(SUM(CASE WHEN WEEK(p.data_pontuacao) = WEEK(CURRENT_DATE) - 1 THEN p.qtd_ponto ELSE 0 END), 0) AS pontosSemanaPassada,
-            COALESCE(SUM(CASE WHEN WEEK(p.data_pontuacao) = WEEK(CURRENT_DATE) THEN p.qtd_ponto ELSE 0 END), 0) -
-            COALESCE(SUM(CASE WHEN WEEK(p.data_pontuacao) = WEEK(CURRENT_DATE) - 1 THEN p.qtd_ponto ELSE 0 END), 0) AS diferencaPontos
+            COALESCE(SUM(CASE WHEN WEEK(p.data_entrega) = WEEK(CURRENT_DATE) THEN p.qtd_ponto ELSE 0 END), 0) AS pontosSemanaAtual,
+            COALESCE(SUM(CASE WHEN WEEK(p.data_entrega) = WEEK(CURRENT_DATE) - 1 THEN p.qtd_ponto ELSE 0 END), 0) AS pontosSemanaPassada,
+            COALESCE(SUM(CASE WHEN WEEK(p.data_entrega) = WEEK(CURRENT_DATE) THEN p.qtd_ponto ELSE 0 END), 0) -
+            COALESCE(SUM(CASE WHEN WEEK(p.data_entrega) = WEEK(CURRENT_DATE) - 1 THEN p.qtd_ponto ELSE 0 END), 0) AS diferencaPontos
         FROM
             Ponto p
         JOIN 

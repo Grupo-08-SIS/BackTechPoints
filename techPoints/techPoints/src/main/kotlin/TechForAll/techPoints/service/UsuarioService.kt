@@ -61,11 +61,13 @@ class UsuarioService @Autowired constructor(
     }
 
     fun hardDeleteUsuario(email: String, senha: String) {
-        val usuario: Usuario = usuarioRepository.findByEmailAndSenha(email, senha) // nao ta disparando credenciais invalidas
-            ?: throw NoSuchElementException("Usuário não encontrado") //arrumar
-        println(usuario)
-        usuarioRepository.delete(usuario)
-    }//funcionando porem esta disparando um erro 500
+        val usuario: Usuario = usuarioRepository.findByEmailAndSenha(email, senha)
+        if (usuario != null) {
+            usuarioRepository.deletar(usuario.idUsuario)
+        } else {
+            throw NoSuchElementException("Usuário não encontrado")
+        }
+    }
 
     fun listarUsuarios(): List<UsuarioDTOOutput> {
         return usuarioRepository.findAll().map { usuarioParaDTOOutput(it) }

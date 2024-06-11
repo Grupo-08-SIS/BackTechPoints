@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.annotation.*
@@ -81,6 +82,7 @@ class UsuarioController @Autowired constructor(
         ]
     )
     @DeleteMapping("/deletar")
+    @Transactional
     fun hardDelete(@RequestBody @Valid requestBody: Map<String, String>): ResponseEntity<Any> {
         val email = requestBody["email"]
         val senha = requestBody["senha"]

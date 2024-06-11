@@ -182,7 +182,7 @@ class UsuarioServiceTest {
 
         usuarioService.hardDeleteUsuario(email, senha)
 
-        verify(usuarioRepository, times(1)).delete(usuario)
+        verify(usuarioRepository, times(1)).deletar(usuario.idUsuario)
     }
 
     @Test
@@ -190,7 +190,7 @@ class UsuarioServiceTest {
         val email = "teste@gmail.com"
         val senha = "senha"
 
-        `when`(usuarioRepository.findByEmailAndSenha(anyString(), anyString())).thenReturn(null)
+        `when`(usuarioRepository.findByEmailAndSenha(email, senha)).thenReturn(null)
 
         val exception = assertThrows(NoSuchElementException::class.java) {
             usuarioService.hardDeleteUsuario(email, senha)

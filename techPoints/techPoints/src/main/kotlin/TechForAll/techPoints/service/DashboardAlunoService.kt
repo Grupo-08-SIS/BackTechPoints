@@ -13,6 +13,7 @@ class DashboardAlunoService(
     private val pontosSemanaRepository: PontosSemanaRepository,
     private val classificacaoRepository: ClassificacaoRepository,
     private val atividadesUsuarioRepository: AtividadesUsuarioRepository
+
 ) {
 
     fun getPontosAoLongoDoTempo(idUsuario: Int): List<Any> {
@@ -32,9 +33,10 @@ class DashboardAlunoService(
         val results = graficoColunaRepository.findPontosPorCursoAoMes(idUsuario)
         return results.map { result ->
             PontosPorCursoAoMesDTO(
-                mes = result[0] as String,
-                nome = result[1] as String,
-                pontos = (result[2] as Long).toInt()
+                mes = (result[0] as Number).toInt(),
+                idCurso = (result[1] as Number).toInt(),
+                nome = result[2] as String,
+                pontos = (result[3] as Number).toInt()
             )
         }
     }
@@ -79,12 +81,23 @@ class DashboardAlunoService(
 
         val listaAlunos: List<Array<Any>> = classificacaoRepository.findClassificacao(cursoId)
 
-        return listaAlunos.map { row ->
+        return listaAlunos.map { result ->
             ClassificacaoDTO(
-                idUsuario = row[0] as Int,
-                nomeUsuario = row[1] as String,
-                email = row[2] as String,
-                totalPontos = row[3] as Int
+                idUsuario = (result[0] as Number).toInt(),
+                nomeUsuario = result[1] as String,
+                email = result[2] as String,
+                totalPontos = (result[3] as Number).toInt(),
+            )
+        }
+    }
+
+    fun buscarPontosPorCurso(idUsuario: Int): List<PontosPorCursoDTO> {
+        val results = classificacaoRepository.findPontosPorCurso(idUsuario)
+        return results.map { result ->
+            PontosPorCursoDTO(
+                idCurso = (result[0] as Number).toInt(),
+                nomeCurso = result[1] as String,
+                totalPontos = (result[2] as Number).toInt()
             )
         }
     }

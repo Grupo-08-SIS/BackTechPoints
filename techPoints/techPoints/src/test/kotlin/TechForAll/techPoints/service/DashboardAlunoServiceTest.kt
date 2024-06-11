@@ -24,6 +24,9 @@ class DashboardAlunoServiceTest {
     private lateinit var pontosSemanaRepository: PontosSemanaRepository
 
     @Mock
+    private lateinit var classificacaoRepository: ClassificacaoRepository
+
+    @Mock
     private lateinit var atividadesUsuarioRepository: AtividadesUsuarioRepository
 
     @InjectMocks
@@ -92,13 +95,14 @@ class DashboardAlunoServiceTest {
     @Test
     fun `teste getPontosPorCursoAoMes`() {
         val resultadosMock = listOf(
-            arrayOf("6" as Any, "Curso B" as Any, 200L as Any)
+            arrayOf(6 as Any, 1 as Any, "Curso B" as Any, 200 as Any)
         )
         `when`(graficoColunaRepository.findPontosPorCursoAoMes(1)).thenReturn(resultadosMock)
 
         val esperado = listOf(
             PontosPorCursoAoMesDTO(
-                mes = "6",
+                mes = 6,
+                idCurso = 1,
                 nome = "Curso B",
                 pontos = 200
             )
@@ -111,19 +115,21 @@ class DashboardAlunoServiceTest {
     @Test
     fun `teste getPontosPorCursoAoMes com dados adicionais`() {
         val resultadosMock = listOf(
-            arrayOf("6" as Any, "Curso B" as Any, 200L as Any),
-            arrayOf("7" as Any, "Curso C" as Any, 250L as Any)
+            arrayOf(6 as Any, 1 as Any, "Curso B" as Any, 200 as Any),
+            arrayOf(7 as Any, 2 as Any, "Curso C" as Any, 250 as Any)
         )
         `when`(graficoColunaRepository.findPontosPorCursoAoMes(1)).thenReturn(resultadosMock)
 
         val esperado = listOf(
             PontosPorCursoAoMesDTO(
-                mes = "6",
+                mes = 6,
+                idCurso = 1,
                 nome = "Curso B",
                 pontos = 200
             ),
             PontosPorCursoAoMesDTO(
-                mes = "7",
+                mes = 7,
+                idCurso = 2,
                 nome = "Curso C",
                 pontos = 250
             )
@@ -261,5 +267,79 @@ class DashboardAlunoServiceTest {
 
         val atual = dashboardAlunoService.getAtividadesDoUsuario(1)
         assertTrue(atual.isEmpty())
+    }
+
+    @Test
+    fun `teste buscarClassificacao sem cursoId`() {
+        val resultadosMock = listOf(
+            arrayOf(1 as Any, "Usuario A" as Any, "emailA@test.com" as Any, 300 as Any),
+            arrayOf(2 as Any, "Usuario B" as Any, "emailB@test.com" as Any, 250 as Any)
+        )
+
+        `when`(classificacaoRepository.findClassificacao(null)).thenReturn(resultadosMock)
+
+        val esperado = listOf(
+            ClassificacaoDTO(
+                idUsuario = 1,
+                nomeUsuario = "Usuario A",
+                email = "emailA@test.com",
+                totalPontos = 300
+            ),
+            ClassificacaoDTO(
+                idUsuario = 2,
+                nomeUsuario = "Usuario B",
+                email = "emailB@test.com",
+                totalPontos = 250
+            )
+        )
+
+        val atual = dashboardAlunoService.buscarClassificacao(null)
+        assertEquals(esperado, atual)
+    }
+
+    @Test
+    fun `teste buscarClassificacao com cursoId`() {
+        val resultadosMock = listOf(
+            arrayOf(1 as Any, "Usuario A" as Any, "emailA@test.com" as Any, 150 as Any)
+        )
+
+        `when`(classificacaoRepository.findClassificacao(1)).thenReturn(resultadosMock)
+
+        val esperado = listOf(
+            ClassificacaoDTO(
+                idUsuario = 1,
+                nomeUsuario = "Usuario A",
+                email = "emailA@test.com",
+                totalPontos = 150
+            )
+        )
+
+        val atual = dashboardAlunoService.buscarClassificacao(1)
+        assertEquals(esperado, atual)
+    }
+
+    @Test
+    fun `teste buscarClassificacao com lista vazia`() {
+        `when`(classificacaoRepository.findClassificacao(1)).thenReturn(emptyList())
+
+        val atual = dashboardAlunoService.buscarClassificacao(1)
+        assertTrue(atual.isEmpty())
+    }
+
+    @Test
+    fun `teste getPontosPorCurso`() {
+        val resultadosMock = listOf(
+            arrayOf(1 as Any, "Curso 1" as Any, 100 as Any),
+            arrayOf(2 as Any, "Curso 2" as Any, 200 as Any)
+        )
+        `when`(classificacaoRepository.findPontosPorCurso(1)).thenReturn(resultadosMock)
+
+        val esperado = listOf(
+            PontosPorCursoDTO(idCurso = 1, nomeCurso = "Curso 1", totalPontos = 100),
+            PontosPorCursoDTO(idCurso = 2, nomeCurso = "Curso 2", totalPontos = 200)
+        )
+
+        val atual = dashboardAlunoService.buscarPontosPorCurso(1)
+        assertEquals(esperado, atual)
     }
 }

@@ -1,35 +1,30 @@
 package TechForAll.techPoints.repository
 
-import TechForAll.techPoints.dominio.Pontuacao
-import TechForAll.techPoints.dto.PontosPorCursoAoMesDTO
+import TechForAll.techPoints.dominio.Ponto
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GraficoColunaRepository : JpaRepository<Pontuacao, Int> {
+interface GraficoColunaRepository : JpaRepository<Ponto, Int> {
     @Query("""
-        SELECT
-            DATE_FORMAT(p.dataAtualizacao, '%Y-%m') as mes,
-            c.nome as curso,
-            SUM(p.totalPontosUsuario) as pontos
-        FROM
-            Pontuacao p
-        JOIN
-            p.usuario u
-        JOIN
-            u.inscricoes i
-        JOIN
-            i.curso c
-        WHERE
-            p.usuario.idUsuario = :idUsuario
-        GROUP BY
-            DATE_FORMAT(p.dataAtualizacao, '%Y-%m'),
-            c.nome
-        ORDER BY
-            DATE_FORMAT(p.dataAtualizacao, '%Y-%m')
-    """)
+        SELECT 
+            MONTH(p.data_entrega) AS mes,
+            c.id_curso,
+            c.nome AS nome_curso,
+            SUM(p.qtd_ponto) AS total_pontos
+        FROM 
+            ponto p
+        INNER JOIN 
+            curso c ON p.fk_curso = c.id_curso
+        WHERE 
+            p.fk_usuario = :idUsuario
+        GROUP BY 
+            mes, c.id_curso, c.nome
+        ORDER BY 
+            mes, c.id_curso;
+    """, nativeQuery = true)
     fun findPontosPorCursoAoMes(@Param("idUsuario") idUsuario: Int): List<Array<Any>>
 }
 

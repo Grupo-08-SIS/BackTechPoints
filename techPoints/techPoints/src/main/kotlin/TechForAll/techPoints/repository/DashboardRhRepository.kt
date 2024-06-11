@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 interface DashboardRhRepository : JpaRepository<Usuario, Int> {
 //    @Query("""
 //        SELECT
-//            u.id, u.nomeUsuario, u.primeiroNome, u.sobrenome, u.email, c.nome, e.cidade)
+//            u.id, u.nomeUsuario, u.primeiroNome, u.sobrenome, u.email, c.nome, e.cidade
 //        FROM Usuario u
 //        JOIN Inscricao i ON u.id = i.usuario.id
 //        JOIN Curso c ON i.curso.id = c.id

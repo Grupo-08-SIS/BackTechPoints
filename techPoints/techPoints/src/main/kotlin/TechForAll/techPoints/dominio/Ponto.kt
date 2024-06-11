@@ -11,11 +11,14 @@ data class Ponto(
     @Column(name = "id_ponto")
     val id: Int,
 
+    @Column(name = "nota")
+    val nota: Int,
+
     @Column(name = "qtd_ponto")
     val qtdPonto: Int,
 
-    @Column(name = "data_pontuacao")
-    val dataPontuacao: LocalDateTime,
+    @Column(name = "data_entrega")
+    val dataEntrega: LocalDateTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_referencia_gerar_pontuacao")

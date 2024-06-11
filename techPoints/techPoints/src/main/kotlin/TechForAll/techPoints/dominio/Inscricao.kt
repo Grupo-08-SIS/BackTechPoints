@@ -19,7 +19,7 @@ data class Inscricao(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_usuario", referencedColumnName = "id_usuario")
-    val usuario: Usuario? = null
+    val usuario: Usuario? = null,
 )
 
 

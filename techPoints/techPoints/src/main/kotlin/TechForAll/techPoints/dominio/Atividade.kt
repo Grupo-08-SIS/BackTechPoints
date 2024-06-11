@@ -11,8 +11,17 @@ data class Atividade(
     @Column(name = "id_atividade")
     val id: Int,
 
-    @Column(name = "nota")
-    val nota: Int?,
+    @Column(name = "nome", length = 45, nullable = false)
+    var nome: String,
+
+    @Column(name = "descricao", length = 200, nullable = false)
+    var descricao: String,
+
+    @Column(name = "valor")
+    val valor: Int?,
+
+    @Column(name = "peso")
+    val peso: Double?,
 
     @Column(name = "temp_duracao")
     val duracao: java.sql.Time?,

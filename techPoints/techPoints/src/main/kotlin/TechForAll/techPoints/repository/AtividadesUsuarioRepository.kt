@@ -18,16 +18,16 @@ interface AtividadesUsuarioRepository : JpaRepository<Atividade, Int> {
     fun findTotalAtividadesPorCurso(): List<Array<Any>>
 
     @Query("""
-        SELECT
-            m.fk_curso AS id_curso,
+        SELECT 
+            c.id_curso,
             c.nome AS nome_curso,
-            COUNT(DISTINCT a.id_atividade) AS total_atividades_usuario
-        FROM modulo m
-        INNER JOIN curso c ON m.fk_curso = c.id_curso
-        LEFT JOIN atividade a ON m.id_modulo = a.fk_modulo AND a.fk_curso = m.fk_curso
-        LEFT JOIN ponto p ON a.id_atividade = p.fk_atividade AND p.fk_usuario = :idUsuario
-        WHERE m.fk_curso IN (SELECT i.fk_curso FROM inscricao i WHERE i.fk_usuario = :idUsuario)
-        GROUP BY m.fk_curso, c.nome
+            COUNT(p.fk_atividade) AS total_atividades_feitas
+        FROM 
+            curso c
+        LEFT JOIN 
+            ponto p ON c.id_curso = p.fk_curso AND p.fk_usuario = :idUsuario
+        GROUP BY 
+            c.id_curso, c.nome;
     """, nativeQuery = true)
     fun findAtividadesPorCursoEUsuario(@Param("idUsuario") idUsuario: Int): List<Array<Any>>
 }

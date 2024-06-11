@@ -129,4 +129,26 @@ class DashboardAlunoController @Autowired constructor(
         }
     }
 
+    @Operation(
+        summary = "Obter pontos por curso",
+        description = "Retorna os pontos acumulados de um usuário em cada curso em que ele está inscrito"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Dados encontrados"),
+            ApiResponse(responseCode = "404", description = "Dados não encontrados"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/pontos-por-curso")
+    fun getPontosPorCurso(@RequestParam idUsuario: Int): ResponseEntity<Any> {
+        return try {
+            val pontos = graficoService.buscarPontosPorCurso(idUsuario)
+            ResponseEntity.ok(pontos)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to e.message))
+        }
+    }
+
+
 }
