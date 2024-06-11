@@ -11,6 +11,7 @@ class DashboardAlunoService(
     private val graficoColunaRepository: GraficoColunaRepository,
     private val graficoLinhaRepository: GraficoLinhaRepository,
     private val pontosSemanaRepository: PontosSemanaRepository,
+    private val classificacaoRepository: ClassificacaoRepository,
     private val atividadesUsuarioRepository: AtividadesUsuarioRepository
 ) {
 
@@ -74,4 +75,17 @@ class DashboardAlunoService(
         }
     }
 
+    fun buscarClassificacao(cursoId: Int?) : List<ClassificacaoDTO>{
+
+        val listaAlunos: List<Array<Any>> = classificacaoRepository.findClassificacao(cursoId)
+
+        return listaAlunos.map { row ->
+            ClassificacaoDTO(
+                idUsuario = row[0] as Int,
+                nomeUsuario = row[1] as String,
+                email = row[2] as String,
+                totalPontos = row[3] as Int
+            )
+        }
+    }
 }

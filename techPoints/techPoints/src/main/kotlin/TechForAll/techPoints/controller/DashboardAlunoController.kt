@@ -1,10 +1,12 @@
 package TechForAll.techPoints.controller
 
 import TechForAll.techPoints.dto.AtividadesUsuarioDTO
+import TechForAll.techPoints.dto.ClassificacaoDTO
 import TechForAll.techPoints.service.DashboardAlunoService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import jakarta.websocket.server.PathParam
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -104,4 +106,27 @@ class DashboardAlunoController @Autowired constructor(
             ResponseEntity.status(500).body("Erro interno do servidor")
         }
     }
+
+
+    @Operation(
+        summary = "Obter classificação",
+        description = "Retorna os usuários e seus pontos acumulados em ordem decrescente"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Dados encontrados"),
+            ApiResponse(responseCode = "404", description = "Dados não encontrados"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/classificacao")
+    fun getClassificacao(@RequestParam(required = false) cursoId: Int?,): ResponseEntity<Any> {
+        return try {
+            val alunos = graficoService.buscarClassificacao(cursoId)
+            ResponseEntity.ok(alunos)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to e.message))
+        }
+    }
+
 }
