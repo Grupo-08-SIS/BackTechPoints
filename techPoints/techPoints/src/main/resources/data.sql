@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS curso (
   fk_categoria_curso INT NOT NULL,
     FOREIGN KEY (fk_categoria_curso)
     REFERENCES `mydb`.`categoria_curso` (`id_categoria_curso`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS modulo (
   PRIMARY KEY (id_modulo, fk_curso),
   FOREIGN KEY (fk_curso)
     REFERENCES curso (id_curso)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION
 )
 ENGINE = InnoDB;
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`atividade` (
   primary key (`id_atividade`, `fk_modulo` , `fk_curso`),
     FOREIGN KEY (`fk_modulo` , `fk_curso`)
     REFERENCES `mydb`.`modulo` (`id_modulo` , `fk_curso`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`ponto` (
     ON UPDATE NO ACTION,
     FOREIGN KEY (`fk_usuario`)
     REFERENCES `mydb`.`usuario` (`id_usuario`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS redefinicao_senha (
   valido TINYINT NOT NULL,
   email_redefinicao VARCHAR(45) NOT NULL,
   fk_usuario INT NOT NULL,
-  CONSTRAINT fk_usuario FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario)
+  CONSTRAINT fk_usuario FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario) ON DELETE CASCADE
 );
 
 
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`inscricao` (
     ON UPDATE NO ACTION,
     FOREIGN KEY (`fk_curso`)
     REFERENCES `mydb`.`curso` (`id_curso`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`dados_empresa` (
   CONSTRAINT `fk_dados_empresa_usuario1`
     FOREIGN KEY (`fk_usuario`)
     REFERENCES `mydb`.`usuario` (`id_usuario`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`tempo_sessao` (
   CONSTRAINT `fk_tempo_sessao_usuario1`
     FOREIGN KEY (`fk_usuario`)
     REFERENCES `mydb`.`usuario` (`id_usuario`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -269,12 +269,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`meta_estudo` (
   CONSTRAINT `fk_usuario_has_tempo_estudo_tempo_estudo1`
     FOREIGN KEY (`fk_tempo_estudo`)
     REFERENCES `mydb`.`tempo_estudo` (`id_tempo_estudo`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_meta_estudo_tempo_sessao1`
     FOREIGN KEY (`fk_tempo_sessao`)
     REFERENCES `mydb`.`tempo_sessao` (`id_tempo_sessao`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -290,6 +290,22 @@ ALTER TABLE redefinicao_senha DROP FOREIGN KEY fk_usuario;
 
 ALTER TABLE redefinicao_senha
 ADD CONSTRAINT fk_usuario
+FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario)
+ON DELETE CASCADE;
+
+ALTER TABLE dados_empresa
+DROP FOREIGN KEY fk_dados_empresa_usuario1;
+
+ALTER TABLE dados_empresa
+ADD CONSTRAINT fk_dados_empresa_usuario1
+FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario)
+ON DELETE CASCADE;
+
+ALTER TABLE inscricao
+DROP FOREIGN KEY inscricao_ibfk_1;
+
+ALTER TABLE inscricao
+ADD CONSTRAINT inscricao_ibfk_1
 FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario)
 ON DELETE CASCADE;
 
@@ -723,4 +739,5 @@ GROUP BY
 ORDER BY
     total_pontos DESC
 LIMIT 300;
+
 
