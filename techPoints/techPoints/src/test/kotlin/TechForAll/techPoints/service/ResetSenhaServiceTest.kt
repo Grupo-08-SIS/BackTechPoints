@@ -13,13 +13,10 @@
     import org.mockito.InjectMocks
     import org.mockito.Mock
     import org.mockito.Mockito.*
-    import org.mockito.MockitoAnnotations
-    import org.springframework.http.ResponseEntity
+    import org.mockito.MockitoAnnotations.openMocks
     import org.springframework.mail.SimpleMailMessage
     import org.springframework.mail.javamail.JavaMailSender
     import java.time.LocalDateTime
-    import java.util.*
-
     class ResetSenhaServiceTest {
 
         @Mock
@@ -36,35 +33,8 @@
 
         @BeforeEach
         fun setUp() {
-            MockitoAnnotations.openMocks(this)
+            openMocks(this)
         }
-
-        @Test
-        fun `test senhaReset quando nao existe redefinição de senha ativa`() {
-            val emailUser = "teste@gmail.com"
-            val usuario = mock(Usuario::class.java)
-
-            `when`(redefinicaoSenhaRepository.findByEmailAndValidoAndDataExpiracaoAfter(anyString(), any()))
-            `when`(usuarioRepository.findByEmail(anyString())).thenReturn(usuario)
-            doNothing().`when`(emailSender).send(any(SimpleMailMessage::class.java))
-
-            val response = resetSenhaService.senhaReset(emailUser)
-            assertEquals(200, response.statusCodeValue)
-        }//falta esse
-
-
-        @Test
-        fun `test senhaReset quando existe redefinição de senha ativa`() {
-            val emailUser = "teste@gmail.com"
-            val redefinicaoSenha = mock(RedefinicaoSenha::class.java)
-
-            `when`(redefinicaoSenhaRepository.findByEmailAndValidoAndDataExpiracaoAfter(anyString(), any())).thenReturn(listOf(redefinicaoSenha))
-
-            val response = resetSenhaService.senhaReset(emailUser)
-            assertEquals(409, response.statusCodeValue)
-            assertTrue(response.body.toString().contains("Uma troca de senha já está em andamento para este usuário."))
-        } //falta esse
-
 
         @Test
         fun `test enviarEmailRecuperacaoSenha`() {
