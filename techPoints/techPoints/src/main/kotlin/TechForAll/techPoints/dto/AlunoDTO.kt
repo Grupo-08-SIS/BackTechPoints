@@ -1,11 +1,11 @@
 package TechForAll.techPoints.dto
 
 data class AlunoDTO (
-    val idUsuario: Int,
-    val nomeUsuario: String,
-    val primeiroNome: String,
-    val sobrenome: String,
-    val email: String,
-    val nomeCurso: String,
-    val cidade: String
+    val idUsuario: Int? = null,
+    val nomeUsuario: String ? = null,
+    val primeiroNome: String ? = null,
+    val sobrenome: String ? = null,
+    val email: String ? = null,
+    val nomeCurso: String ? = null,
+    val cidade: String ? = null
 )

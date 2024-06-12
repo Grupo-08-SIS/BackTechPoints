@@ -29,7 +29,7 @@ class DadoEmpresaService @Autowired constructor(
             telefoneContato = dadoEmpresaDTO.telefoneContato,
             cnpj = dadoEmpresaDTO.cnpj,
             dataAtualizacao = null,
-            fkUsuario = usuario
+            fkUsuario = usuario!!
         )
 
         val empresaSalva = dadoEmpresaRepository.save(dadoEmpresa)

@@ -740,4 +740,27 @@ ORDER BY
     total_pontos DESC
 LIMIT 300;
 
+-- DASH RH
+SELECT
+    u.id_usuario AS idUsuario,
+    u.nome_usuario AS nomeUsuario,
+    u.primeiro_nome AS primeiroNome,
+    u.sobrenome AS sobrenome,
+    u.email AS email,
+    c.nome AS nomeCurso,
+    e.cidade AS cidade
+FROM
+    usuario u
+JOIN
+    tipo_usuario tu ON u.fk_tipo_usuario = tu.id_tipo_usuario
+LEFT JOIN
+    endereco e ON u.fk_endereco = e.id_endereco
+LEFT JOIN
+    inscricao i ON u.id_usuario = i.fk_usuario
+LEFT JOIN
+    curso c ON i.fk_curso = c.id_curso
+WHERE
+    u.fk_tipo_usuario = 2
+LIMIT 0, 300;
+
 
