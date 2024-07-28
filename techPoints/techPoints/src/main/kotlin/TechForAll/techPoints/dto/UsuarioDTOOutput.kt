@@ -1,6 +1,7 @@
 package TechForAll.techPoints.dto
 
 import TechForAll.techPoints.dominio.Endereco
+import TechForAll.techPoints.dominio.TipoUsuario
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDateTime
 
@@ -21,5 +22,6 @@ data class UsuarioDTOOutput(
     @JsonIgnore
     val dataDeletado: LocalDateTime? = null,
     val dataAtualizacao: LocalDateTime? = null,
-    val endereco: Endereco? = null
+    val endereco: Endereco? = null,
+        val tipoUsuario: Int? = null
 )

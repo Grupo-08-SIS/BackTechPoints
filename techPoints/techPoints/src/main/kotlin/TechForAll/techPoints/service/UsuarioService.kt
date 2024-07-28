@@ -16,35 +16,35 @@ import kotlin.NoSuchElementException
 
 @Service
 class UsuarioService @Autowired constructor(
-    private val usuarioRepository: UsuarioRepository,
-    private val enderecoRepository: EnderecoRepository,
-    private val tipoUsuarioRepository: TipoUsuarioRepository
+        private val usuarioRepository: UsuarioRepository,
+        private val enderecoRepository: EnderecoRepository,
+        private val tipoUsuarioRepository: TipoUsuarioRepository,
 
-) {
+        ) {
 
     fun cadastrarUsuario(usuarioDTO: UsuarioDTOInput): UsuarioDTOOutput {
         if (usuarioRepository.existsByEmail(usuarioDTO.email)) {
             throw IllegalArgumentException("Email já cadastrado")
         }
         val tipo: TipoUsuario = tipoUsuarioRepository.findById(usuarioDTO.idTipo)
-            .orElseThrow { IllegalArgumentException("Tipo não encontrado com o ID: ${usuarioDTO.idTipo}") }
+                .orElseThrow { IllegalArgumentException("Tipo não encontrado com o ID: ${usuarioDTO.idTipo}") }
 
         val endereco: Endereco? = enderecoRepository.findById(usuarioDTO.idEndereco)
-            .orElseThrow { IllegalArgumentException("Endereço não encontrado com o ID: ${usuarioDTO.idEndereco}") }
+                .orElseThrow { IllegalArgumentException("Endereço não encontrado com o ID: ${usuarioDTO.idEndereco}") }
 
         val usuario = Usuario(
-            idUsuario = usuarioDTO.idUsuario ?: 0, //autoincrementa no banco de forma correta
-            nomeUsuario = usuarioDTO.nomeUsuario,
-            cpf = usuarioDTO.cpf!!,
-            senha = usuarioDTO.senha,
-            primeiroNome = usuarioDTO.primeiroNome,
-            sobrenome = usuarioDTO.sobrenome,
-            email = usuarioDTO.email,
-            autenticado = usuarioDTO.autenticado,
-            dataDeletado = usuarioDTO.dataDeletado,
-            imagemPerfil = null,
-            endereco = endereco,
-            tipoUsuario = tipo
+                idUsuario = usuarioDTO.idUsuario ?: 0, //autoincrementa no banco de forma correta
+                nomeUsuario = usuarioDTO.nomeUsuario,
+                cpf = usuarioDTO.cpf!!,
+                senha = usuarioDTO.senha,
+                primeiroNome = usuarioDTO.primeiroNome,
+                sobrenome = usuarioDTO.sobrenome,
+                email = usuarioDTO.email,
+                autenticado = usuarioDTO.autenticado,
+                dataDeletado = usuarioDTO.dataDeletado,
+                imagemPerfil = null,
+                endereco = endereco,
+                tipoUsuario = tipo
         )
 
         val usuarioSalvo = usuarioRepository.save(usuario)
@@ -53,7 +53,7 @@ class UsuarioService @Autowired constructor(
 
     fun softDeleteUsuario(email: String, senha: String) {
         val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
-            ?: throw IllegalArgumentException("Credenciais inválidas")
+                ?: throw IllegalArgumentException("Credenciais inválidas")
 
         usuario.deletado = true
         usuario.dataDeletado = LocalDateTime.now()
@@ -76,11 +76,11 @@ class UsuarioService @Autowired constructor(
 
     fun buscarUsuarioPorId(idUsuario: Int): UsuarioDTOOutput {
         val usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
         return usuarioParaDTOOutput(usuario)
     }
 
-    fun loginUsuario(email: String, senha: String) : Any {
+    fun loginUsuario(email: String, senha: String): Any {
         val usuario = usuarioRepository.findByEmail(email)
 
         if (senha != usuario.senha) {
@@ -95,7 +95,7 @@ class UsuarioService @Autowired constructor(
 
     fun logoffUsuario(idUsuario: Int) {
         val usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
         usuario.autenticado = false
         usuarioRepository.save(usuario)
@@ -112,7 +112,7 @@ class UsuarioService @Autowired constructor(
 
     fun atualizarUsuario(idUsuario: Int, atualizacao: Map<String, Any>): UsuarioDTOOutput {
         val usuarioExistente = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
         atualizacao["nomeUsuario"]?.let { usuarioExistente.nomeUsuario = it as String }
         atualizacao["cpf"]?.let { usuarioExistente.cpf = it as String }
@@ -132,7 +132,7 @@ class UsuarioService @Autowired constructor(
         }
 
         val usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
         usuario.imagemPerfil = novaFoto
         usuarioRepository.save(usuario)
@@ -140,7 +140,7 @@ class UsuarioService @Autowired constructor(
 
     fun obterImagemPerfil(idUsuario: Int): ByteArray {
         val usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
         return usuario.imagemPerfil ?: throw NoSuchElementException("Imagem de perfil não encontrada")
     }
@@ -148,19 +148,20 @@ class UsuarioService @Autowired constructor(
 
     private fun usuarioParaDTOOutput(usuario: Usuario): UsuarioDTOOutput {
         return UsuarioDTOOutput(
-            idUsuario = usuario.idUsuario,
-            nomeUsuario = usuario.nomeUsuario,
-            cpf = usuario.cpf,
-            senha = usuario.senha,
-            primeiroNome = usuario.primeiroNome,
-            sobrenome = usuario.sobrenome,
-            email = usuario.email,
-            autenticado = usuario.autenticado,
-            dataCriacao = usuario.dataCriacao,
-            deletado = usuario.deletado,
-            dataDeletado = usuario.dataDeletado,
-            dataAtualizacao = usuario.dataAtualizacao,
-            endereco = usuario.endereco!!
+                idUsuario = usuario.idUsuario,
+                nomeUsuario = usuario.nomeUsuario,
+                cpf = usuario.cpf,
+                senha = usuario.senha,
+                primeiroNome = usuario.primeiroNome,
+                sobrenome = usuario.sobrenome,
+                email = usuario.email,
+                autenticado = usuario.autenticado,
+                dataCriacao = usuario.dataCriacao,
+                deletado = usuario.deletado,
+                dataDeletado = usuario.dataDeletado,
+                dataAtualizacao = usuario.dataAtualizacao,
+                endereco = usuario.endereco!!,
+                tipoUsuario = usuario.tipoUsuario!!.idTipoUsuario
         )
     }
 
