@@ -23,4 +23,5 @@ data class UsuarioDTOOutput(
         val dataAtualizacao: LocalDateTime? = null,
         val endereco: Endereco? = null,
         val tipoUsuario: Int? = null,
+        val telefone: String? = null
 )

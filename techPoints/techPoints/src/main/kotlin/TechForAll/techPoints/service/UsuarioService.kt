@@ -44,7 +44,8 @@ class UsuarioService @Autowired constructor(
                 dataDeletado = usuarioDTO.dataDeletado,
                 imagemPerfil = null,
                 endereco = endereco,
-                tipoUsuario = tipo
+                tipoUsuario = tipo,
+                telefone = usuarioDTO.telefone
         )
 
         val usuarioSalvo = usuarioRepository.save(usuario)

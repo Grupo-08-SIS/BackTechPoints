@@ -44,20 +44,21 @@ class UsuarioServiceTest {
     @Test
     fun `test cadastrarUsuario quando email ja existe`() {
         val usuarioDTO = UsuarioDTOInput(
-            idUsuario = null,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataCriacao = LocalDateTime.now(),
-            deletado = false,
-            dataDeletado = null,
-            dataAtualizacao = null,
-            idEndereco = 1,
-            idTipo = 1
+                idUsuario = null,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataCriacao = LocalDateTime.now(),
+                deletado = false,
+                dataDeletado = null,
+                dataAtualizacao = null,
+                idEndereco = 1,
+                idTipo = 1,
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.existsByEmail(anyString())).thenReturn(true)
@@ -72,20 +73,21 @@ class UsuarioServiceTest {
     @Test
     fun `test cadastrarUsuario quando tipo e endereco existe`() {
         val usuarioDTO = UsuarioDTOInput(
-            idUsuario = null,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataCriacao = LocalDateTime.now(),
-            deletado = false,
-            dataDeletado = null,
-            dataAtualizacao = null,
-            idEndereco = 1,
-            idTipo = 1
+                idUsuario = null,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataCriacao = LocalDateTime.now(),
+                deletado = false,
+                dataDeletado = null,
+                dataAtualizacao = null,
+                idEndereco = 1,
+                idTipo = 1,
+                telefone = "(00) 00000-0000"
         )
 
         val tipoUsuario = TipoUsuario(1, NomeTipoUsuario.ADM)
@@ -95,18 +97,19 @@ class UsuarioServiceTest {
         `when`(tipoUsuarioRepository.findById(anyInt())).thenReturn(Optional.of(tipoUsuario))
         `when`(enderecoRepository.findById(anyInt())).thenReturn(Optional.of(endereco))
         `when`(usuarioRepository.save(any(Usuario::class.java))).thenReturn(Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = endereco,
-            tipoUsuario = tipoUsuario
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = endereco,
+                tipoUsuario = tipoUsuario,
+                telefone = "(00) 00000-0000"
         ))
 
         val resultado = usuarioService.cadastrarUsuario(usuarioDTO)
@@ -120,18 +123,19 @@ class UsuarioServiceTest {
         val email = "teste@gmail.com"
         val senha = "senha"
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = senha,
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = email,
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = senha,
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = email,
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findByEmailAndSenha(anyString(), anyString())).thenReturn(usuario)
@@ -163,18 +167,19 @@ class UsuarioServiceTest {
         val email = "teste@gmail.com.com"
         val senha = "senha"
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = senha,
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = email,
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = senha,
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = email,
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findByEmailAndSenha(anyString(), anyString())).thenReturn(usuario)
@@ -202,18 +207,19 @@ class UsuarioServiceTest {
     @Test
     fun `test listarUsuarios`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findAll()).thenReturn(listOf(usuario))
@@ -226,18 +232,19 @@ class UsuarioServiceTest {
     @Test
     fun `test buscarUsuarioPorId com id valido`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuario))
@@ -263,18 +270,19 @@ class UsuarioServiceTest {
         val email = "teste@gmail.com"
         val senha = "senha"
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = senha,
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = email,
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = senha,
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = email,
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findByEmail(anyString())).thenReturn(usuario)
@@ -291,18 +299,19 @@ class UsuarioServiceTest {
         val email = "teste@gmail.com"
         val senha = "senha"
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "outraSenha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = email,
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "outraSenha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = email,
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findByEmail(anyString())).thenReturn(usuario)
@@ -317,18 +326,19 @@ class UsuarioServiceTest {
     @Test
     fun `test logoffUsuario com id valido`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = true,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = true,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuario))
@@ -355,18 +365,19 @@ class UsuarioServiceTest {
     fun `test buscarUsuarioPorEmail com email valido`() {
         val email = "teste@gmail.com"
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = email,
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = email,
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findByEmail(anyString())).thenReturn(usuario)
@@ -390,26 +401,27 @@ class UsuarioServiceTest {
     @Test
     fun `test atualizarUsuario com id valido`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuario))
         `when`(usuarioRepository.save(any(Usuario::class.java))).thenReturn(usuario)
 
         val atualizacao = mapOf(
-            "nomeUsuario" to "novoNomeUsuario",
-            "cpf" to "98765432100"
+                "nomeUsuario" to "novoNomeUsuario",
+                "cpf" to "98765432100"
         )
 
         val resultado = usuarioService.atualizarUsuario(1, atualizacao)
@@ -423,8 +435,8 @@ class UsuarioServiceTest {
         `when`(usuarioRepository.findById(anyInt())).thenReturn(Optional.empty())
 
         val atualizacao = mapOf(
-            "nomeUsuario" to "novoNomeUsuario",
-            "cpf" to "98765432100"
+                "nomeUsuario" to "novoNomeUsuario",
+                "cpf" to "98765432100"
         )
 
         val exception = assertThrows(NoSuchElementException::class.java) {
@@ -437,18 +449,19 @@ class UsuarioServiceTest {
     @Test
     fun `test atualizarImagemUsuario com id e imagem valida`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         val novaFoto = byteArrayOf(1, 2, 3)
@@ -474,18 +487,19 @@ class UsuarioServiceTest {
     @Test
     fun `test obterImagemPerfil com id valido`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = byteArrayOf(1, 2, 3),
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = byteArrayOf(1, 2, 3),
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuario))
@@ -498,18 +512,19 @@ class UsuarioServiceTest {
     @Test
     fun `test obterImagemPerfil com id valido e sem imagem`() {
         val usuario = Usuario(
-            idUsuario = 1,
-            nomeUsuario = "nomeUsuario",
-            cpf = "12345678909",
-            senha = "senha",
-            primeiroNome = "primeiroNome",
-            sobrenome = "sobrenome",
-            email = "teste@gmail.com",
-            autenticado = false,
-            dataDeletado = null,
-            imagemPerfil = null,
-            endereco = mock(Endereco::class.java),
-            tipoUsuario = mock(TipoUsuario::class.java)
+                idUsuario = 1,
+                nomeUsuario = "nomeUsuario",
+                cpf = "12345678909",
+                senha = "senha",
+                primeiroNome = "primeiroNome",
+                sobrenome = "sobrenome",
+                email = "teste@gmail.com",
+                autenticado = false,
+                dataDeletado = null,
+                imagemPerfil = null,
+                endereco = mock(Endereco::class.java),
+                tipoUsuario = mock(TipoUsuario::class.java),
+                telefone = "(00) 00000-0000"
         )
 
         `when`(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuario))
