@@ -84,10 +84,19 @@ class ResetSenhaController @Autowired constructor(
     fun atualizarSenha(@RequestBody senhaRequest: Map<String, String>): ResponseEntity<Any> {
         val emailUser = senhaRequest["email"]
         val novaSenha = senhaRequest["novaSenha"]
-        return if (emailUser != null && novaSenha != null) {
+
+        // Verifica se os parâmetros estão presentes
+        if (emailUser.isNullOrBlank() || novaSenha.isNullOrBlank()) {
+            return ResponseEntity.badRequest().body(mapOf("message" to "Dados de solicitação inválidos"))
+        }
+
+        // Atualiza a senha através do serviço
+        return try {
             resetService.atualizarSenha(emailUser, novaSenha)
-        } else {
-            ResponseEntity.status(400).body(mapOf("message" to "Dados de solicitação inválidos"))
+            ResponseEntity.ok(mapOf("message" to "Senha atualizada com sucesso"))
+        } catch (e: Exception) {
+            // Retorna uma mensagem de erro genérica se algo der errado
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
 }
