@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   senha VARCHAR(200) NOT NULL,
   primeiro_nome VARCHAR(100) NULL,
   sobrenome VARCHAR(100) NULL,
+  telefone VARCHAR(20) NULL,
   email VARCHAR(45) NOT NULL,
   imagem_perfil BLOB NULL,
   data_criacao DATETIME NOT NULL,
@@ -626,10 +627,6 @@ INSERT INTO ponto (id_ponto, nota, qtd_ponto, data_entrega, fk_referencia_gerar_
 (12, 92.0, 138, '2023-03-05', 1, 2, 3, 4, 3),
 (13, 94.0, 188, '2023-03-10', 1, 3, 3, 4, 3),
 (14, 96.0, 240, '2023-03-15', 1, 4, 3, 4, 3);
-
-
-
-
 
 
 -- KPI atividades
