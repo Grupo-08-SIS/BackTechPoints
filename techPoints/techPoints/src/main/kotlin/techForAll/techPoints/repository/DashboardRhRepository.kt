@@ -5,28 +5,29 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import techForAll.techPoints.dominio.Curso
+import techForAll.techPoints.dto.AlunoDTO
+import techForAll.techPoints.dto.AlunosPorCursoDTO
+import techForAll.techPoints.dto.CursoComAlunoDTO
 
 @Repository
-interface DashboardRhRepository : JpaRepository<Usuario, Int> {
+interface DashboardRhRepository : JpaRepository<Curso, Int> {
+
     @Query(
         """
-        SELECT
-            u.idUsuario, 
-            u.nomeUsuario, 
-            u.primeiroNome, 
-            u.sobrenome, 
-            u.email, 
+        SELECT new techForAll.techPoints.dto.CursoComAlunoDTO(
+            c.idCurso, 
             c.nome, 
-            e.cidade
-        FROM Usuario u
-        JOIN u.tipoUsuario tu
-        LEFT JOIN u.endereco e
-        LEFT JOIN u.inscricoes i
-        LEFT JOIN i.curso c
-        WHERE tu.id = 2
-        AND (:curso IS NULL OR c.nome = :curso)
-        AND (:cidade IS NULL OR e.cidade = :cidade)
+            u.idUsuario, 
+            u.nomeUsuario
+        )
+        FROM Curso c
+        LEFT JOIN c.inscricoes i
+        LEFT JOIN i.usuario u
     """
     )
-    fun findAlunosByCursoAndCidade(@Param("curso") curso: String?, @Param("cidade") cidade: String?): List<Any>
+    fun findAllCursosComUsuarios(): List<CursoComAlunoDTO>
+
+
+
 }

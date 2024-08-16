@@ -36,7 +36,7 @@ class DashboardRhController (
         @RequestParam(required = false) cidade: String?
     ): ResponseEntity<Any> {
         return try {
-            val alunos = dashboardRhService.getUsuariosPorCursoEMunicipio(curso, cidade)
+            val alunos = dashboardRhService.getCursosComUsuarios()
             ResponseEntity.ok(alunos)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))

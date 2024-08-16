@@ -20,4 +20,7 @@ data class Curso(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_categoria_curso", referencedColumnName = "id_categoria_curso")
     var categoriaCurso: CategoriaCurso?,
+
+    @OneToMany(mappedBy = "curso", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    val inscricoes: List<Inscricao> = emptyList()
 )
