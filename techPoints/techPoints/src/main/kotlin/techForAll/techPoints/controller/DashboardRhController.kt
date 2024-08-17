@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import techForAll.techPoints.dto.RhAlunoCursoDtoOrdenado
 
 
 @RestController
@@ -41,5 +42,16 @@ class DashboardRhController (
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         }
+    }
+
+    @GetMapping("/alunos-filtro")
+    fun getAlunosFiltrado(
+        @RequestParam(required = false, name = "escolaridade") escolaridade: String?,
+        @RequestParam(required = false, name = "municipio") municipio: String?,
+        @RequestParam(required = false, name = "curso") nomeCurso: String?
+    ) : ResponseEntity<List<RhAlunoCursoDtoOrdenado>>
+    {
+        val alunosFiltraos = dashboardRhService.getAlunosFiltrado(escolaridade, municipio, nomeCurso);
+        return  ResponseEntity.status(200).body(alunosFiltraos);
     }
 }
