@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import techForAll.techPoints.dto.rhdashboard.AlunoEspecificoDto
 
 
 @RestController
@@ -40,6 +42,20 @@ class DashboardRhController (
             ResponseEntity.ok(alunos)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
+        }
+    }
+
+    @GetMapping("/aluno/{id}")
+    fun getAlunoModal(
+        @PathVariable id: Int
+    ): ResponseEntity<AlunoEspecificoDto> {
+        val aluno = dashboardRhService.getAlunoEspecificoModal(id);
+
+        return if (aluno !== null) {
+            ResponseEntity.status(200).body(aluno);
+
+        } else {
+            ResponseEntity.status(404).build();
         }
     }
 }
