@@ -3,10 +3,13 @@ package techForAll.techPoints.service
 import techForAll.techPoints.dto.AlunoDTO
 import techForAll.techPoints.repository.DashboardRhRepository
 import org.springframework.stereotype.Service
+import techForAll.techPoints.dto.rhdashboard.AlunoEspecificoDto
+import techForAll.techPoints.mapper.MapperDashboardRh
 
 @Service
 class DashboardRhService (
-    private val dashboardRhRepository: DashboardRhRepository
+    private val dashboardRhRepository: DashboardRhRepository,
+    private val mapperDashboardRh: MapperDashboardRh
 ){
     fun getUsuariosPorCursoEMunicipio(curso: String?, cidade: String?): List<AlunoDTO> {
         val results = dashboardRhRepository.findAlunosByCursoAndCidade(curso, cidade)
@@ -21,6 +24,18 @@ class DashboardRhService (
                 nomeCurso = row[5] as String?,
                 cidade = row[6] as String?
             )
+        }
+    }
+
+    fun getAlunoEspecificoModal(id: Int): AlunoEspecificoDto? {
+
+        val alunoEncontrado = dashboardRhRepository.findById(id);
+
+        if( alunoEncontrado.isPresent ) {
+            val alunoDto = alunoEncontrado.map { mapperDashboardRh.usuarioToAlunoEspecificoDto(it) };
+            return alunoDto.get();
+        } else {
+            return null;
         }
     }
 }

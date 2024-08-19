@@ -11,7 +11,6 @@ interface UsuarioRepository : JpaRepository<Usuario, Int> {
     fun existsByEmail(email: String): Boolean
     fun findByEmailAndSenha(email: String, senha: String) : Usuario
 
-
     @Modifying
     @Query("DELETE FROM Usuario u WHERE u.idUsuario = :idUsuario")
     fun deletar(@Param("idUsuario") idUsuario: Int)
