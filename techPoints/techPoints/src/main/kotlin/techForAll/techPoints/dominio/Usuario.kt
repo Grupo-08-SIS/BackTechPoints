@@ -69,4 +69,6 @@ data class Usuario(
 
         @OneToMany(mappedBy = "usuario")
         val inscricoes: List<Inscricao> = ArrayList()
+
+
 )
