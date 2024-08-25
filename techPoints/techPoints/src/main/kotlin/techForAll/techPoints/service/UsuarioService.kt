@@ -165,4 +165,17 @@ class UsuarioService @Autowired constructor(
         )
     }
 
+    fun reativarUsuario(email: String, senha: String) {
+        val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
+            ?: throw NoSuchElementException("Usuário não encontrado")
+
+        if (usuario.deletado == true) {
+            usuario.deletado = false
+            usuarioRepository.save(usuario)
+        } else {
+            throw IllegalArgumentException("Usuário já está ativo")
+        }
+    }
+
+
 }

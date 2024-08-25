@@ -293,6 +293,36 @@ class UsuarioController @Autowired constructor(
         }
     }
 
+    @Operation(summary = "Reativação de um usuário", description = "Marca o usuário como ativo, reativando-o no sistema")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Usuário reativado com sucesso"),
+            ApiResponse(responseCode = "400", description = "Credenciais inválidas"),
+            ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @PostMapping("/reativar")
+    fun reativarUsuario(@RequestBody @Valid requestBody: Map<String, String>): ResponseEntity<Any> {
+        val email = requestBody["email"]
+        val senha = requestBody["senha"]
+
+        return try {
+            if (email != null && senha != null) {
+                usuarioService.reativarUsuario(email, senha)
+                ResponseEntity.status(200).build()
+            } else {
+                ResponseEntity.status(400).build()
+            }
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(400).body(mapOf("message" to e.message))
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+        }
+    }
+
 
 
 }
