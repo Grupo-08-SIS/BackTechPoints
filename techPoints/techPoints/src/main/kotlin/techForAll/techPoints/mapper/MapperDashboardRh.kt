@@ -8,7 +8,7 @@
 //    fun mapToAlunosCursoDto(alunos: Map<Pair<Int, String>, List<RhAlunoCursoDto>>): List<RhAlunoCursoDtoOrdenado>
 //}package techForAll.techPoints.mapper
 //
-//import techForAll.techPoints.dominio.Usuario
+//import techForAll.techPoints.Domain.Usuario
 //import techForAll.techPoints.dto.rhdashboard.AlunoEspecificoDto
 //
 //class MapperDashboardRh {

@@ -1,6 +1,6 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.dominio.Endereco
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dto.EnderecoDTO
 import techForAll.techPoints.repository.EnderecoRepository
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,6 +1,6 @@
 package techForAll.techPoints.repository
 
-import techForAll.techPoints.dominio.Endereco
+import techForAll.techPoints.domain.Endereco
 
 import org.springframework.data.jpa.repository.JpaRepository
 

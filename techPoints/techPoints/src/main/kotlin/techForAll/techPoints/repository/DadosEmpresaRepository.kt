@@ -1,6 +1,6 @@
 package techForAll.techPoints.repository
 
-import techForAll.techPoints.dominio.DadosEmpresa
+import techForAll.techPoints.domain.DadosEmpresa
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

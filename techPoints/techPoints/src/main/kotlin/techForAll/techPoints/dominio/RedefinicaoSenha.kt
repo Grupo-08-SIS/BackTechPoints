@@ -2,6 +2,7 @@ package techForAll.techPoints.dominio
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
+import techForAll.techPoints.domain.Usuario
 import java.time.LocalDateTime
 
 @Entity

@@ -1,13 +1,9 @@
 package techForAll.techPoints.repository
 
-import techForAll.techPoints.dominio.Usuario
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import techForAll.techPoints.dominio.Curso
-import techForAll.techPoints.dto.AlunoDTO
-import techForAll.techPoints.dto.AlunosPorCursoDTO
 import techForAll.techPoints.dto.CursoComAlunoDTO
 import techForAll.techPoints.dto.RhAlunoCursoDto
 

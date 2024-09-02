@@ -1,6 +1,7 @@
 package techForAll.techPoints.dominio
 
 import jakarta.persistence.*
+import techForAll.techPoints.domain.Aluno
 
 
 @Entity
@@ -8,7 +9,7 @@ import jakarta.persistence.*
 data class Curso(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_curso")
+    @Column(name = "id")
     var idCurso: Int,
 
     @Column(name = "nome", length = 45, nullable = false)
@@ -17,10 +18,6 @@ data class Curso(
     @Column(name = "qtd_horas", nullable = false)
     var qtdHoras: Int,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_categoria_curso", referencedColumnName = "id_categoria_curso")
-    var categoriaCurso: CategoriaCurso?,
-
-    @OneToMany(mappedBy = "curso", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val inscricoes: List<Inscricao> = emptyList()
+    @ManyToMany(mappedBy = "cursos", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    val inscricoes: List<Aluno> = emptyList()
 )

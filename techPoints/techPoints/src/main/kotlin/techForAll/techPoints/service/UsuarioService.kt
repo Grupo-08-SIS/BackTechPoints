@@ -1,8 +1,8 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.dominio.Endereco
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dominio.TipoUsuario
-import techForAll.techPoints.dominio.Usuario
+import techForAll.techPoints.domain.Usuario
 import techForAll.techPoints.dto.UsuarioDTOInput
 import techForAll.techPoints.dto.UsuarioDTOOutput
 import techForAll.techPoints.repository.EnderecoRepository

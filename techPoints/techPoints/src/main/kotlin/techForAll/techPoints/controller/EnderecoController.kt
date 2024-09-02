@@ -1,6 +1,6 @@
 package techForAll.techPoints.controller
 
-import techForAll.techPoints.dominio.Endereco
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dto.EnderecoDTO
 import techForAll.techPoints.service.EnderecoService
 import io.swagger.v3.oas.annotations.Operation

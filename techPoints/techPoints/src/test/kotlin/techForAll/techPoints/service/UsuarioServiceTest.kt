@@ -1,9 +1,9 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.dominio.Endereco
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dominio.NomeTipoUsuario
 import techForAll.techPoints.dominio.TipoUsuario
-import techForAll.techPoints.dominio.Usuario
+import techForAll.techPoints.domain.Usuario
 import techForAll.techPoints.dto.UsuarioDTOInput
 import techForAll.techPoints.repository.EnderecoRepository
 import techForAll.techPoints.repository.TipoUsuarioRepository
@@ -95,7 +95,8 @@ class UsuarioServiceTest {
         `when`(usuarioRepository.existsByEmail(anyString())).thenReturn(false)
         `when`(tipoUsuarioRepository.findById(anyInt())).thenReturn(Optional.of(tipoUsuario))
         `when`(enderecoRepository.findById(anyInt())).thenReturn(Optional.of(endereco))
-        `when`(usuarioRepository.save(any(Usuario::class.java))).thenReturn(Usuario(
+        `when`(usuarioRepository.save(any(Usuario::class.java))).thenReturn(
+            Usuario(
                 idUsuario = 1,
                 nomeUsuario = "nomeUsuario",
                 cpf = "12345678909",
@@ -109,7 +110,8 @@ class UsuarioServiceTest {
                 endereco = endereco,
                 tipoUsuario = tipoUsuario,
                 telefone = "(00) 00000-0000"
-        ))
+        )
+        )
 
         val resultado = usuarioService.cadastrarUsuario(usuarioDTO)
 

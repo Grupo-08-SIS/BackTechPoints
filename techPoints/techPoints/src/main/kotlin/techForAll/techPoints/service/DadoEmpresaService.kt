@@ -1,6 +1,6 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.dominio.DadosEmpresa
+import techForAll.techPoints.domain.DadosEmpresa
 import techForAll.techPoints.dto.DadoEmpresaDTO
 import techForAll.techPoints.dto.DadosEmpresaDTOAtt
 import techForAll.techPoints.repository.DadosEmpresaRepository

@@ -1,6 +1,7 @@
 package techForAll.techPoints.dominio
 
 import jakarta.persistence.*
+import techForAll.techPoints.domain.Usuario
 import java.time.LocalDateTime
 
 @Entity
