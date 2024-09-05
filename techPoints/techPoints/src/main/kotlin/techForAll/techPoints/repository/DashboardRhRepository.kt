@@ -10,6 +10,7 @@ import techForAll.techPoints.dto.AlunoDTO
 import techForAll.techPoints.dto.AlunosPorCursoDTO
 import techForAll.techPoints.dto.CursoComAlunoDTO
 import techForAll.techPoints.dto.RhAlunoCursoDto
+import java.util.Optional
 
 @Repository
 interface DashboardRhRepository : JpaRepository<Curso, Int> {
@@ -55,4 +56,27 @@ interface DashboardRhRepository : JpaRepository<Curso, Int> {
     // Implementação (escolaridade: String?,)
     // Query: AND (:escolaridade IS NULL OR u.escolaridade = :escolaridade)
 
+
+    @Query (
+        """
+        SELECT
+        new techForAll.techPoints.dto.RhAlunoCursoDto(
+            c.idCurso,
+            c.nome,
+            u.idUsuario,
+            u.nomeUsuario,
+            u.imagemPerfil,
+            u.email,
+            u.inscricoes,
+            e.cidade
+        )
+        FROM Curso c
+        JOIN c.inscricoes i
+        JOIN i.usuario u
+        JOIN u.endereco e
+        WHERE (c.idCurso = :idCurso)
+        AND (u.idUsuario = :idUsuario)
+        """
+    )
+    fun findByIdCursoAndByIdUsuario(idCurso: Int, idUsuario: Int): Optional<RhAlunoCursoDto>
 }

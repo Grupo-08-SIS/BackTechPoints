@@ -57,11 +57,12 @@ class DashboardRhController (
         return  ResponseEntity.status(200).body(alunosFiltraos);
     }
 
-    @GetMapping("/aluno/{id}")
+    @GetMapping("/aluno/{idCurso}/{idAluno}")
     fun getAlunoModal(
-        @PathVariable id: Int
+        @PathVariable idAluno: Int,
+        @PathVariable idCurso: Int
     ): ResponseEntity<AlunoEspecificoDto> {
-        val aluno = dashboardRhService.getAlunoEspecificoModal(id);
+        val aluno = dashboardRhService.getAlunoEspecificoModal(idAluno, idCurso);
 
         return if (aluno !== null) {
             ResponseEntity.status(200).body(aluno);

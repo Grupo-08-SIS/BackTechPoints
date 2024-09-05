@@ -763,4 +763,9 @@ WHERE
     u.fk_tipo_usuario = 2
 LIMIT 0, 300;
 
+SELECT
+	* 
+FROM  curso
+LEFT JOIN
+    inscricao i ON u.id_usuario = i.fk_usuario
 
