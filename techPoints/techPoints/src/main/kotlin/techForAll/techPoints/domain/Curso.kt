@@ -5,7 +5,7 @@ import jakarta.persistence.*
 @Entity
 class Curso(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Long,
 
     @Column(nullable = false)
     val nome: String,

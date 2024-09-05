@@ -23,7 +23,7 @@ class Aluno(
     val escolaridade: String? = null,
 
     @Column(nullable = false)
-    val embarcavel: Boolean = false,
+    val emblemas: Boolean = false,
 
     @Column(nullable = false)
     val descricao: String? = null,

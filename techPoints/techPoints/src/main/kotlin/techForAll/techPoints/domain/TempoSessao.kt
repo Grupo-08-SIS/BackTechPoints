@@ -10,16 +10,12 @@ class TempoSessao(
     val id: Long,
 
     @Column(nullable = false)
-    val diaSessao: LocalDateTime,
+    val diaSessao: String,
 
     @Column(nullable = false)
-    val qtTempoSessao: Double,
+    val qtdTempoSessao: Double,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")
-    val aluno: Aluno,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "metaEstudoSemana_id")
-    val metaEstudoSemana: MetaEstudoSemana
+    val aluno: Aluno
 )

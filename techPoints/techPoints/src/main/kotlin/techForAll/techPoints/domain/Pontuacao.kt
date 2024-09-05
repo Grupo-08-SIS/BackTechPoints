@@ -6,16 +6,18 @@ import java.time.LocalDateTime
 @Entity
 class Pontuacao(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Long,
 
     @Column(nullable = false)
-    val dataEntrega: LocalDateTime,
+    val dataEntrega: String,
 
     @Column(nullable = false)
     val nomeAtividade: String,
 
     @Column(nullable = false)
     val notaAtividade: Double,
+
+    val notaAluno: Double,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")

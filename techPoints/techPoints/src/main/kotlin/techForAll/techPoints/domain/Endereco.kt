@@ -20,5 +20,8 @@ class Endereco(
     val cidade: String,
 
     @Column(nullable = false)
-    val estado: String
+    val estado: String,
+
+    @Column(nullable = false)
+    val dataAtualizacao: LocalDateTime
 )

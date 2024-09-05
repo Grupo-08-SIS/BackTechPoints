@@ -22,7 +22,10 @@ class Recrutador(
         joinColumns = [JoinColumn(name = "recrutador_id")],
         inverseJoinColumns = [JoinColumn(name = "aluno_id")]
     )
-    val interessados: List<Aluno>
+    val interessados: List<Aluno>,
+    
+    @Column(nullable = false)
+    val cargoUsuario: String
 ) : Usuario(
     nomeUsuario = "NomeUsuario",
     cpf = "CPF",

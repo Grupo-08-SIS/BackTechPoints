@@ -15,7 +15,7 @@ class DadosEmpresa(
     val cnpj: String,
 
     @Column(nullable = false)
-    val setor: String,
+    val setorIndustria: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id")
