@@ -6,18 +6,18 @@ import jakarta.persistence.*
 @Entity
 class MetaEstudoSemana(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")
-    val aluno: Aluno,
+    var aluno: Aluno,
 
-    @OneToMany(mappedBy = "metaEstudoSemana")
-    val diasAtivos: List<TempoEstudo>,
+    @OneToMany(mappedBy = "metaEstudoSemana", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var diasAtivos: List<TempoEstudo>,
 
     @Column(nullable = false)
-    val horasTotal: Double,
+    var horasTotal: Double,
 
-    @OneToMany(mappedBy = "metaEstudoSemana")
-    val tempoSessao: List<TempoSessao>
+    @OneToMany(mappedBy = "metaEstudoSemana", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var tempoSessao: List<TempoSessao>
 )

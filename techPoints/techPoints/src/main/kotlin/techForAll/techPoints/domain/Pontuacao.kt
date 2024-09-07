@@ -6,26 +6,26 @@ import java.time.LocalDateTime
 @Entity
 class Pontuacao(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @Column(nullable = false)
-    val dataEntrega: String,
+    var dataEntrega: String,
 
     @Column(nullable = false)
-    val nomeAtividade: String,
+    var nomeAtividade: String,
 
     @Column(nullable = false)
-    val notaAtividade: Double,
+    var notaAtividade: Double,
 
-    val notaAluno: Double,
+    var notaAluno: Double,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
-    val curso: Curso,
+    var curso: Curso,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")
-    val aluno: Aluno
+    var aluno: Aluno
 ) {
     // Funções adicionais, como cálculo de pontos, podem ser adicionadas aqui
 }

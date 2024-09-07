@@ -5,26 +5,26 @@ import techForAll.techPoints.domain.Curso
 
 class AlunoDto(
 
-    val id: Long,
+    var id: Long,
 
-    val primeiroNome: String,
+    var primeiroNome: String,
 
-    val sobrenome: String,
+    var sobrenome: String,
 
-    val email: String,
+    var email: String,
 
-    val cursos: List<Curso>,
+    var cursos: List<Curso>,
 
-    val emblemas: List<PontosPorCursoDto> = emptyList(),
+    var emblemas: List<PontosPorCursoDto> = emptyList(),
 
-    val cidade: String,
+    var cidade: String,
 
-    val escolaridade: String,
+    var escolaridade: String,
 
-    val descricao: String,
+    var descricao: String,
 
-    val pontosSemanaAtual: Int,
+    var pontosSemanaAtual: Int,
 
-    val pontosSemanaPassada: Int
+    var pontosSemanaPassada: Int
 
 )

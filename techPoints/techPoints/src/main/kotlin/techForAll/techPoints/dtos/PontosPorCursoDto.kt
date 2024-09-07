@@ -5,9 +5,9 @@ import techForAll.techPoints.domain.Curso
 
 class PontosPorCursoDto (
 
-    val idPontos: Int,
+    var idPontos: Int,
 
-    val curso: Curso,
+    var curso: Curso,
 
-    val totalPontos: Int
+    var totalPontos: Int
 )

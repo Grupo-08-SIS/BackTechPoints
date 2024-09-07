@@ -4,51 +4,56 @@ import jakarta.persistence.*
     import java.time.LocalDateTime
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo_usuario")
+@Inheritance(strategy = InheritanceType.JOINED)
 abstract class Usuario(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long = 0,
+        var id: Long = 0,
 
         @Column(nullable = false)
-        val nomeUsuario: String,
+        var nomeUsuario: String,
 
         @Column(nullable = false, unique = true)
-        val cpf: String,
+        var cpf: String,
 
         @Column(nullable = false)
-        val senha: String,
+        var senha: String,
 
         @Column(nullable = false)
-        val primeiroNome: String,
+        var primeiroNome: String,
 
         @Column(nullable = false)
-        val sobrenome: String,
+        var sobrenome: String,
 
         @Column(nullable = false, unique = true)
-        val email: String,
+        var email: String,
 
         @Column(nullable = false)
-        val telefone: String,
+        var telefone: String,
 
         @Column(nullable = false)
-        val imagemPerfil: String,
+        var imagemPerfil: ByteArray,
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @PrimaryKeyJoinColumn(name = "endereco_id")
-        val endereco: Endereco,
 
-        @Column(nullable = false)
-        val enabled: Boolean,
+        @Column(nullable = true)
+        var autenticado: Boolean,
 
         @Column(nullable = false)
-        val dataCriacao: LocalDateTime = LocalDateTime.now(),
+        var dataCriacao: LocalDateTime = LocalDateTime.now(),
 
-        val deletado: Boolean = false,
+        var deletado: Boolean = false,
 
-        val dataDeletado: LocalDateTime? = null,
+        var dataDeletado: LocalDateTime? = null,
 
-        val dataAtualizacao: LocalDateTime? = null
+        var dataAtualizacao: LocalDateTime? = null
 ) {
-        abstract fun getTipoUsuario(): String
+        @PrePersist
+        fun onPrePersist() {
+                dataCriacao = LocalDateTime.now()
+        }
+
+        @PreUpdate
+        fun onPreUpdate() {
+                dataAtualizacao = LocalDateTime.now()
+        }
+        abstract fun criarUsuario(): Usuario
 }

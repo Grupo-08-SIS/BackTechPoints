@@ -1,21 +1,24 @@
 package techForAll.techPoints.domain
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 
 @Entity
 class TempoSessao(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @Column(nullable = false)
-    val diaSessao: String,
+    var diaSessao: String,
 
     @Column(nullable = false)
-    val qtdTempoSessao: Double,
+    var qtdTempoSessao: Double,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")
-    val aluno: Aluno
+    var aluno: Aluno,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meta_estudo_semana_id")
+    var metaEstudoSemana: MetaEstudoSemana
 )

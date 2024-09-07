@@ -6,16 +6,20 @@ import jakarta.persistence.*
 @Entity
 class TempoEstudo(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @Column(nullable = false)
-    val nomeDia: String,
+    var nomeDia: String,
 
     @Column(nullable = false)
-    val qtdTempoEstudo: String,
+    var qtdTempoEstudo: String,
 
     @Column(nullable = false)
-    val ativado: Boolean,
+    var ativado: Boolean,
 
-    var metaAtingida: Boolean = false
+    var metaAtingida: Boolean = false,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meta_estudo_semana_id")
+    var metaEstudoSemana: MetaEstudoSemana
 )

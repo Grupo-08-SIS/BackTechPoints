@@ -5,14 +5,14 @@ import jakarta.persistence.*
 @Entity
 class Curso(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @Column(nullable = false)
-    val nome: String,
+    var nome: String,
 
     @Column(nullable = false)
-    val totalAtividades: Int,
+    var totalAtividades: Int,
 
     @Column(nullable = false)
-    val totalAtividadesDoAluno: Int
+    var totalAtividadesDoAluno: Int
 )

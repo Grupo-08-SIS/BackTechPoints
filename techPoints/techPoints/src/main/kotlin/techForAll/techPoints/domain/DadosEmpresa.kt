@@ -6,24 +6,24 @@ import java.time.LocalDateTime
 @Entity
 class DadosEmpresa(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(nullable = false)
-    val nomeEmpresa: String,
+    var nomeEmpresa: String,
 
     @Column(nullable = false, unique = true)
-    val cnpj: String,
+    var cnpj: String,
 
     @Column(nullable = false)
-    val setorIndustria: String,
+    var setorIndustria: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id")
-    val endereco: Endereco,
+    var endereco: Endereco,
 
     @Column(nullable = false)
-    val dataAtualizacao: LocalDateTime = LocalDateTime.now(),
+    var dataAtualizacao: LocalDateTime = LocalDateTime.now(),
 
-    @OneToMany
-    val recrutadores:  List<Recrutador>
+    @OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY)
+    var recrutadores: List<Recrutador> = listOf()
 )

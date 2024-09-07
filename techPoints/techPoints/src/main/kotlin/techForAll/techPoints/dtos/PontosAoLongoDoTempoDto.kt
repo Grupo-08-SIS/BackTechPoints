@@ -2,11 +2,11 @@ package techForAll.techPoints.dtos
 
 class PontosAoLongoDoTempoDto(
 
-    val data_pontuacao: String,
+    var data_pontuacao: String,
 
-    val nomeCurso: String,
+    var nomeCurso: String,
 
-    val pontos: Int,
+    var pontos: Int,
 
-    val idCurso: Int
+    var idCurso: Int
 )

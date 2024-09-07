@@ -1,27 +1,28 @@
 package techForAll.techPoints.domain
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 class Endereco(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(nullable = false)
-    val cep: String,
+    var cep: String,
 
     @Column(nullable = false)
-    val logradouro: String,
+    var logradouro: String,
 
     @Column(nullable = false)
-    val numero: String,
+    var numero: String,
 
     @Column(nullable = false)
-    val cidade: String,
+    var cidade: String,
 
     @Column(nullable = false)
-    val estado: String,
+    var estado: String,
 
     @Column(nullable = false)
-    val dataAtualizacao: LocalDateTime
+    var dataAtualizacao: LocalDateTime
 )
