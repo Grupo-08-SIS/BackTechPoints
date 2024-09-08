@@ -1,7 +1,6 @@
 package techForAll.techPoints.domain
 
 import jakarta.persistence.*
-import com.fasterxml.jackson.databind.ObjectMapper
 import techForAll.techPoints.dtos.ListToJsonConverter
 
 
@@ -32,7 +31,7 @@ class Recrutador(
     sobrenome: String,
     email: String,
     telefone: String,
-    imagemPerfil: ByteArray,
+    imagemPerfil: ByteArray?,
     autenticado: Boolean
 ) : Usuario(
     nomeUsuario = nomeUsuario,
@@ -43,13 +42,15 @@ class Recrutador(
     email = email,
     telefone = telefone,
     imagemPerfil = imagemPerfil,
+    tipoUsuario = 2,
     autenticado = autenticado
 ) {
-    override fun criarUsuario(): Usuario {
+    override fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario {
+        if (empresa == null) throw IllegalArgumentException("Empresa é obrigatória para Recrutador")
         return Recrutador(
             favoritos = this.favoritos,
             interessados = this.interessados,
-            empresa = this.empresa,
+            empresa = empresa,
             cargoUsuario = this.cargoUsuario,
             nomeUsuario = this.nomeUsuario,
             cpf = this.cpf,

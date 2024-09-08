@@ -13,7 +13,7 @@ class Aluno(
         joinColumns = [JoinColumn(name = "aluno_id")],
         inverseJoinColumns = [JoinColumn(name = "curso_id")]
     )
-    var cursos: List<Curso>?,
+    var cursos: List<Curso>? = emptyList(),
 
     @Column(nullable = false)
     var escolaridade: String,
@@ -35,7 +35,7 @@ class Aluno(
     sobrenome: String,
     email: String,
     telefone: String,
-    imagemPerfil: ByteArray,
+    imagemPerfil: ByteArray?,
     autenticado: Boolean
 ) : Usuario(
     nomeUsuario = nomeUsuario,
@@ -46,10 +46,17 @@ class Aluno(
     email = email,
     telefone = telefone,
     imagemPerfil = imagemPerfil,
+    tipoUsuario = 1,
     autenticado = autenticado
 ) {
-    override fun criarUsuario(): Usuario {
+    override fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario {
+        if (endereco == null) throw IllegalArgumentException("Endereço é obrigatório para Aluno")
         return Aluno(
+            cursos = this.cursos,
+            escolaridade = this.escolaridade,
+            endereco = endereco,
+            descricao = this.descricao,
+            dtNasc = this.dtNasc,
             nomeUsuario = this.nomeUsuario,
             cpf = this.cpf,
             senha = this.senha,
@@ -58,7 +65,6 @@ class Aluno(
             email = this.email,
             telefone = this.telefone,
             imagemPerfil = this.imagemPerfil,
-            endereco = this.endereco,
             autenticado = this.autenticado
         )
     }

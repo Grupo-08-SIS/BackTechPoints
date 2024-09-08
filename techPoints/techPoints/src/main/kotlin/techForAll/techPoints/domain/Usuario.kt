@@ -30,30 +30,26 @@ abstract class Usuario(
         @Column(nullable = false)
         var telefone: String,
 
-        @Column(nullable = false)
-        var imagemPerfil: ByteArray,
-
-
         @Column(nullable = true)
+        var imagemPerfil: ByteArray?,
+
+        @Column(nullable = false)
+        var tipoUsuario: Int,
+
+        @Column(nullable = false)
         var autenticado: Boolean,
 
         @Column(nullable = false)
         var dataCriacao: LocalDateTime = LocalDateTime.now(),
 
+        @Column(nullable = true)
         var deletado: Boolean = false,
 
+        @Column(nullable = true)
         var dataDeletado: LocalDateTime? = null,
 
+        @Column(nullable = true)
         var dataAtualizacao: LocalDateTime? = null
 ) {
-        @PrePersist
-        fun onPrePersist() {
-                dataCriacao = LocalDateTime.now()
-        }
-
-        @PreUpdate
-        fun onPreUpdate() {
-                dataAtualizacao = LocalDateTime.now()
-        }
-        abstract fun criarUsuario(): Usuario
+        abstract fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario
 }

@@ -23,6 +23,18 @@ class Endereco(
     @Column(nullable = false)
     var estado: String,
 
+    @Column(nullable = true)
+    var deletado: Boolean = false,
+
     @Column(nullable = false)
-    var dataAtualizacao: LocalDateTime
+    var dataCriacao: LocalDateTime = LocalDateTime.now(),
+
+    @Column(nullable = true)
+    var dataDeletado: LocalDateTime? = null,
+
+    @Column(nullable = true)
+    var dataAtualizacao: LocalDateTime = LocalDateTime.now()
+
 )
+
+

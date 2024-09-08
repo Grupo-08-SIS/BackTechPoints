@@ -1,7 +1,6 @@
 package techForAll.techPoints.controller
 
 import techForAll.techPoints.domain.Endereco
-import techForAll.techPoints.dto.EnderecoDTO
 import techForAll.techPoints.service.EnderecoService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -70,7 +69,7 @@ class EnderecoController @Autowired constructor(
         ]
     )
     @GetMapping("/buscar/{idEndereco}")
-    fun buscar(@PathVariable idEndereco: Int): ResponseEntity<Any> {
+    fun buscar(@PathVariable idEndereco: Long): ResponseEntity<Any> {
         return try {
             val enderecoEncontrado = service.buscarEnderecoPorId(idEndereco)
             ResponseEntity.status(200).body(enderecoEncontrado)
@@ -90,10 +89,10 @@ class EnderecoController @Autowired constructor(
         ]
     )
     @PatchMapping("/atualizar/{idEndereco}")
-    fun patch(@PathVariable idEndereco: Int, @RequestBody enderecoDTO: EnderecoDTO): ResponseEntity<Any> {
+    fun patch(@PathVariable idEndereco: Long, @RequestBody enderecoAtualizado: Map<String, Any>): ResponseEntity<Any> {
         return try {
-            val enderecoAtualizado = service.atualizarEndereco(idEndereco, enderecoDTO)
-            ResponseEntity.status(200).body(enderecoAtualizado)
+            val endereco = service.atualizarEndereco(idEndereco, enderecoAtualizado)
+            ResponseEntity.status(200).body(endereco)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
         } catch (e: Exception) {

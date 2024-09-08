@@ -1,7 +1,5 @@
 package techForAll.techPoints.controller
 
-import techForAll.techPoints.dto.DadoEmpresaDTO
-import techForAll.techPoints.dto.DadosEmpresaDTOAtt
 import techForAll.techPoints.service.DadoEmpresaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,12 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import techForAll.techPoints.dtos.EmpresaInput
 
 @RestController
 @RequestMapping("/empresa")
 @Validated
 class DadosEmpresaController @Autowired constructor(
-    private val empresaService: DadoEmpresaService
+    private val service: DadoEmpresaService
 ) {
 
     @Operation(
@@ -31,12 +30,35 @@ class DadosEmpresaController @Autowired constructor(
         ]
     )
     @PostMapping("/cadastro")
-    fun post(@RequestBody @Valid dadoEmpresaDTO: DadoEmpresaDTO): ResponseEntity<Any> {
+    fun post(@RequestBody @Valid novaEmpresa: EmpresaInput): ResponseEntity<Any> {
         return try {
-            val empresa = empresaService.cadastrarEmpresa(dadoEmpresaDTO)
-            ResponseEntity.status(201).body(empresa)
+            val empresaCadastrada = service.cadastrarEmpresa(novaEmpresa)
+            ResponseEntity.status(201).body(empresaCadastrada)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+        }
+
+    }
+
+    @Operation(summary = "Listar todas as empresas", description = "Retorna uma lista de todas as empresas cadastradas")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Lista de empresas retornada com sucesso"),
+            ApiResponse(responseCode = "204", description = "Nenhuma empresa encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/listar")
+    fun listar(): ResponseEntity<Any> {
+        return try {
+            val empresas = service.listarEmpresas()
+            if (empresas.isNotEmpty()) {
+                ResponseEntity.status(200).body(empresas)
+            } else {
+                ResponseEntity.status(204).build()
+            }
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
@@ -53,17 +75,18 @@ class DadosEmpresaController @Autowired constructor(
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
-    @GetMapping("/buscar/{id}")
-    fun obterEmpresaPorId(@PathVariable id: Int): ResponseEntity<Any> {
+    @GetMapping("/buscar/{idEmpresa}")
+    fun buscar(@PathVariable idEmpresa: Long): ResponseEntity<Any> {
         return try {
-            val dadosEmpresaDTO = empresaService.obterEmpresaPorId(id)
-            ResponseEntity.ok(dadosEmpresaDTO)
+            val empresaEncontrada = service.buscarEmpresaPorId(idEmpresa)
+            ResponseEntity.status(200).body(empresaEncontrada)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
+
 
     @Operation(
         summary = "Atualizar dados de uma empresa",
@@ -77,13 +100,10 @@ class DadosEmpresaController @Autowired constructor(
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
-    @PatchMapping("/atualizar/{id}")
-    fun updateEmpresa(
-        @PathVariable id: Int,
-        @RequestBody @Valid dadoEmpresaDTO: DadosEmpresaDTOAtt
-    ): ResponseEntity<Any> {
+    @PatchMapping("/atualizar/{idEmpresa}")
+    fun patch(@PathVariable idEmpresa: Long, @RequestBody empresaAtualizada: Map<String, Any>): ResponseEntity<Any> {
         return try {
-            val empresaAtualizada = empresaService.atualizarEmpresa(id, dadoEmpresaDTO)
+            val empresaAtualizada = service.atualizarEmpresa(idEmpresa, empresaAtualizada)
             ResponseEntity.status(200).body(empresaAtualizada)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Empresa não encontrada"))
@@ -93,4 +113,6 @@ class DadosEmpresaController @Autowired constructor(
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
+
 }
+
