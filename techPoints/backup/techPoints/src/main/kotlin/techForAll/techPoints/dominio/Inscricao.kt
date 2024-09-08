@@ -10,7 +10,7 @@ data class Inscricao(
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_curso", referencedColumnName = "id_curso")
-    val curso: Curso,
+    val curso: CursoOld,
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)

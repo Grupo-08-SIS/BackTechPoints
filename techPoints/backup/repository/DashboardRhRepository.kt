@@ -3,12 +3,12 @@ package techForAll.techPoints.repository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
-import techForAll.techPoints.dominio.Curso
+import techForAll.techPoints.dominio.CursoOld
 import techForAll.techPoints.dto.CursoComAlunoDTO
 import techForAll.techPoints.dto.RhAlunoCursoDto
 
 @Repository
-interface DashboardRhRepository : JpaRepository<Curso, Int> {
+interface DashboardRhRepository : JpaRepository<CursoOld, Int> {
 
     @Query(
         """

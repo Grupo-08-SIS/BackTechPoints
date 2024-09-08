@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "pontuacao")
-data class Pontuacao(
+data class PontuacaoOld(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

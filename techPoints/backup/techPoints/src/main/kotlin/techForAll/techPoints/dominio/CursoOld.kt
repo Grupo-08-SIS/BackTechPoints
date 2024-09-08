@@ -6,7 +6,7 @@ import techForAll.techPoints.domain.Aluno
 
 @Entity
 @Table(name = "curso")
-data class Curso(
+data class CursoOld(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
