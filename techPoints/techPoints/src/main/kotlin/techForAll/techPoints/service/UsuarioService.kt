@@ -5,6 +5,7 @@ import techForAll.techPoints.domain.Usuario
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import techForAll.techPoints.domain.Aluno
+import techForAll.techPoints.domain.Curso
 import techForAll.techPoints.domain.Recrutador
 import techForAll.techPoints.dtos.UsuarioInput
 import techForAll.techPoints.repository.AlunoRepository
