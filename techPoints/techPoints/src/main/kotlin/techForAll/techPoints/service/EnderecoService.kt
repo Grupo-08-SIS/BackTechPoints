@@ -38,7 +38,15 @@ class EnderecoService @Autowired constructor(
         enderecoAtualizado["numero"]?.let { enderecoExistente.numero = it as String }
         enderecoAtualizado["cidade"]?.let { enderecoExistente.cidade = it as String }
         enderecoAtualizado["estado"]?.let { enderecoExistente.estado = it as String }
+        enderecoExistente.dataAtualizacao = LocalDateTime.now()
 
         return repository.save(enderecoExistente)
+    }
+
+    fun deletarEndereco(idEndereco: Long) {
+        val enderecoExistente = repository.findById(idEndereco)
+            .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
+
+        repository.delete(enderecoExistente)
     }
 }

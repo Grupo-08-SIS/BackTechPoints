@@ -52,4 +52,28 @@ abstract class Usuario(
         var dataAtualizacao: LocalDateTime? = null
 ) {
         abstract fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario
+
+        fun login(senha: String): Boolean {
+                if (this.senha == senha) {
+                        this.autenticado = true
+                        this.dataAtualizacao = LocalDateTime.now()
+                        return true
+                } else {
+                        throw IllegalArgumentException("Senha incorreta")
+                }
+        }
+        fun logoff() {
+                this.autenticado = false
+                this.dataAtualizacao = LocalDateTime.now()
+        }
+
+        fun reativar() {
+                if (deletado) {
+                        deletado = false
+                        dataDeletado = null
+                        dataAtualizacao = LocalDateTime.now()
+                } else {
+                        throw IllegalArgumentException("Usuário já está ativo")
+                }
+        }
 }

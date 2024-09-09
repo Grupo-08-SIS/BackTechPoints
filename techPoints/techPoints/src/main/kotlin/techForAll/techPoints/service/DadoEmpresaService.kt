@@ -39,8 +39,19 @@ class DadoEmpresaService @Autowired constructor(
     }
 
     fun buscarEmpresaPorId(idEmpresa: Long): DadosEmpresa {
-        return empresaRepository.findById(idEmpresa)
-            .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEmpresa") }
+        val dadosEmpresa = empresaRepository.findById(idEmpresa)
+            .orElseThrow { NoSuchElementException("Empresa não encontrada com o ID: $idEmpresa") }
+
+        val dadosEmpresa = DadosEmpresa(
+            nomeEmpresa = dadosEmpresa.nomeEmpresa,
+            cnpj = dadosEmpresa.cnpj,
+            setorIndustria = dadosEmpresa.setorIndustria,
+            telefoneContato = dadosEmpresa.telefoneContato,
+            emailCorporativo = dadosEmpresa.emailCorporativo,
+            endereco = dadosEmpresa.endereco
+        )
+
+        return dadosEmpresa
     }
 
     fun atualizarEmpresa(idEmpresa: Long, empresaAtualizada: Map<String, Any>): DadosEmpresa {
@@ -48,12 +59,20 @@ class DadoEmpresaService @Autowired constructor(
             .orElseThrow { NoSuchElementException("Empresa não encontrada com o ID: $idEmpresa") }
 
         empresaAtualizada["nomeEmpresa"]?.let { empresaExistente.nomeEmpresa = it as String }
+        empresaAtualizada["setorIndustria"]?.let { empresaExistente.setorIndustria = it as String }
         empresaAtualizada["telefoneContato"]?.let { empresaExistente.telefoneContato = it as String }
         empresaAtualizada["emailCorporativo"]?.let { empresaExistente.emailCorporativo = it as String }
         empresaAtualizada["cnpj"]?.let { empresaExistente.cnpj = it as String }
         empresaExistente.dataAtualizacao = LocalDateTime.now()
+
         return empresaRepository.save(empresaExistente)
     }
 
+    fun deletarEmpresa(idEmpresa: Long) {
+        val empresaExistente = empresaRepository.findById(idEmpresa)
+            .orElseThrow { NoSuchElementException("Empresa não encontrada com o ID: $idEmpresa") }
+
+        empresaRepository.delete(empresaExistente)
+    }
 
 }

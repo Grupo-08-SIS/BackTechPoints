@@ -33,7 +33,7 @@ class Endereco(
     var dataDeletado: LocalDateTime? = null,
 
     @Column(nullable = true)
-    var dataAtualizacao: LocalDateTime = LocalDateTime.now()
+    var dataAtualizacao: LocalDateTime? = null,
 
 )
 

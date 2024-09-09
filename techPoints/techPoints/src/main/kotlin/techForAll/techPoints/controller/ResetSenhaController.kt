@@ -1,12 +1,10 @@
 package techForAll.techPoints.controller
 
-import techForAll.techPoints.dominio.EmailRequest
 import techForAll.techPoints.repository.UsuarioRepository
 import techForAll.techPoints.service.ResetSenhaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/reset-senha")
 class ResetSenhaController @Autowired constructor(
     private val resetService: ResetSenhaService,
-    private val usuarioRepository: UsuarioRepository,
+    private val usuarioRepository: UsuarioRepository
 ) {
 
     @Operation(
@@ -31,38 +29,19 @@ class ResetSenhaController @Autowired constructor(
         ]
     )
     @PostMapping("/solicitar-troca")
-    fun solicitarTrocaSenha(@RequestBody @Valid emailRequest: EmailRequest): ResponseEntity<Any> {
+    fun solicitarTrocaSenha(@RequestBody request: Map<String, String>): ResponseEntity<Any> {
         return try {
-            val emailUser = emailRequest.email
-            if (usuarioRepository.existsByEmail(emailUser)) {
+            val emailUser = request["email"]
+
+            if (emailUser.isNullOrBlank()) {
+                ResponseEntity.badRequest().body(mapOf("message" to "Email é obrigatório"))
+            } else if (usuarioRepository.existsByEmail(emailUser)) {
                 resetService.senhaReset(emailUser)
             } else {
                 ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
             }
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
-        }
-    }
-
-    @Operation(
-        summary = "Verificar token de redefinição de senha",
-        description = "Endpoint para verificar a validade do token de redefinição de senha."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Token de redefinição de senha válido."),
-            ApiResponse(responseCode = "400", description = "Token de redefinição de senha inválido."),
-            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-        ]
-    )
-    @PostMapping("/verificar-token")
-    fun verificarToken(@RequestBody tokenRequest: Map<String, String>): ResponseEntity<Any> {
-        val codigoRedefinicao = tokenRequest["codigo"]
-        val emailUser = tokenRequest["email"]
-        return if (codigoRedefinicao != null && emailUser != null) {
-            resetService.verificarToken(codigoRedefinicao, emailUser)
-        } else {
-            ResponseEntity.badRequest().body(mapOf("message" to "Dados de solicitação inválidos"))
         }
     }
 
@@ -79,22 +58,21 @@ class ResetSenhaController @Autowired constructor(
         ]
     )
     @PatchMapping("/nova-senha")
-    fun atualizarSenha(@RequestBody senhaRequest: Map<String, String>): ResponseEntity<Any> {
-        val emailUser = senhaRequest["email"]
-        val novaSenha = senhaRequest["novaSenha"]
+    fun atualizarSenha(@RequestBody request: Map<String, String>): ResponseEntity<Any> {
+        val emailUser = request["email"]
+        val novaSenha = request["novaSenha"]
+        val token = request["token"]
 
-        // Verifica se os parâmetros estão presentes
-        if (emailUser.isNullOrBlank() || novaSenha.isNullOrBlank()) {
-            return ResponseEntity.badRequest().body(mapOf("message" to "Dados de solicitação inválidos"))
+        if (emailUser.isNullOrBlank() || novaSenha.isNullOrBlank() || token.isNullOrBlank()) {
+            return ResponseEntity.badRequest().body(mapOf("message" to "Dados de solicitação de reset inválidos"))
         }
 
-        // Atualiza a senha através do serviço
         return try {
-            resetService.atualizarSenha(emailUser, novaSenha)
-            ResponseEntity.ok(mapOf("message" to "Senha atualizada com sucesso"))
+            resetService.atualizarSenha(emailUser, novaSenha, token)
+            ResponseEntity.status(200).body(mapOf("message" to "Senha atualizada com sucesso"))
         } catch (e: Exception) {
-            // Retorna uma mensagem de erro genérica se algo der errado
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
 }
+
