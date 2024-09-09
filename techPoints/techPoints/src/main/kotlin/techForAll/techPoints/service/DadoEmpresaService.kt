@@ -5,6 +5,7 @@ import techForAll.techPoints.domain.DadosEmpresa
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
+import techForAll.techPoints.dtos.EmpresaComRecrutadoresDTO
 import techForAll.techPoints.dtos.EmpresaInput
 import techForAll.techPoints.repository.DadosEmpresaRepository
 import techForAll.techPoints.repository.EnderecoRepository
@@ -38,20 +39,23 @@ class DadoEmpresaService @Autowired constructor(
         return empresas
     }
 
-    fun buscarEmpresaPorId(idEmpresa: Long): DadosEmpresa {
+    fun buscarEmpresaPorId(idEmpresa: Long): EmpresaComRecrutadoresDTO {
         val dadosEmpresa = empresaRepository.findById(idEmpresa)
             .orElseThrow { NoSuchElementException("Empresa não encontrada com o ID: $idEmpresa") }
 
-        val dadosEmpresa = DadosEmpresa(
+        val dadosEmpresaExibir = EmpresaComRecrutadoresDTO(
+            id = dadosEmpresa.id,
             nomeEmpresa = dadosEmpresa.nomeEmpresa,
             cnpj = dadosEmpresa.cnpj,
             setorIndustria = dadosEmpresa.setorIndustria,
             telefoneContato = dadosEmpresa.telefoneContato,
             emailCorporativo = dadosEmpresa.emailCorporativo,
-            endereco = dadosEmpresa.endereco
+            endereco = dadosEmpresa.endereco,
+            dataCriacao = dadosEmpresa.dataCriacao,
+            recrutadores = dadosEmpresa.recrutadores.map{ it.nomeUsuario }
         )
 
-        return dadosEmpresa
+        return dadosEmpresaExibir
     }
 
     fun atualizarEmpresa(idEmpresa: Long, empresaAtualizada: Map<String, Any>): DadosEmpresa {
