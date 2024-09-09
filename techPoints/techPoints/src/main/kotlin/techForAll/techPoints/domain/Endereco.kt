@@ -12,7 +12,7 @@ class Endereco(
     var cep: String,
 
     @Column(nullable = false)
-    var logradouro: String,
+    var rua: String,
 
     @Column(nullable = false)
     var numero: String,

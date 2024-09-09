@@ -3,7 +3,7 @@ package techForAll.techPoints.dtos
 import techForAll.techPoints.domain.Endereco
 import java.time.LocalDateTime
 
-data class EmpresaComRecrutadoresDTO(
+data class EmpresaComRecrutadoresDto(
     val id: Long,
     val nomeEmpresa: String,
     val cnpj: String,
