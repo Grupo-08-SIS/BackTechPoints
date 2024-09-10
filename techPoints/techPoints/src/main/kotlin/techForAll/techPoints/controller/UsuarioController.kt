@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.annotation.*
-import techForAll.techPoints.domain.Aluno
-import techForAll.techPoints.domain.Recrutador
 import techForAll.techPoints.dtos.UsuarioInput
 import techForAll.techPoints.service.UsuarioService
 
@@ -37,19 +35,8 @@ class UsuarioController @Autowired constructor(
     fun cadastrarUsuario(@RequestBody request: UsuarioInput): ResponseEntity<Any> {
         return try {
             val usuario = usuarioService.cadastrarUsuario(request)
-            val usuarioSemSenha = mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to usuario.tipoUsuario,
-                "autenticado" to usuario.autenticado,
-                "dataCriacao" to usuario.dataCriacao
-            )
-            ResponseEntity.status(201).body(usuarioSemSenha)
+
+            ResponseEntity.status(201).body(usuario)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
@@ -181,40 +168,7 @@ class UsuarioController @Autowired constructor(
         return try {
             val usuario = usuarioService.loginUsuario(email, senha)
 
-            val usuarioSemSenha = when (usuario) {
-                is Aluno -> mapOf(
-                    "id" to usuario.id,
-                    "nomeUsuario" to usuario.nomeUsuario,
-                    "cpf" to usuario.cpf,
-                    "primeiroNome" to usuario.primeiroNome,
-                    "sobrenome" to usuario.sobrenome,
-                    "email" to usuario.email,
-                    "telefone" to usuario.telefone,
-                    "tipoUsuario" to "Aluno",
-                    "autenticado" to usuario.autenticado,
-                    "dataCriacao" to usuario.dataCriacao,
-                    "escolaridade" to usuario.escolaridade,
-                    "dataNascimento" to usuario.dtNasc,
-                    "endereco" to usuario.endereco
-                )
-                is Recrutador -> mapOf(
-                    "id" to usuario.id,
-                    "nomeUsuario" to usuario.nomeUsuario,
-                    "cpf" to usuario.cpf,
-                    "primeiroNome" to usuario.primeiroNome,
-                    "sobrenome" to usuario.sobrenome,
-                    "email" to usuario.email,
-                    "telefone" to usuario.telefone,
-                    "tipoUsuario" to "Recrutador",
-                    "autenticado" to usuario.autenticado,
-                    "dataCriacao" to usuario.dataCriacao,
-                    "empresa" to usuario.empresa,
-                    "cargoUsuario" to usuario.cargoUsuario
-                )
-                else -> throw IllegalStateException("Tipo de usuário desconhecido")
-            }
-
-            ResponseEntity.status(200).body(usuarioSemSenha)
+            ResponseEntity.status(200).body(usuario)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(401).body(mapOf("message" to e.message))
         } catch (e: Exception) {
@@ -276,23 +230,10 @@ class UsuarioController @Autowired constructor(
         @RequestBody atualizacao: Map<String, Any>
     ): ResponseEntity<Any> {
         return try {
+
             val usuarioAtualizado = usuarioService.atualizarUsuario(idUsuario, atualizacao)
-            val usuarioSemSenha = mapOf(
-                "id" to usuarioAtualizado.id,
-                "nomeUsuario" to usuarioAtualizado.nomeUsuario,
-                "cpf" to usuarioAtualizado.cpf,
-                "primeiroNome" to usuarioAtualizado.primeiroNome,
-                "sobrenome" to usuarioAtualizado.sobrenome,
-                "email" to usuarioAtualizado.email,
-                "telefone" to usuarioAtualizado.telefone,
-                "autenticado" to usuarioAtualizado.autenticado,
-                "dataCriacao" to usuarioAtualizado.dataCriacao,
-                "escolaridade" to (usuarioAtualizado as? Aluno)?.escolaridade,
-                "dataNascimento" to (usuarioAtualizado as? Aluno)?.dtNasc,
-                "empresa" to (usuarioAtualizado as? Recrutador)?.empresa,
-                "cargoUsuario" to (usuarioAtualizado as? Recrutador)?.cargoUsuario
-            )
-            ResponseEntity.status(200).body(usuarioSemSenha)
+
+            ResponseEntity.status(200).body(usuarioAtualizado)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {

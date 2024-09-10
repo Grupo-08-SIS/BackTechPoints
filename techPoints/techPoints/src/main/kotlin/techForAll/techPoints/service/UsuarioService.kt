@@ -1,6 +1,4 @@
 package techForAll.techPoints.service
-
-
 import techForAll.techPoints.domain.Usuario
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -22,8 +20,8 @@ class UsuarioService @Autowired constructor(
 
     ) {
 
-    fun cadastrarUsuario(request: UsuarioInput): Usuario {
-        return when (request.tipoUsuario) {
+    fun cadastrarUsuario(request: UsuarioInput): Any {
+        when (request.tipoUsuario) {
             1 -> {
                 val endereco = enderecoRepository.findById(request.enderecoId!!)
                     .orElseThrow { IllegalArgumentException("Endereço não encontrado") }
@@ -63,9 +61,54 @@ class UsuarioService @Autowired constructor(
                     autenticado = request.autenticado
                 )
                 recrutadorRepository.save(recrutador.criarUsuario(null, empresa) as Recrutador)
+
             }
 
             else -> throw IllegalArgumentException("Tipo de usuário inválido")
+        }
+
+        val usuario = usuarioRepository.findByEmail(request.email)
+
+        return when (usuario) {
+            is Aluno -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Aluno",
+                "autenticado" to usuario.autenticado,
+                "dataCriacao" to usuario.dataCriacao,
+                "escolaridade" to usuario.escolaridade,
+                "dataNascimento" to usuario.dtNasc,
+                "endereco" to usuario.endereco
+            )
+            is Recrutador -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Recrutador",
+                "autenticado" to usuario.autenticado,
+                "cargoUsuario" to usuario.cargoUsuario,
+                "dataCriacao" to usuario.dataCriacao,
+                "empresa" to mapOf(
+                    "nome" to usuario.empresa.nomeEmpresa,
+                    "cnpj" to usuario.empresa.cnpj,
+                    "setorIndustria" to usuario.empresa.setorIndustria,
+                    "telefoneContato" to usuario.empresa.telefoneContato,
+                    "emailCorporativo" to usuario.empresa.emailCorporativo,
+                    "endereco" to usuario.empresa.endereco,
+                    "dataCriacao" to usuario.empresa.dataCriacao,
+                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                )
+            )
+            else -> throw IllegalStateException("Tipo de usuário desconhecido")
         }
     }
     fun softDeleteUsuario(email: String, senha: String) {
@@ -113,9 +156,19 @@ class UsuarioService @Autowired constructor(
                     "telefone" to usuario.telefone,
                     "tipoUsuario" to "Recrutador",
                     "autenticado" to usuario.autenticado,
+                    "cargoUsuario" to usuario.cargoUsuario,
                     "dataCriacao" to usuario.dataCriacao,
-                    "empresa" to usuario.empresa,
-                    "cargoUsuario" to usuario.cargoUsuario
+                    "empresa" to mapOf(
+                        "nome" to usuario.empresa.nomeEmpresa,
+                        "cnpj" to usuario.empresa.cnpj,
+                        "setorIndustria" to usuario.empresa.setorIndustria,
+                        "telefoneContato" to usuario.empresa.telefoneContato,
+                        "emailCorporativo" to usuario.empresa.emailCorporativo,
+                        "endereco" to usuario.empresa.endereco,
+                        "dataCriacao" to usuario.empresa.dataCriacao,
+                        "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                    )
+
                 )
                 else -> throw IllegalStateException("Tipo de usuário desconhecido")
             }
@@ -152,22 +205,71 @@ class UsuarioService @Autowired constructor(
                 "telefone" to usuario.telefone,
                 "tipoUsuario" to "Recrutador",
                 "autenticado" to usuario.autenticado,
+                "cargoUsuario" to usuario.cargoUsuario,
                 "dataCriacao" to usuario.dataCriacao,
-                "empresa" to usuario.empresa,
-                "cargoUsuario" to usuario.cargoUsuario
+                "empresa" to mapOf(
+                    "nome" to usuario.empresa.nomeEmpresa,
+                    "cnpj" to usuario.empresa.cnpj,
+                    "setorIndustria" to usuario.empresa.setorIndustria,
+                    "telefoneContato" to usuario.empresa.telefoneContato,
+                    "emailCorporativo" to usuario.empresa.emailCorporativo,
+                    "endereco" to usuario.empresa.endereco,
+                    "dataCriacao" to usuario.empresa.dataCriacao,
+                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                )
             )
             else -> throw IllegalStateException("Tipo de usuário desconhecido")
         }
     }
 
-    fun loginUsuario(email: String, senha: String): Usuario {
+    fun loginUsuario(email: String, senha: String): Any {
         val usuario = usuarioRepository.findByEmail(email)
             ?: throw IllegalArgumentException("Usuário não encontrado")
 
         usuario.login(senha)
         usuarioRepository.save(usuario)
 
-        return usuario
+        return when (usuario) {
+            is Aluno -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Aluno",
+                "autenticado" to usuario.autenticado,
+                "dataCriacao" to usuario.dataCriacao,
+                "escolaridade" to usuario.escolaridade,
+                "dataNascimento" to usuario.dtNasc,
+                "endereco" to usuario.endereco
+            )
+            is Recrutador -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Recrutador",
+                "autenticado" to usuario.autenticado,
+                "cargoUsuario" to usuario.cargoUsuario,
+                "dataCriacao" to usuario.dataCriacao,
+                "empresa" to mapOf(
+                    "nome" to usuario.empresa.nomeEmpresa,
+                    "cnpj" to usuario.empresa.cnpj,
+                    "setorIndustria" to usuario.empresa.setorIndustria,
+                    "telefoneContato" to usuario.empresa.telefoneContato,
+                    "emailCorporativo" to usuario.empresa.emailCorporativo,
+                    "endereco" to usuario.empresa.endereco,
+                    "dataCriacao" to usuario.empresa.dataCriacao,
+                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                )
+            )
+            else -> throw IllegalStateException("Tipo de usuário desconhecido")
+        }
     }
 
     fun logoffUsuario(idUsuario: Long) {
@@ -208,44 +310,83 @@ class UsuarioService @Autowired constructor(
                 "telefone" to usuario.telefone,
                 "tipoUsuario" to "Recrutador",
                 "autenticado" to usuario.autenticado,
+                "cargoUsuario" to usuario.cargoUsuario,
                 "dataCriacao" to usuario.dataCriacao,
-                "empresa" to usuario.empresa.nomeEmpresa,
-                "cargoUsuario" to usuario.cargoUsuario
+                "empresa" to mapOf(
+                    "nome" to usuario.empresa.nomeEmpresa,
+                    "cnpj" to usuario.empresa.cnpj,
+                    "setorIndustria" to usuario.empresa.setorIndustria,
+                    "telefoneContato" to usuario.empresa.telefoneContato,
+                    "emailCorporativo" to usuario.empresa.emailCorporativo,
+                    "endereco" to usuario.empresa.endereco,
+                    "dataCriacao" to usuario.empresa.dataCriacao,
+                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                )
             )
             else -> throw IllegalStateException("Tipo de usuário desconhecido")
         }
     }
 
-    fun atualizarUsuario(idUsuario: Long, atualizacao: Map<String, Any>): Usuario {
-        val usuarioExistente = usuarioRepository.findById(idUsuario)
-            .orElseThrow { NoSuchElementException("Usuário não encontrado com o ID: $idUsuario") }
+    fun atualizarUsuario(idUsuario: Long, atualizacao: Map<String, Any>): Any {
+            val usuarioExistente = usuarioRepository.findById(idUsuario)
+                .orElseThrow { NoSuchElementException("Usuário não encontrado com o ID: $idUsuario") }
 
-        atualizacao["nomeUsuario"]?.let { usuarioExistente.nomeUsuario = it as String }
-        atualizacao["cpf"]?.let { usuarioExistente.cpf = it as String }
-        atualizacao["primeiroNome"]?.let { usuarioExistente.primeiroNome = it as String }
-        atualizacao["sobrenome"]?.let { usuarioExistente.sobrenome = it as String }
-        atualizacao["email"]?.let { usuarioExistente.email = it as String }
-        atualizacao["telefone"]?.let { usuarioExistente.telefone = it as String }
-        usuarioExistente.dataAtualizacao = LocalDateTime.now()
+            atualizacao["nomeUsuario"]?.let { usuarioExistente.nomeUsuario = it as String }
+            atualizacao["cpf"]?.let { usuarioExistente.cpf = it as String }
+            atualizacao["primeiroNome"]?.let { usuarioExistente.primeiroNome = it as String }
+            atualizacao["sobrenome"]?.let { usuarioExistente.sobrenome = it as String }
+            atualizacao["email"]?.let { usuarioExistente.email = it as String }
+            atualizacao["telefone"]?.let { usuarioExistente.telefone = it as String }
+            usuarioExistente.dataAtualizacao = LocalDateTime.now()
 
-        if (usuarioExistente is Aluno) {
-            atualizacao["escolaridade"]?.let { usuarioExistente.escolaridade = it as String }
-            atualizacao["dataNascimento"]?.let { usuarioExistente.dtNasc = it as LocalDate }
-            atualizacao["descricao"]?.let { usuarioExistente.descricao = it as String }
-        }
+            if (usuarioExistente is Aluno) {
+                atualizacao["escolaridade"]?.let { usuarioExistente.escolaridade = it as String }
+                atualizacao["dataNascimento"]?.let { usuarioExistente.dtNasc = it as LocalDate }
+                atualizacao["descricao"]?.let { usuarioExistente.descricao = it as String }
+            }
 
-        if (usuarioExistente is Recrutador) {
-            atualizacao["cargoUsuario"]?.let { usuarioExistente.cargoUsuario = it as String }
-        }
+            if (usuarioExistente is Recrutador) {
+                atualizacao["cargoUsuario"]?.let { usuarioExistente.cargoUsuario = it as String }
+            }
 
-        return usuarioRepository.save(usuarioExistente)
+            val usuarioSemSenha = mapOf(
+                "id" to usuarioExistente.id,
+                "nomeUsuario" to usuarioExistente.nomeUsuario,
+                "cpf" to usuarioExistente.cpf,
+                "primeiroNome" to usuarioExistente.primeiroNome,
+                "sobrenome" to usuarioExistente.sobrenome,
+                "email" to usuarioExistente.email,
+                "telefone" to usuarioExistente.telefone,
+                "autenticado" to usuarioExistente.autenticado,
+                "dataCriacao" to usuarioExistente.dataCriacao,
+                "escolaridade" to (usuarioExistente as? Aluno)?.escolaridade,
+                "dataNascimento" to (usuarioExistente as? Aluno)?.dtNasc,
+                "empresa" to if (usuarioExistente is Recrutador) {
+                    mapOf(
+                        "nomeEmpresa" to usuarioExistente.empresa.nomeEmpresa,
+                        "cnpj" to usuarioExistente.empresa.cnpj,
+                        "setorIndustria" to usuarioExistente.empresa.setorIndustria,
+                        "telefoneContato" to usuarioExistente.empresa.telefoneContato,
+                        "emailCorporativo" to usuarioExistente.empresa.emailCorporativo,
+                        "endereco" to usuarioExistente.empresa.endereco,
+                        "dataCriacao" to usuarioExistente.empresa.dataCriacao,
+                        "recrutadores" to usuarioExistente.empresa.recrutadores.map { it.nomeUsuario }
+                    )
+                } else {
+                    null
+                },
+                "cargoUsuario" to (usuarioExistente as? Recrutador)?.cargoUsuario
+            )
+
+        usuarioRepository.save(usuarioExistente)
+
+        return usuarioSemSenha
     }
 
     fun atualizarImagemUsuario(idUsuario: Long, novaFoto: ByteArray) {
         if (novaFoto.isEmpty()) {
             throw IllegalArgumentException("Requisição inválida")
         }
-
         val usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
@@ -263,7 +404,6 @@ class UsuarioService @Autowired constructor(
     fun reativarUsuario(email: String, senha: String) {
         val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
             ?: throw NoSuchElementException("Usuário não encontrado")
-
         try {
             usuario.reativar()
             usuarioRepository.save(usuario)
