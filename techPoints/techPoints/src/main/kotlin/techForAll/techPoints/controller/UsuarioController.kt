@@ -11,8 +11,8 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import techForAll.techPoints.dtos.UsuarioInput
 import techForAll.techPoints.service.UsuarioService
 
@@ -252,24 +252,35 @@ class UsuarioController @Autowired constructor(
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
-    @PatchMapping("/atualizar-imagem/{idUsuario}", consumes = ["image/jpeg", "image/png", "image/jpg"])
+    @PatchMapping("/atualizar-imagem/{idUsuario}", consumes = ["multipart/form-data"])
     fun atualizarImagemPerfil(
         @PathVariable idUsuario: Long,
-        @RequestBody novaFoto: ByteArray
+        @RequestPart("imagemPerfil") novaFoto: MultipartFile
     ): ResponseEntity<Any> {
         return try {
-            usuarioService.atualizarImagemUsuario(idUsuario, novaFoto)
+            if (novaFoto.isEmpty) {
+                return ResponseEntity.status(400).body(mapOf("message" to "Imagem não pode estar vazia"))
+            }
+
+            if (novaFoto.contentType == null || !novaFoto.contentType!!.startsWith("image/")) {
+                return ResponseEntity.status(415).body(mapOf("message" to "Tipo de mídia não suportado"))
+            }
+
+            usuarioService.atualizarImagemUsuario(idUsuario, novaFoto.bytes)
+
             ResponseEntity.status(204).build()
         } catch (e: IllegalArgumentException) {
-            ResponseEntity.status(400).body(mapOf("message" to "Requisição inválida"))
+            e.printStackTrace()
+            ResponseEntity.status(400).body(mapOf("message" to "Requisição inválida: ${e.message}"))
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).body(mapOf("message" to "ID do usuário não encontrado"))
-        } catch (e: HttpMediaTypeNotSupportedException) {
-            ResponseEntity.status(415).body(mapOf("message" to "Tipo de mídia não suportado"))
+            e.printStackTrace()
+            ResponseEntity.status(404).body(mapOf("message" to "ID do usuário não encontrado: ${e.message}"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            e.printStackTrace()
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+
 
     @Operation(summary = "Obter imagem de perfil do usuário", description = "Retorna a imagem de perfil do usuário pelo ID")
     @ApiResponses(

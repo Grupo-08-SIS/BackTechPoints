@@ -1,5 +1,4 @@
 package techForAll.techPoints.service
-import techForAll.techPoints.domain.Usuario
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import techForAll.techPoints.domain.Aluno
@@ -61,14 +60,14 @@ class UsuarioService @Autowired constructor(
                     autenticado = request.autenticado
                 )
                 recrutadorRepository.save(recrutador.criarUsuario(null, empresa) as Recrutador)
-
+                
             }
 
             else -> throw IllegalArgumentException("Tipo de usuário inválido")
         }
-
+        
         val usuario = usuarioRepository.findByEmail(request.email)
-
+         
         return when (usuario) {
             is Aluno -> mapOf(
                 "id" to usuario.id,
@@ -385,14 +384,20 @@ class UsuarioService @Autowired constructor(
 
     fun atualizarImagemUsuario(idUsuario: Long, novaFoto: ByteArray) {
         if (novaFoto.isEmpty()) {
-            throw IllegalArgumentException("Requisição inválida")
+            throw IllegalArgumentException("Requisição inválida: imagem vazia")
         }
+
         val usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+
+        if (usuario == null) {
+            throw NoSuchElementException("Usuário não encontrado para o ID: $idUsuario")
+        }
 
         usuario.imagemPerfil = novaFoto
         usuarioRepository.save(usuario)
     }
+
 
     fun obterImagemPerfil(idUsuario: Long): ByteArray {
         val usuario = usuarioRepository.findById(idUsuario)
