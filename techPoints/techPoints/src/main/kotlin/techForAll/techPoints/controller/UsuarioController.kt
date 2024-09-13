@@ -70,7 +70,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -101,7 +101,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -123,7 +123,7 @@ class UsuarioController @Autowired constructor(
                 ResponseEntity.status(204).build()
             }
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -143,7 +143,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -172,7 +172,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(401).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -192,7 +192,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -212,7 +212,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -237,7 +237,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -300,9 +300,9 @@ class UsuarioController @Autowired constructor(
                 .contentLength(imagemPerfil.size.toLong())
                 .body(byteArrayResource)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(204).build()
+            ResponseEntity.status(204).body(mapOf("message" to "Usuário não encontrado ou imagem de perfil não encontrada"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).build()
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -332,7 +332,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 

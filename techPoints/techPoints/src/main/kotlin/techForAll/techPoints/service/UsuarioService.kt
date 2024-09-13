@@ -60,56 +60,15 @@ class UsuarioService @Autowired constructor(
                     autenticado = request.autenticado
                 )
                 recrutadorRepository.save(recrutador.criarUsuario(null, empresa) as Recrutador)
-                
             }
 
             else -> throw IllegalArgumentException("Tipo de usuário inválido")
         }
-        
+
         val usuario = usuarioRepository.findByEmail(request.email)
-         
-        return when (usuario) {
-            is Aluno -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Aluno",
-                "autenticado" to usuario.autenticado,
-                "dataCriacao" to usuario.dataCriacao,
-                "escolaridade" to usuario.escolaridade,
-                "dataNascimento" to usuario.dtNasc,
-                "endereco" to usuario.endereco
-            )
-            is Recrutador -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Recrutador",
-                "autenticado" to usuario.autenticado,
-                "cargoUsuario" to usuario.cargoUsuario,
-                "dataCriacao" to usuario.dataCriacao,
-                "empresa" to mapOf(
-                    "nome" to usuario.empresa.nomeEmpresa,
-                    "cnpj" to usuario.empresa.cnpj,
-                    "setorIndustria" to usuario.empresa.setorIndustria,
-                    "telefoneContato" to usuario.empresa.telefoneContato,
-                    "emailCorporativo" to usuario.empresa.emailCorporativo,
-                    "endereco" to usuario.empresa.endereco,
-                    "dataCriacao" to usuario.empresa.dataCriacao,
-                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
-                )
-            )
-            else -> throw IllegalStateException("Tipo de usuário desconhecido")
-        }
+        return mapearUsuario(usuario)
     }
+
     fun softDeleteUsuario(email: String, senha: String) {
         val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
             ?: throw IllegalArgumentException("Credenciais inválidas")
@@ -128,97 +87,13 @@ class UsuarioService @Autowired constructor(
     }
 
     fun listarUsuarios(): List<Map<String, Any>> {
-        return usuarioRepository.findAll().map { usuario ->
-            when (usuario) {
-                is Aluno -> mapOf(
-                    "id" to usuario.id,
-                    "nomeUsuario" to usuario.nomeUsuario,
-                    "cpf" to usuario.cpf,
-                    "primeiroNome" to usuario.primeiroNome,
-                    "sobrenome" to usuario.sobrenome,
-                    "email" to usuario.email,
-                    "telefone" to usuario.telefone,
-                    "tipoUsuario" to "Aluno",
-                    "autenticado" to usuario.autenticado,
-                    "dataCriacao" to usuario.dataCriacao,
-                    "escolaridade" to usuario.escolaridade,
-                    "dataNascimento" to usuario.dtNasc,
-                    "endereco" to usuario.endereco
-                )
-                is Recrutador -> mapOf(
-                    "id" to usuario.id,
-                    "nomeUsuario" to usuario.nomeUsuario,
-                    "cpf" to usuario.cpf,
-                    "primeiroNome" to usuario.primeiroNome,
-                    "sobrenome" to usuario.sobrenome,
-                    "email" to usuario.email,
-                    "telefone" to usuario.telefone,
-                    "tipoUsuario" to "Recrutador",
-                    "autenticado" to usuario.autenticado,
-                    "cargoUsuario" to usuario.cargoUsuario,
-                    "dataCriacao" to usuario.dataCriacao,
-                    "empresa" to mapOf(
-                        "nome" to usuario.empresa.nomeEmpresa,
-                        "cnpj" to usuario.empresa.cnpj,
-                        "setorIndustria" to usuario.empresa.setorIndustria,
-                        "telefoneContato" to usuario.empresa.telefoneContato,
-                        "emailCorporativo" to usuario.empresa.emailCorporativo,
-                        "endereco" to usuario.empresa.endereco,
-                        "dataCriacao" to usuario.empresa.dataCriacao,
-                        "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
-                    )
-
-                )
-                else -> throw IllegalStateException("Tipo de usuário desconhecido")
-            }
-        }
+        return usuarioRepository.findAll().map { usuario -> mapearUsuario(usuario) }
     }
 
     fun buscarUsuarioPorId(idUsuario: Long): Map<String, Any> {
         val usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow { NoSuchElementException("Usuário não encontrado") }
-
-        return when (usuario) {
-            is Aluno -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Aluno",
-                "autenticado" to usuario.autenticado,
-                "dataCriacao" to usuario.dataCriacao,
-                "escolaridade" to usuario.escolaridade,
-                "dataNascimento" to usuario.dtNasc,
-                "endereco" to usuario.endereco
-            )
-            is Recrutador -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Recrutador",
-                "autenticado" to usuario.autenticado,
-                "cargoUsuario" to usuario.cargoUsuario,
-                "dataCriacao" to usuario.dataCriacao,
-                "empresa" to mapOf(
-                    "nome" to usuario.empresa.nomeEmpresa,
-                    "cnpj" to usuario.empresa.cnpj,
-                    "setorIndustria" to usuario.empresa.setorIndustria,
-                    "telefoneContato" to usuario.empresa.telefoneContato,
-                    "emailCorporativo" to usuario.empresa.emailCorporativo,
-                    "endereco" to usuario.empresa.endereco,
-                    "dataCriacao" to usuario.empresa.dataCriacao,
-                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
-                )
-            )
-            else -> throw IllegalStateException("Tipo de usuário desconhecido")
-        }
+        return mapearUsuario(usuario)
     }
 
     fun loginUsuario(email: String, senha: String): Any {
@@ -228,47 +103,7 @@ class UsuarioService @Autowired constructor(
         usuario.login(senha)
         usuarioRepository.save(usuario)
 
-        return when (usuario) {
-            is Aluno -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Aluno",
-                "autenticado" to usuario.autenticado,
-                "dataCriacao" to usuario.dataCriacao,
-                "escolaridade" to usuario.escolaridade,
-                "dataNascimento" to usuario.dtNasc,
-                "endereco" to usuario.endereco
-            )
-            is Recrutador -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Recrutador",
-                "autenticado" to usuario.autenticado,
-                "cargoUsuario" to usuario.cargoUsuario,
-                "dataCriacao" to usuario.dataCriacao,
-                "empresa" to mapOf(
-                    "nome" to usuario.empresa.nomeEmpresa,
-                    "cnpj" to usuario.empresa.cnpj,
-                    "setorIndustria" to usuario.empresa.setorIndustria,
-                    "telefoneContato" to usuario.empresa.telefoneContato,
-                    "emailCorporativo" to usuario.empresa.emailCorporativo,
-                    "endereco" to usuario.empresa.endereco,
-                    "dataCriacao" to usuario.empresa.dataCriacao,
-                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
-                )
-            )
-            else -> throw IllegalStateException("Tipo de usuário desconhecido")
-        }
+        return mapearUsuario(usuario)
     }
 
     fun logoffUsuario(idUsuario: Long) {
@@ -282,49 +117,9 @@ class UsuarioService @Autowired constructor(
     fun buscarUsuarioPorEmail(email: String): Map<String, Any> {
         val usuario = usuarioRepository.findByEmail(email)
             ?: throw NoSuchElementException("Usuário não encontrado")
-
-        return when (usuario) {
-            is Aluno -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Aluno",
-                "autenticado" to usuario.autenticado,
-                "dataCriacao" to usuario.dataCriacao,
-                "escolaridade" to usuario.escolaridade,
-                "dataNascimento" to usuario.dtNasc,
-                "endereco" to usuario.endereco
-            )
-            is Recrutador -> mapOf(
-                "id" to usuario.id,
-                "nomeUsuario" to usuario.nomeUsuario,
-                "cpf" to usuario.cpf,
-                "primeiroNome" to usuario.primeiroNome,
-                "sobrenome" to usuario.sobrenome,
-                "email" to usuario.email,
-                "telefone" to usuario.telefone,
-                "tipoUsuario" to "Recrutador",
-                "autenticado" to usuario.autenticado,
-                "cargoUsuario" to usuario.cargoUsuario,
-                "dataCriacao" to usuario.dataCriacao,
-                "empresa" to mapOf(
-                    "nome" to usuario.empresa.nomeEmpresa,
-                    "cnpj" to usuario.empresa.cnpj,
-                    "setorIndustria" to usuario.empresa.setorIndustria,
-                    "telefoneContato" to usuario.empresa.telefoneContato,
-                    "emailCorporativo" to usuario.empresa.emailCorporativo,
-                    "endereco" to usuario.empresa.endereco,
-                    "dataCriacao" to usuario.empresa.dataCriacao,
-                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
-                )
-            )
-            else -> throw IllegalStateException("Tipo de usuário desconhecido")
-        }
+        return mapearUsuario(usuario)
     }
+
 
     fun atualizarUsuario(idUsuario: Long, atualizacao: Map<String, Any>): Any {
             val usuarioExistente = usuarioRepository.findById(idUsuario)
@@ -348,38 +143,11 @@ class UsuarioService @Autowired constructor(
                 atualizacao["cargoUsuario"]?.let { usuarioExistente.cargoUsuario = it as String }
             }
 
-            val usuarioSemSenha = mapOf(
-                "id" to usuarioExistente.id,
-                "nomeUsuario" to usuarioExistente.nomeUsuario,
-                "cpf" to usuarioExistente.cpf,
-                "primeiroNome" to usuarioExistente.primeiroNome,
-                "sobrenome" to usuarioExistente.sobrenome,
-                "email" to usuarioExistente.email,
-                "telefone" to usuarioExistente.telefone,
-                "autenticado" to usuarioExistente.autenticado,
-                "dataCriacao" to usuarioExistente.dataCriacao,
-                "escolaridade" to (usuarioExistente as? Aluno)?.escolaridade,
-                "dataNascimento" to (usuarioExistente as? Aluno)?.dtNasc,
-                "empresa" to if (usuarioExistente is Recrutador) {
-                    mapOf(
-                        "nomeEmpresa" to usuarioExistente.empresa.nomeEmpresa,
-                        "cnpj" to usuarioExistente.empresa.cnpj,
-                        "setorIndustria" to usuarioExistente.empresa.setorIndustria,
-                        "telefoneContato" to usuarioExistente.empresa.telefoneContato,
-                        "emailCorporativo" to usuarioExistente.empresa.emailCorporativo,
-                        "endereco" to usuarioExistente.empresa.endereco,
-                        "dataCriacao" to usuarioExistente.empresa.dataCriacao,
-                        "recrutadores" to usuarioExistente.empresa.recrutadores.map { it.nomeUsuario }
-                    )
-                } else {
-                    null
-                },
-                "cargoUsuario" to (usuarioExistente as? Recrutador)?.cargoUsuario
-            )
+
 
         usuarioRepository.save(usuarioExistente)
 
-        return usuarioSemSenha
+        return mapearUsuario(usuarioExistente)
     }
 
     fun atualizarImagemUsuario(idUsuario: Long, novaFoto: ByteArray) {
@@ -417,5 +185,48 @@ class UsuarioService @Autowired constructor(
         }
     }
 
+    private fun mapearUsuario(usuario: Any): Map<String, Any> {
+        return when (usuario) {
+            is Aluno -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Aluno",
+                "autenticado" to usuario.autenticado,
+                "dataCriacao" to usuario.dataCriacao,
+                "escolaridade" to usuario.escolaridade,
+                "dataNascimento" to usuario.dtNasc,
+                "endereco" to usuario.endereco
+            )
+            is Recrutador -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Recrutador",
+                "autenticado" to usuario.autenticado,
+                "cargoUsuario" to usuario.cargoUsuario,
+                "dataCriacao" to usuario.dataCriacao,
+                "empresa" to mapOf(
+                    "nome" to usuario.empresa.nomeEmpresa,
+                    "cnpj" to usuario.empresa.cnpj,
+                    "setorIndustria" to usuario.empresa.setorIndustria,
+                    "telefoneContato" to usuario.empresa.telefoneContato,
+                    "emailCorporativo" to usuario.empresa.emailCorporativo,
+                    "endereco" to usuario.empresa.endereco,
+                    "dataCriacao" to usuario.empresa.dataCriacao,
+                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                )
+            )
+            else -> throw IllegalStateException("Tipo de usuário desconhecido")
+        }
+    }
 
 }

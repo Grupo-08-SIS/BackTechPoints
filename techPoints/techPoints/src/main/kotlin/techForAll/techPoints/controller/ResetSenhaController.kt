@@ -41,7 +41,7 @@ class ResetSenhaController @Autowired constructor(
                 ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
             }
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -71,7 +71,7 @@ class ResetSenhaController @Autowired constructor(
             resetService.atualizarSenha(emailUser, novaSenha, token)
             ResponseEntity.status(200).body(mapOf("message" to "Senha atualizada com sucesso"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 }

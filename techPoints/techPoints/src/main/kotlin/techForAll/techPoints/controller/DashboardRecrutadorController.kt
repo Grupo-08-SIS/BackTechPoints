@@ -135,7 +135,7 @@ class DashboardRecrutadorController@Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Recrutador não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -155,7 +155,7 @@ class DashboardRecrutadorController@Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Recrutador não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 }
