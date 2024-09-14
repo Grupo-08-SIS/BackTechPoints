@@ -74,5 +74,33 @@ class ResetSenhaController @Autowired constructor(
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+
+    @Operation(
+        summary = "Verificar token de redefinição de senha",
+        description = "Endpoint para verificar se o token de redefinição de senha é válido."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Token válido."),
+            ApiResponse(responseCode = "400", description = "Token ou e-mail inválido."),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+        ]
+    )
+    @PostMapping("/verificar-token")
+    fun verificarToken(@RequestBody request: Map<String, String>): ResponseEntity<Any> {
+        val codigoRedefinicao = request["codigoRedefinicao"]
+        val emailUser = request["emailUser"]
+
+        if (codigoRedefinicao.isNullOrBlank() || emailUser.isNullOrBlank()) {
+            return ResponseEntity.status(400).body(mapOf("message" to "Dados de verificação inválidos"))
+        }
+
+        return try {
+            resetService.verificarToken(codigoRedefinicao, emailUser)
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
+
 }
 
