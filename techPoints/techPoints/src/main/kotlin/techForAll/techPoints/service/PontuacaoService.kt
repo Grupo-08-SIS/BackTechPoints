@@ -35,6 +35,7 @@ class PontuacaoService @Autowired constructor(
                 notaAluno = pontuacao.notaAluno,
                 pontosAtividade = pontos,
                 cursoId = pontuacao.curso.id,
+                cursoNome = pontuacao.curso.nome,
                 alunoId = pontuacao.aluno.id
             )
         }
@@ -80,7 +81,7 @@ class PontuacaoService @Autowired constructor(
 
         val diferenca = atividadesTotais - atividadesEntregues
 
-        return mapOf("atividadesTotias" to atividadesTotais,"atividadesNaoEntregues" to diferenca)
+        return mapOf("atividadesTotais" to atividadesTotais,"atividadesNaoEntregues" to diferenca)
 
     }
 

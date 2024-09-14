@@ -8,5 +8,6 @@ data class PontuacaoComPontosDTO(
     val notaAluno: Double,
     val pontosAtividade: Int,
     val cursoId: Long,
+    val cursoNome: String,
     val alunoId: Long
 )
