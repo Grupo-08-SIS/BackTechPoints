@@ -9,9 +9,6 @@ import techForAll.techPoints.repository.PontuacaoRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
-import java.util.function.Function
-import java.util.stream.Collectors
-
 
 @Service
 class PontuacaoService @Autowired constructor(
@@ -65,7 +62,7 @@ class PontuacaoService @Autowired constructor(
         val pontosSemanaPassada = alunoAgrupadoCurso.mapValues { entrada ->
             entrada.value.filter { atividade ->
                 val dataEntrega = LocalDate.parse(atividade.dataEntrega)
-                !dataEntrega.isAfter(inicioSemanaPassada) && dataEntrega.isBefore(inicioSemanaAtual)
+                dataEntrega.isAfter(inicioSemanaPassada) && dataEntrega.isBefore(inicioSemanaAtual)
             }.sumOf { it.pontosAtividade }
         }
 
@@ -128,8 +125,6 @@ class PontuacaoService @Autowired constructor(
 
     // ALUNO:
     // TODO: Soma total de Pontos do Curso
-    // TODO: Recuperar Pontos de Atividades conquistados por dia e separados por Curso
-    // TODO:Recuperar Pontos de Atividades conquistados por mês -> Geral e Filtro
     // TODO: Gráfico Radar <- Precisa de Banco Ainda
     // TODO: Meta de Estudo <- Próxima Sprint
 

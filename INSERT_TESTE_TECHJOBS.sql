@@ -98,4 +98,34 @@ VALUES (NULL, 9.0, 1, 2, '2024-09-20', 'Atividade 4 - Fundamentos de Algoritmos'
 INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
 VALUES (NULL, 9.0, 1, 2, '2024-09-20', 'Atividade 5 - Fundamentos de Estruturas de Dados');
 
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (8.5, 8.5, 1, 3, '2024-09-07', 'Atividade 1 - Estruturas de Dados');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (7.0, 7.0, 2, 1, '2024-09-06', 'Atividade 2 - Programação Orientada a Objetos');
+/*
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (NULL, 9.0, 3, 4, '2024-09-05', 'Atividade 3 - Redes de Computadores');
+*/
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (10.0, 10.0, 1, 2, '2024-09-08', 'Atividade 4 - Banco de Dados');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (NULL, 6.0, 1, 3, '2024-09-09', 'Atividade 5 - Engenharia de Software');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (2.0, 7.0, 2, 2, '2024-09-12', 'Atividade 6 - Sistemas Operacionais');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (5.0, 5.0, 2, 3, '2024-09-13', 'Atividade 7 - Desenvolvimento Web');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (3.0, 9.0, 1, 1, '2024-09-14', 'Atividade 8 - Segurança da Informação');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (2.0, 6.0, 1, 2, '2024-09-11', 'Atividade 9 - Inteligência Artificial');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (5.0, 10.0, 1, 3, '2024-09-10', 'Atividade 10 - Machine Learning');
+
 
