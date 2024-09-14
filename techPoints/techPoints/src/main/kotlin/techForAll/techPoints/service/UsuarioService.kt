@@ -86,11 +86,11 @@ class UsuarioService @Autowired constructor(
         usuarioRepository.delete(usuario)
     }
 
-    fun listarUsuarios(): List<Map<String, Any>> {
+    fun listarUsuarios(): List<Map<String, Any?>> {
         return usuarioRepository.findAll().map { usuario -> mapearUsuario(usuario) }
     }
 
-    fun buscarUsuarioPorId(idUsuario: Long): Map<String, Any> {
+    fun buscarUsuarioPorId(idUsuario: Long): Map<String, Any?> {
         val usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow { NoSuchElementException("Usuário não encontrado") }
         return mapearUsuario(usuario)
@@ -114,7 +114,7 @@ class UsuarioService @Autowired constructor(
         usuarioRepository.save(usuario)
     }
 
-    fun buscarUsuarioPorEmail(email: String): Map<String, Any> {
+    fun buscarUsuarioPorEmail(email: String): Map<String, Any?> {
         val usuario = usuarioRepository.findByEmail(email)
             ?: throw NoSuchElementException("Usuário não encontrado")
         return mapearUsuario(usuario)
@@ -185,7 +185,7 @@ class UsuarioService @Autowired constructor(
         }
     }
 
-    private fun mapearUsuario(usuario: Any): Map<String, Any> {
+    private fun mapearUsuario(usuario: Any): Map<String, Any?> {
         return when (usuario) {
             is Aluno -> mapOf(
                 "id" to usuario.id,
@@ -200,6 +200,9 @@ class UsuarioService @Autowired constructor(
                 "dataCriacao" to usuario.dataCriacao,
                 "escolaridade" to usuario.escolaridade,
                 "dataNascimento" to usuario.dtNasc,
+                "dataAtualizacao" to usuario.dataAtualizacao,
+                "deletado" to usuario.deletado,
+                "dataDeletado" to usuario.dataDeletado,
                 "endereco" to usuario.endereco
             )
             is Recrutador -> mapOf(
@@ -214,6 +217,9 @@ class UsuarioService @Autowired constructor(
                 "autenticado" to usuario.autenticado,
                 "cargoUsuario" to usuario.cargoUsuario,
                 "dataCriacao" to usuario.dataCriacao,
+                "dataAtualizacao" to usuario.dataAtualizacao,
+                "deletado" to usuario.deletado,
+                "dataDeletado" to usuario.dataDeletado,
                 "empresa" to mapOf(
                     "nome" to usuario.empresa.nomeEmpresa,
                     "cnpj" to usuario.empresa.cnpj,
