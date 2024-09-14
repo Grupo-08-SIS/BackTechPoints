@@ -66,6 +66,23 @@ class PontuacaoService @Autowired constructor(
         return mapOf("semanaPassada" to pontosSemanaPassada,"semanaAtual" to pontosSemanaAtual)
     }
 
+    fun recuperarKPIEntregas(idAluno: Long): Map<String, Int> {
+
+        val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno);
+
+        val atividadesEntregues: Int = alunoAgrupadoCurso.values
+            .flatten()
+            .count { true }
+
+        val atividadesTotais: Int = alunoAgrupadoCurso.values
+            .flatten()
+            .count()
+
+        val diferenca = atividadesTotais - atividadesEntregues
+
+        return mapOf("atividadesTotias" to atividadesTotais,"atividadesNaoEntregues" to diferenca)
+
+    }
 
 //    fun recuperarAlunoCursoEspecifico(idAluno: Long, idCurso: Long): PontuacaoComPontosDTO {
 //
@@ -93,7 +110,6 @@ class PontuacaoService @Autowired constructor(
     // ALUNO:
     // TODO: Atividades Entregues diferença de Atividades Totais
     // TODO: Soma total de Pontos do Curso
-    // TODO: Recuperar Pontos da Semana Atual e Semana Passada -> Geral e Filtro Curso
     // TODO: Recuperar Pontos de Atividades conquistados por dia e separados por Curso
     // TODO:Recuperar Pontos de Atividades conquistados por mês -> Geral e Filtro
     // TODO: Gráfico Radar <- Precisa de Banco Ainda

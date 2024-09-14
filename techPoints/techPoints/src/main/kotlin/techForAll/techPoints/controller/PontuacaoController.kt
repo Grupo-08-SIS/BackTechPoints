@@ -34,4 +34,10 @@ class PontuacaoController @Autowired constructor(
 
         return service.recuperarKPISemanaPassadaAndAtual(idAluno);
     }
+
+    @GetMapping("/kpi-entregas/{idAluno}")
+    fun recuperarKPIEntrega(@PathVariable idAluno: Long): Map<String, Int> {
+
+        return service.recuperarKPIEntregas(idAluno);
+    }
 }
