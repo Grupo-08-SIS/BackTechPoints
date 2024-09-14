@@ -105,7 +105,6 @@ class ResetSenhaService(
         }
     }
 
-
     private fun gerarResetCode(): String {
         return UUID.randomUUID().toString().substring(0, 8)
     }

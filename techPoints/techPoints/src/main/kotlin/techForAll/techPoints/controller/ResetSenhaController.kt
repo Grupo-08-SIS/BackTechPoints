@@ -101,5 +101,6 @@ class ResetSenhaController @Autowired constructor(
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+
 }
 
