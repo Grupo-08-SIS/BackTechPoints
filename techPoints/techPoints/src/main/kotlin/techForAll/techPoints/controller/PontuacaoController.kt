@@ -10,6 +10,7 @@ import techForAll.techPoints.domain.Curso
 import techForAll.techPoints.domain.Pontuacao
 import techForAll.techPoints.dtos.PontuacaoComPontosDTO
 import techForAll.techPoints.service.PontuacaoService
+import java.time.YearMonth
 
 @RestController
 @RequestMapping("/pontuacoes")
@@ -39,5 +40,11 @@ class PontuacaoController @Autowired constructor(
     fun recuperarKPIEntrega(@PathVariable idAluno: Long): Map<String, Int> {
 
         return service.recuperarKPIEntregas(idAluno);
+    }
+
+    @GetMapping("/pontos-mes/{idAluno}")
+    fun recuperarPontosPorMes(@PathVariable idAluno: Long): Map<Long, Map<YearMonth, Int>> {
+
+        return service.recuperarPontosConquistadosPorMes(idAluno);
     }
 }

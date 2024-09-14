@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`meta_estudo_semana` (
 DROP TABLE IF EXISTS `mydb`.`pontuacao` ;
 
 CREATE TABLE IF NOT EXISTS `mydb`.`pontuacao` (
-                                                  `nota_aluno` DOUBLE NOT NULL,
+                                                  `nota_aluno` DOUBLE NULL,
                                                   `nota_atividade` DOUBLE NOT NULL,
                                                   `aluno_id` BIGINT NULL DEFAULT NULL,
                                                   `curso_id` BIGINT NULL DEFAULT NULL,

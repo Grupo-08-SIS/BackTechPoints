@@ -16,7 +16,7 @@ class Pontuacao(
     @Column(nullable = false)
     var notaAtividade: Double,
 
-    var notaAluno: Double,
+    var notaAluno: Double?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
@@ -29,9 +29,12 @@ class Pontuacao(
 
     fun getPontosAtividade() : Int {
 
-        val porcento = (this.notaAluno / this.notaAtividade) * 100;
+        val notaAlunoCorrigida = this.notaAluno ?: 0.0
+
+        val porcento = (notaAlunoCorrigida/ this.notaAtividade) * 100;
 
         return when (porcento) {
+            0.0 -> 0
             in 1.0..10.0  ->  10
             in 11.0..20.0  ->  20
             in 21.0..30.0  ->  30

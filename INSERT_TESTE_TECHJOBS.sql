@@ -92,3 +92,10 @@ VALUES (9.2, 9.5, 1, 3, '2024-09-18', 'Atividade 2 - Banco de Dados Relacional')
 INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
 VALUES (8.8, 9.0, 1, 2, '2024-09-20', 'Atividade 3 - Introdução à Programação');
 
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (NULL, 9.0, 1, 2, '2024-09-20', 'Atividade 4 - Fundamentos de Algoritmos');
+
+INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
+VALUES (NULL, 9.0, 1, 2, '2024-09-20', 'Atividade 5 - Fundamentos de Estruturas de Dados');
+
+

@@ -8,6 +8,9 @@ import techForAll.techPoints.repository.AlunoRepository
 import techForAll.techPoints.repository.PontuacaoRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
+import java.util.function.Function
+import java.util.stream.Collectors
 
 
 @Service
@@ -26,13 +29,16 @@ class PontuacaoService @Autowired constructor(
         val aluno = alunoExiste(idAluno);
         val atividades = pontuacaoRepository.findByAlunoOrderByCurso(aluno);
         val atividadesPontos = atividades.map { pontuacao ->
+
+            val notaAlunoCorrigida = pontuacao.notaAluno ?: 0.0
             val pontos = pontuacao.getPontosAtividade();
+
             PontuacaoComPontosDTO(
                 id = pontuacao.id,
                 dataEntrega = pontuacao.dataEntrega,
                 nomeAtividade = pontuacao.nomeAtividade,
                 notaAtividade = pontuacao.notaAtividade,
-                notaAluno = pontuacao.notaAluno,
+                notaAluno = notaAlunoCorrigida ,
                 pontosAtividade = pontos,
                 cursoId = pontuacao.curso.id,
                 alunoId = pontuacao.aluno.id
@@ -72,7 +78,7 @@ class PontuacaoService @Autowired constructor(
 
         val atividadesEntregues: Int = alunoAgrupadoCurso.values
             .flatten()
-            .count { true }
+            .count { atividade -> atividade.notaAluno != 0.0 }
 
         val atividadesTotais: Int = alunoAgrupadoCurso.values
             .flatten()
@@ -80,10 +86,23 @@ class PontuacaoService @Autowired constructor(
 
         val diferenca = atividadesTotais - atividadesEntregues
 
-        return mapOf("atividadesTotias" to atividadesTotais,"atividadesNaoEntregues" to diferenca)
+        return mapOf("atividadesTotais" to atividadesTotais, "atividadesEntregues" to atividadesEntregues, "atividadesNaoEntregues" to diferenca)
 
     }
 
+    fun recuperarPontosConquistadosPorMes(idAluno: Long): Map<Long, Map<YearMonth, Int>> {
+
+        val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno);
+
+        return alunoAgrupadoCurso.mapValues { entry ->
+            entry.value.groupBy { atividade ->
+                YearMonth.from(LocalDate.parse(atividade.dataEntrega))
+            }.mapValues { (_, atividades) ->
+                atividades.sumOf { it.pontosAtividade }
+            }
+        }
+
+    }
 //    fun recuperarAlunoCursoEspecifico(idAluno: Long, idCurso: Long): PontuacaoComPontosDTO {
 //
 //        val aluno = alunoRepository.findById(idAluno);
@@ -108,7 +127,6 @@ class PontuacaoService @Autowired constructor(
 //    }
 
     // ALUNO:
-    // TODO: Atividades Entregues diferença de Atividades Totais
     // TODO: Soma total de Pontos do Curso
     // TODO: Recuperar Pontos de Atividades conquistados por dia e separados por Curso
     // TODO:Recuperar Pontos de Atividades conquistados por mês -> Geral e Filtro
