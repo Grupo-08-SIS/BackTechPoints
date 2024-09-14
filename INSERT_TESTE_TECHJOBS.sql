@@ -1,15 +1,14 @@
-
 INSERT INTO `mydb`.`usuario` (`autenticado`, `deletado`, `data_atualizacao`, `data_criacao`, `data_deletado`, `cpf`, `email`, `nome_usuario`, `primeiro_nome`, `senha`, `sobrenome`, `telefone`, `imagem_perfil`, `tipo_usuario`)
 VALUES (b'1', b'0', NOW(), NOW(), NULL, '12345678901', 'usuario1@example.com', 'usuario1', 'João', 'senha1', 'Silva', '11987654321', "https://images.pexels.com/photos/1310522/pexels-photo-1310522.jpeg?cs=srgb&dl=pexels-george-dolgikh-551816-1310522.jpg&fm=jpg", 1);
 
 INSERT INTO `mydb`.`usuario` (`autenticado`, `deletado`, `data_atualizacao`, `data_criacao`, `data_deletado`, `cpf`, `email`, `nome_usuario`, `primeiro_nome`, `senha`, `sobrenome`, `telefone`, `imagem_perfil`, `tipo_usuario`)
 VALUES (b'0', b'0', NOW(), NOW(), NULL, '23456789012', 'usuario2@example.com', 'usuario2', 'Maria', 'senha2', 'Souza', '11912345678', "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_HFQbK0SjP6lVSn7FUknx5MVcXFb5GOW0sA&s", 2);
 
-INSERT INTO `mydb`.`endereco` (`data_atualizacao`, `data_criacao`, `deletado`, `cep`, `cidade`, `estado`, `logradouro`, `numero`)
-VALUES (NOW(), NOW(), b'0', '12345-678', 'São Paulo', 'SP', 'Rua Exemplo', '100');
+INSERT INTO `mydb`.`endereco` (`data_atualizacao`, `data_criacao`, `cep`, `cidade`, `estado`, `rua`, `numero`)
+VALUES (NOW(), NOW(), '12345-678', 'São Paulo', 'SP', 'Rua Exemplo', '100');
 
-INSERT INTO `mydb`.`endereco` (`data_atualizacao`, `data_criacao`, `deletado`, `cep`, `cidade`, `estado`, `logradouro`, `numero`)
-VALUES (NOW(), NOW(), b'0', '87654-321', 'Rio de Janeiro', 'RJ', 'Avenida Teste', '200');
+INSERT INTO `mydb`.`endereco` (`data_atualizacao`, `data_criacao`, `cep`, `cidade`, `estado`, `rua`, `numero`)
+VALUES (NOW(), NOW(), '87654-321', 'Rio de Janeiro', 'RJ', 'Avenida Teste', '200');
 
 INSERT INTO `mydb`.`aluno` (`dt_nasc`, `endereco_id`, `id`, `descricao`, `escolaridade`)
 VALUES ('1990-01-01', 1, 1, 'Aluno do ensino médio', 'Ensino Médio Completo');
@@ -29,11 +28,11 @@ VALUES (1, 1);
 INSERT INTO `mydb`.`aluno_curso` (`aluno_id`, `curso_id`)
 VALUES (2, 2);
 
-INSERT INTO `mydb`.`dados_empresa` (`data_atualizacao`, `endereco_id`, `cnpj`, `nome_empresa`, `setor_industria`)
-VALUES (NOW(), 1, '12345678000101', 'Empresa Exemplo', 'Tecnologia');
+INSERT INTO `mydb`.`dados_empresa` (`data_atualizacao`, `data_criacao`, `endereco_id`, `telefone_contato`, `email_corporativo`, `cnpj`, `nome_empresa`, `setor_industria`)
+VALUES (NOW(), NOW(), 1, '11943005811', 'email@teste.com', '12345678000101', 'Empresa Exemplo', 'Tecnologia');
 
-INSERT INTO `mydb`.`dados_empresa` (`data_atualizacao`, `endereco_id`, `cnpj`, `nome_empresa`, `setor_industria`)
-VALUES (NOW(), 2, '23456789000102', 'Empresa Teste', 'Educação');
+INSERT INTO `mydb`.`dados_empresa` (`data_atualizacao`, `data_criacao`, `endereco_id`, `telefone_contato`, `email_corporativo`, `cnpj`, `nome_empresa`, `setor_industria`)
+VALUES (NOW(), NOW(), 2, '11943005811', 'email@teste2.com', '23456789000102', 'Empresa Teste', 'Educação');
 
 INSERT INTO `mydb`.`meta_estudo_semana` (`horas_total`, `aluno_id`)
 VALUES (10, 1);
