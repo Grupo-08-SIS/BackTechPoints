@@ -1,0 +1,16 @@
+SELECT * FROM PONTUACAO, Where aluno_id = ?, group by curso_id, order by curso_id.nome 
+
+Cálculo pontos -> Pegar (notaAtividade) e tirar uma base de pontos em cima disso a partir de (notaAluno), pontos são a diferença entre (notaAtividade) e (notaAluno), mas para poder ter marcos que fazem sentido, os marcos precisam ser dinâmicos baseados em (notaAtividade).
+
+10% -> 10 pontos
+20% -> 20 pontos
+...
+
+notaAtividade -> 100%
+notaAluno -> x
+
+notaAtividadex = notaAluno
+
+x = notaAluno / notaAtividade
+
+x = ?* 100 = x%
