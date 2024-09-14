@@ -89,6 +89,23 @@ class ResetSenhaService(
         }
     }
 
+    fun verificarToken(codigoRedefinicao: String, emailUser: String): ResponseEntity<Any> {
+        return try {
+            val redefinicaoSenha = redefinicaoSenhaRepository.findByCodigoRedefinicaoAndEmailRedefinicaoAndValidoAndDataExpiracaoAfter(
+                codigoRedefinicao, emailUser, true, LocalDateTime.now()
+            )
+
+            if (redefinicaoSenha != null) {
+                ResponseEntity.status(200).build()
+            } else {
+                ResponseEntity.status(400).body(mapOf("message" to "Token ou email inválido"))
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+        }
+    }
+
+
     private fun gerarResetCode(): String {
         return UUID.randomUUID().toString().substring(0, 8)
     }
