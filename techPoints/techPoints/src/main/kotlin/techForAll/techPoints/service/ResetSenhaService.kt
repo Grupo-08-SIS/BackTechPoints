@@ -1,97 +1,98 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.dominio.RedefinicaoSenha
-import techForAll.techPoints.repository.RedefinicaoSenhaRepository
-import techForAll.techPoints.repository.UsuarioRepository
+import techForAll.techPoints.domain.RedefinicaoSenha
 import org.springframework.http.ResponseEntity
-import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
+import techForAll.techPoints.repository.RedefinicaoSenhaRepository
+import techForAll.techPoints.repository.UsuarioRepository
 import java.time.LocalDateTime
 import java.util.*
 
+
 @Service
 class ResetSenhaService(
-    private val emailSender: JavaMailSender,
     private val redefinicaoSenhaRepository: RedefinicaoSenhaRepository,
-    private val usuarioRepository: UsuarioRepository
+    private val usuarioRepository: UsuarioRepository,
+    private val emailSender: JavaMailSender
 ) {
-
     fun senhaReset(emailUser: String): ResponseEntity<Any> {
         return try {
-            val trocasSenhaAtivas = redefinicaoSenhaRepository.findByEmailAndValidoAndDataExpiracaoAfter(emailUser, LocalDateTime.now())
+            val trocasSenhaAtivas = redefinicaoSenhaRepository.findByEmailRedefinicaoAndValidoAndDataExpiracaoAfter(
+                emailUser, true, LocalDateTime.now()
+            )
+
             val usuario = usuarioRepository.findByEmail(emailUser)
+
+            if (usuario == null) {
+                return ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
+            }
 
             if (trocasSenhaAtivas.isNotEmpty()) {
-                ResponseEntity.status(409).body(mapOf("message" to "Uma troca de senha já está em andamento para este usuário."))
-            } else {
-                val codigoRecuperacao = gerarResetCode()
-                val dataCriacao = LocalDateTime.now()
-                val dataExpiracao = calcularValidade()
-                val emailCadastrar: String = emailUser
+                return ResponseEntity.status(409)
+                    .body(mapOf("message" to "Uma troca de senha já está em andamento para este usuário."))
+            }
 
-                val redefinicaoSenha = RedefinicaoSenha(
-                    idRedefinicaoSenha = 0,
-                    codigoRedefinicao = codigoRecuperacao,
-                    dataCriacao = dataCriacao,
-                    dataExpiracao = dataExpiracao,
-                    valido = true,
-                    emailRedefinicao = emailCadastrar,
-                    fkUsuario = usuario
+            val redefinicaoSenha = RedefinicaoSenha(
+                codigoRedefinicao = gerarResetCode(),
+                dataCriacao = LocalDateTime.now(),
+                dataExpiracao = calcularValidade(),
+                valido = true,
+                emailRedefinicao = emailUser,
+                usuarioRedefinicao = usuario
+            )
+
+            redefinicaoSenhaRepository.save(redefinicaoSenha)
+
+            val emailEnviadoComSucesso = redefinicaoSenha.enviarEmailRecuperacaoSenha(emailSender)
+
+            return if (emailEnviadoComSucesso) {
+                val response = mapOf(
+                    "message" to "Solicitação de redefinição de senha enviada para o e-mail",
+                    "redefinicaoSenha" to mapOf(
+                        "codigoRedefinicao" to redefinicaoSenha.codigoRedefinicao,
+                        "dataCriacao" to redefinicaoSenha.dataCriacao,
+                        "dataExpiracao" to redefinicaoSenha.dataExpiracao,
+                        "emailUsuario" to redefinicaoSenha.usuarioRedefinicao.email
+                    )
                 )
-                redefinicaoSenhaRepository.save(redefinicaoSenha)// Usando o método toEntity()
-                enviarEmailRecuperacaoSenha(emailCadastrar, codigoRecuperacao)
-                ResponseEntity.status(200).build()
+                ResponseEntity.status(200).body(response)
+            } else {
+                ResponseEntity.status(500).body(mapOf("message" to "Erro ao enviar o e-mail"))
             }
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
         }
     }
 
-    fun enviarEmailRecuperacaoSenha(emailCadastrar: String, token: String) {
-        val message = SimpleMailMessage()
-        message.setTo(emailCadastrar)
-        message.setSubject("Recuperação de Senha")
-        message.setText("Olá!\n\nPara redefinir sua senha do Tech4Points, use o seguinte código: $token\n\nAtenciosamente,\nEquipe Tech4All")
+    fun atualizarSenha(emailUser: String, novaSenha: String, token: String): ResponseEntity<Any> {
+        return try {
+            val redefinicaoSenha = redefinicaoSenhaRepository.findByCodigoRedefinicaoAndEmailRedefinicaoAndValidoAndDataExpiracaoAfter(
+                token, emailUser, true, LocalDateTime.now()
+            )
 
-        emailSender.send(message)
+            if (redefinicaoSenha != null) {
+                val usuario = redefinicaoSenha.usuarioRedefinicao
+                usuario.senha = novaSenha
+
+                redefinicaoSenha.valido = false
+
+                redefinicaoSenhaRepository.save(redefinicaoSenha)
+                usuarioRepository.save(usuario)
+
+                ResponseEntity.status(200).body(mapOf("message" to "Senha atualizada com sucesso"))
+            } else {
+                ResponseEntity.status(400).body(mapOf("message" to "Token inválido ou expirado"))
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+        }
     }
 
-    fun gerarResetCode(): String {
+    private fun gerarResetCode(): String {
         return UUID.randomUUID().toString().substring(0, 8)
     }
-
-    fun calcularValidade(): LocalDateTime {
-        return LocalDateTime.now().plusHours(24)
+    private fun calcularValidade(): LocalDateTime {
+        return LocalDateTime.now().plusMinutes(30)
     }
-
-    fun verificarToken(codigoRedefinicao: String, emailUser: String): ResponseEntity<Any> {
-        return try {
-            if (redefinicaoSenhaRepository.existsByTokenAndEmailAndValidoAndDataExpiracaoAfter(codigoRedefinicao, emailUser)) {
-                ResponseEntity.status(200).build()
-            } else {
-                ResponseEntity.status(400).body(mapOf("message" to "Token ou email inválido"))
-            }
-        } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
-        }
-    }
-
-    fun atualizarSenha(emailUser: String, novaSenha: String): ResponseEntity<Any> {
-        return try {
-            val usuario = usuarioRepository.findByEmail(emailUser)
-
-            if (usuario != null) {
-                usuario.senha = novaSenha
-                usuario.dataAtualizacao = LocalDateTime.now()
-                usuarioRepository.save(usuario)
-                ResponseEntity.status(200).build()
-            } else {
-                ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
-            }
-        } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
-        }
-    }
-
 }

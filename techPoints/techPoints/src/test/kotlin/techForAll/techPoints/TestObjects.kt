@@ -1,5 +1,8 @@
 package techForAll.techPoints
 
+import techForAll.techPoints.domain.DadosEmpresa
+import techForAll.techPoints.domain.Endereco
+import techForAll.techPoints.domain.Usuario
 import techForAll.techPoints.dominio.*
 import techForAll.techPoints.dto.DadoEmpresaDTO
 import techForAll.techPoints.dto.DadosEmpresaDTOAtt

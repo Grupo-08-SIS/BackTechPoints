@@ -3,7 +3,7 @@ package techForAll.techPoints.service
 import techForAll.techPoints.TestObjects.dadoEmpresaDTOTeste1
 import techForAll.techPoints.TestObjects.empresaTeste1
 import techForAll.techPoints.TestObjects.usuarioTeste1
-import techForAll.techPoints.dominio.DadosEmpresa
+import techForAll.techPoints.domain.DadosEmpresa
 import techForAll.techPoints.dto.DadosEmpresaDTOAtt
 import techForAll.techPoints.repository.DadosEmpresaRepository
 import techForAll.techPoints.repository.UsuarioRepository

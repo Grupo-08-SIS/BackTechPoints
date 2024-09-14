@@ -1,7 +1,6 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.dominio.Endereco
-import techForAll.techPoints.dto.EnderecoDTO
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.repository.EnderecoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -25,21 +24,29 @@ class EnderecoService @Autowired constructor(
         return enderecos
     }
 
-    fun buscarEnderecoPorId(idEndereco: Int): Endereco {
+    fun buscarEnderecoPorId(idEndereco: Long): Endereco {
         return repository.findById(idEndereco)
             .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
     }
 
-    fun atualizarEndereco(idEndereco: Int, enderecoDTO: EnderecoDTO): Endereco {
+    fun atualizarEndereco(idEndereco: Long, enderecoAtualizado: Map<String, Any>): Endereco {
         val enderecoExistente = repository.findById(idEndereco)
             .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
 
-        enderecoDTO.cep?.let { enderecoExistente.cep = it }
-        enderecoDTO.cidade?.let { enderecoExistente.cidade = it }
-        enderecoDTO.estado?.let { enderecoExistente.estado = it }
-        enderecoDTO.rua?.let { enderecoExistente.rua = it }
+        enderecoAtualizado["cep"]?.let { enderecoExistente.cep = it as String }
+        enderecoAtualizado["rua"]?.let { enderecoExistente.rua = it as String }
+        enderecoAtualizado["numero"]?.let { enderecoExistente.numero = it as String }
+        enderecoAtualizado["cidade"]?.let { enderecoExistente.cidade = it as String }
+        enderecoAtualizado["estado"]?.let { enderecoExistente.estado = it as String }
         enderecoExistente.dataAtualizacao = LocalDateTime.now()
 
         return repository.save(enderecoExistente)
+    }
+
+    fun deletarEndereco(idEndereco: Long) {
+        val enderecoExistente = repository.findById(idEndereco)
+            .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
+
+        repository.delete(enderecoExistente)
     }
 }

@@ -1,59 +1,77 @@
 package techForAll.techPoints.service
-
-import techForAll.techPoints.dominio.Endereco
-import techForAll.techPoints.dominio.TipoUsuario
-import techForAll.techPoints.dominio.Usuario
-import techForAll.techPoints.dto.UsuarioDTOInput
-import techForAll.techPoints.dto.UsuarioDTOOutput
-import techForAll.techPoints.repository.EnderecoRepository
-import techForAll.techPoints.repository.TipoUsuarioRepository
-import techForAll.techPoints.repository.UsuarioRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import techForAll.techPoints.domain.Aluno
+import techForAll.techPoints.domain.Recrutador
+import techForAll.techPoints.dtos.UsuarioInput
+import techForAll.techPoints.repository.*
+import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.NoSuchElementException
+
 
 @Service
 class UsuarioService @Autowired constructor(
-        private val usuarioRepository: UsuarioRepository,
-        private val enderecoRepository: EnderecoRepository,
-        private val tipoUsuarioRepository: TipoUsuarioRepository,
+    private val alunoRepository: AlunoRepository,
+    private val recrutadorRepository: RecrutadorRepository,
+    private val usuarioRepository: UsuarioRepository,
+    private val dadosEmpresaRepository: DadosEmpresaRepository,
+    private val enderecoRepository: EnderecoRepository
 
-        ) {
+    ) {
 
-    fun cadastrarUsuario(usuarioDTO: UsuarioDTOInput): UsuarioDTOOutput {
-        if (usuarioRepository.existsByEmail(usuarioDTO.email)) {
-            throw IllegalArgumentException("Email já cadastrado")
+    fun cadastrarUsuario(request: UsuarioInput): Any {
+        when (request.tipoUsuario) {
+            1 -> {
+                val endereco = enderecoRepository.findById(request.enderecoId!!)
+                    .orElseThrow { IllegalArgumentException("Endereço não encontrado") }
+                val aluno = Aluno(
+                    nomeUsuario = request.nomeUsuario,
+                    cpf = request.cpf,
+                    senha = request.senha,
+                    primeiroNome = request.primeiroNome,
+                    sobrenome = request.sobrenome,
+                    email = request.email,
+                    telefone = request.telefone,
+                    imagemPerfil = null,
+                    dtNasc = request.dtNasc!!,
+                    escolaridade = request.escolaridade!!,
+                    autenticado = request.autenticado,
+                    endereco = endereco
+                )
+                alunoRepository.save(aluno.criarUsuario(endereco, null) as Aluno)
+            }
+
+            2 -> {
+                val empresa = dadosEmpresaRepository.findByCnpj(request.cnpj!!)
+                    .orElseThrow { IllegalArgumentException("Empresa não encontrada com o CNPJ informado") }
+                val recrutador = Recrutador(
+                    favoritos = emptyList(),
+                    interessados = emptyList(),
+                    empresa = empresa,
+                    cargoUsuario = request.cargoUsuario!!,
+                    nomeUsuario = request.nomeUsuario,
+                    cpf = request.cpf,
+                    senha = request.senha,
+                    primeiroNome = request.primeiroNome,
+                    sobrenome = request.sobrenome,
+                    email = request.email,
+                    telefone = request.telefone,
+                    imagemPerfil = null,
+                    autenticado = request.autenticado
+                )
+                recrutadorRepository.save(recrutador.criarUsuario(null, empresa) as Recrutador)
+            }
+
+            else -> throw IllegalArgumentException("Tipo de usuário inválido")
         }
-        val tipo: TipoUsuario = tipoUsuarioRepository.findById(usuarioDTO.idTipo)
-                .orElseThrow { IllegalArgumentException("Tipo não encontrado com o ID: ${usuarioDTO.idTipo}") }
 
-        val endereco: Endereco? = enderecoRepository.findById(usuarioDTO.idEndereco)
-                .orElseThrow { IllegalArgumentException("Endereço não encontrado com o ID: ${usuarioDTO.idEndereco}") }
-
-        val usuario = Usuario(
-                idUsuario = usuarioDTO.idUsuario ?: 0, //autoincrementa no banco de forma correta
-                nomeUsuario = usuarioDTO.nomeUsuario,
-                cpf = usuarioDTO.cpf!!,
-                senha = usuarioDTO.senha,
-                primeiroNome = usuarioDTO.primeiroNome,
-                sobrenome = usuarioDTO.sobrenome,
-                email = usuarioDTO.email,
-                autenticado = usuarioDTO.autenticado,
-                dataDeletado = usuarioDTO.dataDeletado,
-                imagemPerfil = null,
-                endereco = endereco,
-                tipoUsuario = tipo,
-                telefone = usuarioDTO.telefone
-        )
-
-        val usuarioSalvo = usuarioRepository.save(usuario)
-        return usuarioParaDTOOutput(usuarioSalvo)
+        val usuario = usuarioRepository.findByEmail(request.email)
+        return mapearUsuario(usuario)
     }
 
     fun softDeleteUsuario(email: String, senha: String) {
         val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
-                ?: throw IllegalArgumentException("Credenciais inválidas")
+            ?: throw IllegalArgumentException("Credenciais inválidas")
 
         usuario.deletado = true
         usuario.dataDeletado = LocalDateTime.now()
@@ -62,120 +80,159 @@ class UsuarioService @Autowired constructor(
     }
 
     fun hardDeleteUsuario(email: String, senha: String) {
-        val usuario: Usuario = usuarioRepository.findByEmailAndSenha(email, senha)
-        if (usuario != null) {
-            usuarioRepository.deletar(usuario.idUsuario)
-        } else {
-            throw NoSuchElementException("Usuário não encontrado")
-        }
+        val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
+            ?: throw NoSuchElementException("Usuário não encontrado")
+
+        usuarioRepository.delete(usuario)
     }
 
-    fun listarUsuarios(): List<UsuarioDTOOutput> {
-        return usuarioRepository.findAll().map { usuarioParaDTOOutput(it) }
+    fun listarUsuarios(): List<Map<String, Any?>> {
+        return usuarioRepository.findAll().map { usuario -> mapearUsuario(usuario) }
     }
 
-    fun buscarUsuarioPorId(idUsuario: Int): UsuarioDTOOutput {
+    fun buscarUsuarioPorId(idUsuario: Long): Map<String, Any?> {
         val usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
-        return usuarioParaDTOOutput(usuario)
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+        return mapearUsuario(usuario)
     }
 
     fun loginUsuario(email: String, senha: String): Any {
         val usuario = usuarioRepository.findByEmail(email)
+            ?: throw IllegalArgumentException("Usuário não encontrado")
 
-        if (senha != usuario.senha) {
-            throw IllegalArgumentException("Credenciais inválidas")
-        }
-
-        usuario.autenticado = true
+        usuario.login(senha)
         usuarioRepository.save(usuario)
 
-        return usuarioParaDTOOutput(usuario)
+        return mapearUsuario(usuario)
     }
 
-    fun logoffUsuario(idUsuario: Int) {
+    fun logoffUsuario(idUsuario: Long) {
         val usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
-        usuario.autenticado = false
+        usuario.logoff()
         usuarioRepository.save(usuario)
-
     }
 
-    fun buscarUsuarioPorEmail(email: String): UsuarioDTOOutput {
+    fun buscarUsuarioPorEmail(email: String): Map<String, Any?> {
         val usuario = usuarioRepository.findByEmail(email)
-        if (usuario == null) {
-            throw NoSuchElementException("Usuário não encontrado") //nao consigo disparar isso, sempre da erro 500
-        }
-        return usuarioParaDTOOutput(usuario)
-    }
-
-    fun atualizarUsuario(idUsuario: Int, atualizacao: Map<String, Any>): UsuarioDTOOutput {
-        val usuarioExistente = usuarioRepository.findById(idUsuario)
-                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
-
-        atualizacao["nomeUsuario"]?.let { usuarioExistente.nomeUsuario = it as String }
-        atualizacao["cpf"]?.let { usuarioExistente.cpf = it as String }
-        atualizacao["primeiroNome"]?.let { usuarioExistente.primeiroNome = it as String }
-        atualizacao["sobrenome"]?.let { usuarioExistente.sobrenome = it as String }
-        atualizacao["email"]?.let { usuarioExistente.email = it as String }
-
-        usuarioExistente.dataAtualizacao = LocalDateTime.now()
-        val usuarioAtualizado = usuarioRepository.save(usuarioExistente)
-        return usuarioParaDTOOutput(usuarioAtualizado)
+            ?: throw NoSuchElementException("Usuário não encontrado")
+        return mapearUsuario(usuario)
     }
 
 
-    fun atualizarImagemUsuario(idUsuario: Int, novaFoto: ByteArray) {
+    fun atualizarUsuario(idUsuario: Long, atualizacao: Map<String, Any>): Any {
+            val usuarioExistente = usuarioRepository.findById(idUsuario)
+                .orElseThrow { NoSuchElementException("Usuário não encontrado com o ID: $idUsuario") }
+
+            atualizacao["nomeUsuario"]?.let { usuarioExistente.nomeUsuario = it as String }
+            atualizacao["cpf"]?.let { usuarioExistente.cpf = it as String }
+            atualizacao["primeiroNome"]?.let { usuarioExistente.primeiroNome = it as String }
+            atualizacao["sobrenome"]?.let { usuarioExistente.sobrenome = it as String }
+            atualizacao["email"]?.let { usuarioExistente.email = it as String }
+            atualizacao["telefone"]?.let { usuarioExistente.telefone = it as String }
+            usuarioExistente.dataAtualizacao = LocalDateTime.now()
+
+            if (usuarioExistente is Aluno) {
+                atualizacao["escolaridade"]?.let { usuarioExistente.escolaridade = it as String }
+                atualizacao["dataNascimento"]?.let { usuarioExistente.dtNasc = it as LocalDate }
+                atualizacao["descricao"]?.let { usuarioExistente.descricao = it as String }
+            }
+
+            if (usuarioExistente is Recrutador) {
+                atualizacao["cargoUsuario"]?.let { usuarioExistente.cargoUsuario = it as String }
+            }
+
+
+
+        usuarioRepository.save(usuarioExistente)
+
+        return mapearUsuario(usuarioExistente)
+    }
+
+    fun atualizarImagemUsuario(idUsuario: Long, novaFoto: ByteArray) {
         if (novaFoto.isEmpty()) {
-            throw IllegalArgumentException("Requisição inválida")
+            throw IllegalArgumentException("Requisição inválida: imagem vazia")
         }
 
         val usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+
+        if (usuario == null) {
+            throw NoSuchElementException("Usuário não encontrado para o ID: $idUsuario")
+        }
 
         usuario.imagemPerfil = novaFoto
         usuarioRepository.save(usuario)
     }
 
-    fun obterImagemPerfil(idUsuario: Int): ByteArray {
+
+    fun obterImagemPerfil(idUsuario: Long): ByteArray {
         val usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow { NoSuchElementException("Usuário não encontrado") }
+            .orElseThrow { NoSuchElementException("Usuário não encontrado") }
 
         return usuario.imagemPerfil ?: throw NoSuchElementException("Imagem de perfil não encontrada")
-    }
-
-
-    private fun usuarioParaDTOOutput(usuario: Usuario): UsuarioDTOOutput {
-        return UsuarioDTOOutput(
-                idUsuario = usuario.idUsuario,
-                nomeUsuario = usuario.nomeUsuario,
-                cpf = usuario.cpf,
-                senha = usuario.senha,
-                primeiroNome = usuario.primeiroNome,
-                sobrenome = usuario.sobrenome,
-                email = usuario.email,
-                autenticado = usuario.autenticado,
-                dataCriacao = usuario.dataCriacao,
-                deletado = usuario.deletado,
-                dataDeletado = usuario.dataDeletado,
-                dataAtualizacao = usuario.dataAtualizacao,
-                endereco = usuario.endereco!!,
-                tipoUsuario = usuario.tipoUsuario!!.idTipoUsuario
-        )
     }
 
     fun reativarUsuario(email: String, senha: String) {
         val usuario = usuarioRepository.findByEmailAndSenha(email, senha)
             ?: throw NoSuchElementException("Usuário não encontrado")
-
-        if (usuario.deletado == true) {
-            usuario.deletado = false
+        try {
+            usuario.reativar()
             usuarioRepository.save(usuario)
-        } else {
-            throw IllegalArgumentException("Usuário já está ativo")
+        } catch (e: IllegalArgumentException) {
+            throw e
         }
     }
 
+    private fun mapearUsuario(usuario: Any): Map<String, Any?> {
+        return when (usuario) {
+            is Aluno -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Aluno",
+                "autenticado" to usuario.autenticado,
+                "dataCriacao" to usuario.dataCriacao,
+                "escolaridade" to usuario.escolaridade,
+                "dataNascimento" to usuario.dtNasc,
+                "dataAtualizacao" to usuario.dataAtualizacao,
+                "deletado" to usuario.deletado,
+                "dataDeletado" to usuario.dataDeletado,
+                "endereco" to usuario.endereco
+            )
+            is Recrutador -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Recrutador",
+                "autenticado" to usuario.autenticado,
+                "cargoUsuario" to usuario.cargoUsuario,
+                "dataCriacao" to usuario.dataCriacao,
+                "dataAtualizacao" to usuario.dataAtualizacao,
+                "deletado" to usuario.deletado,
+                "dataDeletado" to usuario.dataDeletado,
+                "empresa" to mapOf(
+                    "nome" to usuario.empresa.nomeEmpresa,
+                    "cnpj" to usuario.empresa.cnpj,
+                    "setorIndustria" to usuario.empresa.setorIndustria,
+                    "telefoneContato" to usuario.empresa.telefoneContato,
+                    "emailCorporativo" to usuario.empresa.emailCorporativo,
+                    "endereco" to usuario.empresa.endereco,
+                    "dataCriacao" to usuario.empresa.dataCriacao,
+                    "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
+                )
+            )
+            else -> throw IllegalStateException("Tipo de usuário desconhecido")
+        }
+    }
 
 }

@@ -1,7 +1,6 @@
 package techForAll.techPoints.controller
 
-import techForAll.techPoints.dominio.Endereco
-import techForAll.techPoints.dto.EnderecoDTO
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.service.EnderecoService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -35,7 +34,7 @@ class EnderecoController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -57,7 +56,7 @@ class EnderecoController @Autowired constructor(
                 ResponseEntity.status(204).build()
             }
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -70,14 +69,14 @@ class EnderecoController @Autowired constructor(
         ]
     )
     @GetMapping("/buscar/{idEndereco}")
-    fun buscar(@PathVariable idEndereco: Int): ResponseEntity<Any> {
+    fun buscar(@PathVariable idEndereco: Long): ResponseEntity<Any> {
         return try {
             val enderecoEncontrado = service.buscarEnderecoPorId(idEndereco)
             ResponseEntity.status(200).body(enderecoEncontrado)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -90,14 +89,34 @@ class EnderecoController @Autowired constructor(
         ]
     )
     @PatchMapping("/atualizar/{idEndereco}")
-    fun patch(@PathVariable idEndereco: Int, @RequestBody enderecoDTO: EnderecoDTO): ResponseEntity<Any> {
+    fun patch(@PathVariable idEndereco: Long, @RequestBody enderecoAtualizado: Map<String, Any>): ResponseEntity<Any> {
         return try {
-            val enderecoAtualizado = service.atualizarEndereco(idEndereco, enderecoDTO)
-            ResponseEntity.status(200).body(enderecoAtualizado)
+            val endereco = service.atualizarEndereco(idEndereco, enderecoAtualizado)
+            ResponseEntity.status(200).body(endereco)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
+
+    @Operation(summary = "Deletar endereço", description = "Deleta um endereço pelo ID")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "204", description = "Endereço deletado com sucesso"),
+            ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @DeleteMapping("/deletar/{idEndereco}")
+    fun deletarEndereco(@PathVariable idEndereco: Long): ResponseEntity<Any> {
+        return try {
+            service.deletarEndereco(idEndereco)
+            ResponseEntity.status(204).build()
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 }

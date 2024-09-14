@@ -1,7 +1,6 @@
 package techForAll.techPoints.controller
 
-import techForAll.techPoints.dto.UsuarioDTOInput
-import techForAll.techPoints.service.UsuarioService
+
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -12,8 +11,10 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import techForAll.techPoints.dtos.UsuarioInput
+import techForAll.techPoints.service.UsuarioService
 
 @RestController
 @RequestMapping("/usuarios")
@@ -31,10 +32,11 @@ class UsuarioController @Autowired constructor(
         ]
     )
     @PostMapping("/cadastro")
-    fun post(@RequestBody @Valid usuarioDTOInput: UsuarioDTOInput): ResponseEntity<Any> {
+    fun cadastrarUsuario(@RequestBody request: UsuarioInput): ResponseEntity<Any> {
         return try {
-            val usuarioDTOOutput = usuarioService.cadastrarUsuario(usuarioDTOInput)
-            ResponseEntity.status(201).body(usuarioDTOOutput)
+            val usuario = usuarioService.cadastrarUsuario(request)
+
+            ResponseEntity.status(201).body(usuario)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
@@ -68,7 +70,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -99,7 +101,7 @@ class UsuarioController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -114,14 +116,14 @@ class UsuarioController @Autowired constructor(
     @GetMapping("/listar")
     fun listar(): ResponseEntity<Any> {
         return try {
-            val usuariosDTO = usuarioService.listarUsuarios()
-            if (usuariosDTO.isNotEmpty()) {
-                ResponseEntity.status(200).body(usuariosDTO)
+            val usuarios = usuarioService.listarUsuarios()
+            if (usuarios.isNotEmpty()) {
+                ResponseEntity.status(200).body(usuarios)
             } else {
                 ResponseEntity.status(204).build()
             }
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -134,14 +136,14 @@ class UsuarioController @Autowired constructor(
         ]
     )
     @GetMapping("/buscar/{idUsuario}")
-    fun buscar(@PathVariable idUsuario: Int): ResponseEntity<Any> {
+    fun buscar(@PathVariable idUsuario: Long): ResponseEntity<Any> {
         return try {
-            val usuarioDTO = usuarioService.buscarUsuarioPorId(idUsuario)
-            ResponseEntity.status(200).body(usuarioDTO)
+            val usuarioSemSenha = usuarioService.buscarUsuarioPorId(idUsuario)
+            ResponseEntity.status(200).body(usuarioSemSenha)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -159,20 +161,20 @@ class UsuarioController @Autowired constructor(
         val email = loginData["email"]
         val senha = loginData["senha"]
 
+        if (email.isNullOrBlank() || senha.isNullOrBlank()) {
+            return ResponseEntity.status(400).body(mapOf("message" to "Email e senha são obrigatórios"))
+        }
+
         return try {
-            if (email != null && senha != null) {
-                val user = usuarioService.loginUsuario(email, senha)
-                ResponseEntity.status(200).body(user)
-            } else {
-                ResponseEntity.status(401).build()
-            }
+            val usuario = usuarioService.loginUsuario(email, senha)
+
+            ResponseEntity.status(200).body(usuario)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(401).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
-
 
     @Operation(summary = "Logoff de usuário", description = "Desautentica um usuário pelo ID")
     @ApiResponses(
@@ -183,19 +185,18 @@ class UsuarioController @Autowired constructor(
         ]
     )
     @PostMapping("/logoff")
-    fun logoff(@RequestParam idUsuario: Int): ResponseEntity<Any> {
+    fun logoff(@RequestParam idUsuario: Long): ResponseEntity<Any> {
         return try {
             usuarioService.logoffUsuario(idUsuario)
             ResponseEntity.status(200).build()
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
-
-    @Operation(summary = "Buscar usuário pelo email", description = "Retorna o usuário correspondente ao email fornecido")
+    @Operation(summary = "Buscar usuário pelo e-mail", description = "Retorna o usuário correspondente ao e-mail fornecido")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Usuário encontrado com sucesso"),
@@ -203,15 +204,15 @@ class UsuarioController @Autowired constructor(
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
-    @GetMapping("/buscarPorEmail")
-    fun buscarPorEmail(@RequestParam email: String): ResponseEntity<Any> {
+    @GetMapping("/buscar/email/{email}")
+    fun buscarPorEmail(@PathVariable email: String): ResponseEntity<Any> {
         return try {
-            val usuarioDTO = usuarioService.buscarUsuarioPorEmail(email)
-            ResponseEntity.status(200).body(usuarioDTO)
+            val usuarioSemSenha = usuarioService.buscarUsuarioPorEmail(email)
+            ResponseEntity.status(200).body(usuarioSemSenha)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -225,16 +226,18 @@ class UsuarioController @Autowired constructor(
     )
     @PatchMapping("/atualizar/{idUsuario}")
     fun patchUsuario(
-        @PathVariable idUsuario: Int,
+        @PathVariable idUsuario: Long,
         @RequestBody atualizacao: Map<String, Any>
     ): ResponseEntity<Any> {
         return try {
-            val usuarioDTO = usuarioService.atualizarUsuario(idUsuario, atualizacao)
-            ResponseEntity.status(200).body(usuarioDTO)
+
+            val usuarioAtualizado = usuarioService.atualizarUsuario(idUsuario, atualizacao)
+
+            ResponseEntity.status(200).body(usuarioAtualizado)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -249,25 +252,35 @@ class UsuarioController @Autowired constructor(
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
-    @PatchMapping(value = ["/atualizar-imagem/{idUsuario}"],
-        consumes = ["image/jpeg", "image/png", "image/jpg"])
-    fun patchImagem(
-        @PathVariable idUsuario: Int,
-        @RequestBody novaFoto: ByteArray
+    @PatchMapping("/atualizar-imagem/{idUsuario}", consumes = ["multipart/form-data"])
+    fun atualizarImagemPerfil(
+        @PathVariable idUsuario: Long,
+        @RequestPart("imagemPerfil") novaFoto: MultipartFile
     ): ResponseEntity<Any> {
         return try {
-            usuarioService.atualizarImagemUsuario(idUsuario, novaFoto)
+            if (novaFoto.isEmpty) {
+                return ResponseEntity.status(400).body(mapOf("message" to "Imagem não pode estar vazia"))
+            }
+
+            if (novaFoto.contentType == null || !novaFoto.contentType!!.startsWith("image/")) {
+                return ResponseEntity.status(415).body(mapOf("message" to "Tipo de mídia não suportado"))
+            }
+
+            usuarioService.atualizarImagemUsuario(idUsuario, novaFoto.bytes)
+
             ResponseEntity.status(204).build()
         } catch (e: IllegalArgumentException) {
-            ResponseEntity.status(400).body(mapOf("message" to "Requisição inválida"))
+            e.printStackTrace()
+            ResponseEntity.status(400).body(mapOf("message" to "Requisição inválida: ${e.message}"))
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).body(mapOf("message" to "ID do usuário não encontrado"))
-        } catch (e: HttpMediaTypeNotSupportedException) {
-            ResponseEntity.status(415).body(mapOf("message" to "Tipo de mídia não suportado"))
+            e.printStackTrace()
+            ResponseEntity.status(404).body(mapOf("message" to "ID do usuário não encontrado: ${e.message}"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            e.printStackTrace()
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+
 
     @Operation(summary = "Obter imagem de perfil do usuário", description = "Retorna a imagem de perfil do usuário pelo ID")
     @ApiResponses(
@@ -277,52 +290,50 @@ class UsuarioController @Autowired constructor(
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
-    @GetMapping("/imagem/{idUsuario}", produces = ["image/*"])
-    fun getImagemPerfil(@PathVariable idUsuario: Int): ResponseEntity<Any> {
+    @GetMapping("/imagem/{idUsuario}", produces = ["image/jpeg", "image/png", "image/jpg"])
+    fun getImagemPerfil(@PathVariable idUsuario: Long): ResponseEntity<Any> {
         return try {
             val imagemPerfil = usuarioService.obterImagemPerfil(idUsuario)
             val byteArrayResource = ByteArrayResource(imagemPerfil)
-            ResponseEntity.ok()
+            ResponseEntity.status(200)
                 .contentType(MediaType.IMAGE_JPEG)
                 .contentLength(imagemPerfil.size.toLong())
                 .body(byteArrayResource)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(204).build()
+            ResponseEntity.status(204).body(mapOf("message" to "Usuário não encontrado ou imagem de perfil não encontrada"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).build()
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
-    @Operation(summary = "Reativação de um usuário", description = "Marca o usuário como ativo, reativando-o no sistema")
+    @Operation(summary = "Reativar usuário", description = "Reativa o usuário correspondente ao e-mail e senha fornecidos")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Usuário reativado com sucesso"),
-            ApiResponse(responseCode = "400", description = "Credenciais inválidas"),
             ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+            ApiResponse(responseCode = "400", description = "Usuário já está ativo"),
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
     )
     @PostMapping("/reativar")
-    fun reativarUsuario(@RequestBody @Valid requestBody: Map<String, String>): ResponseEntity<Any> {
-        val email = requestBody["email"]
-        val senha = requestBody["senha"]
+    fun reativarUsuario(@RequestBody credenciais: Map<String, String>): ResponseEntity<Any> {
+        val email = credenciais["email"]
+        val senha = credenciais["senha"]
 
         return try {
             if (email != null && senha != null) {
                 usuarioService.reativarUsuario(email, senha)
-                ResponseEntity.status(200).build()
+                ResponseEntity.status(200).body(mapOf("message" to "Usuário reativado com sucesso"))
             } else {
-                ResponseEntity.status(400).build()
+                ResponseEntity.status(400).body(mapOf("message" to "Dados de login inválidos"))
             }
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
-        } catch (e: NoSuchElementException) {
-            ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
-
-
 
 }

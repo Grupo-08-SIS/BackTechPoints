@@ -1,7 +1,7 @@
 
     package techForAll.techPoints.service
 
-    import techForAll.techPoints.dominio.Usuario
+    import techForAll.techPoints.domain.Usuario
     import techForAll.techPoints.repository.RedefinicaoSenhaRepository
     import techForAll.techPoints.repository.UsuarioRepository
     import org.junit.jupiter.api.Assertions.*
