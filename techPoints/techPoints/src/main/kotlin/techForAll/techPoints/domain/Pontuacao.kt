@@ -1,7 +1,6 @@
 package techForAll.techPoints.domain
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 @Entity
 class Pontuacao(
@@ -17,7 +16,7 @@ class Pontuacao(
     @Column(nullable = false)
     var notaAtividade: Double,
 
-    var notaAluno: Double,
+    var notaAluno: Double?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
@@ -30,9 +29,18 @@ class Pontuacao(
 
     fun getPontosAtividade() : Int {
 
+<<<<<<< HEAD
+        val notaAlunoCorrigida = this.notaAluno ?: 0.0
+
+        val porcento = (notaAlunoCorrigida/ this.notaAtividade) * 100;
+
+        return when (porcento) {
+            0.0 -> 0
+=======
         val porcento = (this.notaAluno / this.notaAtividade) * 100;
 
         return when (porcento) {
+>>>>>>> origin/main
             in 1.0..10.0  ->  10
             in 11.0..20.0  ->  20
             in 21.0..30.0  ->  30
@@ -44,6 +52,10 @@ class Pontuacao(
             in 81.0..90.0  ->  90
             else -> {100}
         }
+<<<<<<< HEAD
+}
+=======
     }
+>>>>>>> origin/main
     // Funções adicionais, como cálculo de pontos, podem ser adicionadas aqui
 }

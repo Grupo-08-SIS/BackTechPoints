@@ -8,7 +8,11 @@ import techForAll.techPoints.repository.AlunoRepository
 import techForAll.techPoints.repository.PontuacaoRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
+<<<<<<< HEAD
+import java.time.YearMonth
+=======
 
+>>>>>>> origin/main
 
 @Service
 class PontuacaoService @Autowired constructor(
@@ -26,16 +30,29 @@ class PontuacaoService @Autowired constructor(
         val aluno = alunoExiste(idAluno);
         val atividades = pontuacaoRepository.findByAlunoOrderByCurso(aluno);
         val atividadesPontos = atividades.map { pontuacao ->
+<<<<<<< HEAD
+
+            val notaAlunoCorrigida = pontuacao.notaAluno ?: 0.0
             val pontos = pontuacao.getPontosAtividade();
+
+=======
+            val pontos = pontuacao.getPontosAtividade();
+>>>>>>> origin/main
             PontuacaoComPontosDTO(
                 id = pontuacao.id,
                 dataEntrega = pontuacao.dataEntrega,
                 nomeAtividade = pontuacao.nomeAtividade,
                 notaAtividade = pontuacao.notaAtividade,
+<<<<<<< HEAD
+                notaAluno = notaAlunoCorrigida ,
+                pontosAtividade = pontos,
+                cursoId = pontuacao.curso.id,
+=======
                 notaAluno = pontuacao.notaAluno,
                 pontosAtividade = pontos,
                 cursoId = pontuacao.curso.id,
                 cursoNome = pontuacao.curso.nome,
+>>>>>>> origin/main
                 alunoId = pontuacao.aluno.id
             )
         }
@@ -60,7 +77,11 @@ class PontuacaoService @Autowired constructor(
         val pontosSemanaPassada = alunoAgrupadoCurso.mapValues { entrada ->
             entrada.value.filter { atividade ->
                 val dataEntrega = LocalDate.parse(atividade.dataEntrega)
+<<<<<<< HEAD
+                dataEntrega.isAfter(inicioSemanaPassada) && dataEntrega.isBefore(inicioSemanaAtual)
+=======
                 !dataEntrega.isAfter(inicioSemanaPassada) && dataEntrega.isBefore(inicioSemanaAtual)
+>>>>>>> origin/main
             }.sumOf { it.pontosAtividade }
         }
 
@@ -73,7 +94,11 @@ class PontuacaoService @Autowired constructor(
 
         val atividadesEntregues: Int = alunoAgrupadoCurso.values
             .flatten()
+<<<<<<< HEAD
+            .count { atividade -> atividade.notaAluno != 0.0 }
+=======
             .count { true }
+>>>>>>> origin/main
 
         val atividadesTotais: Int = alunoAgrupadoCurso.values
             .flatten()
@@ -81,10 +106,30 @@ class PontuacaoService @Autowired constructor(
 
         val diferenca = atividadesTotais - atividadesEntregues
 
+<<<<<<< HEAD
+        return mapOf("atividadesTotais" to atividadesTotais, "atividadesEntregues" to atividadesEntregues, "atividadesNaoEntregues" to diferenca)
+
+    }
+
+    fun recuperarPontosConquistadosPorMes(idAluno: Long): Map<Long, Map<YearMonth, Int>> {
+
+        val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno);
+
+        return alunoAgrupadoCurso.mapValues { entry ->
+            entry.value.groupBy { atividade ->
+                YearMonth.from(LocalDate.parse(atividade.dataEntrega))
+            }.mapValues { (_, atividades) ->
+                atividades.sumOf { it.pontosAtividade }
+            }
+        }
+
+    }
+=======
         return mapOf("atividadesTotais" to atividadesTotais,"atividadesNaoEntregues" to diferenca)
 
     }
 
+>>>>>>> origin/main
 //    fun recuperarAlunoCursoEspecifico(idAluno: Long, idCurso: Long): PontuacaoComPontosDTO {
 //
 //        val aluno = alunoRepository.findById(idAluno);
@@ -109,10 +154,14 @@ class PontuacaoService @Autowired constructor(
 //    }
 
     // ALUNO:
+<<<<<<< HEAD
+    // TODO: Soma total de Pontos do Curso
+=======
     // TODO: Atividades Entregues diferença de Atividades Totais
     // TODO: Soma total de Pontos do Curso
     // TODO: Recuperar Pontos de Atividades conquistados por dia e separados por Curso
     // TODO:Recuperar Pontos de Atividades conquistados por mês -> Geral e Filtro
+>>>>>>> origin/main
     // TODO: Gráfico Radar <- Precisa de Banco Ainda
     // TODO: Meta de Estudo <- Próxima Sprint
 

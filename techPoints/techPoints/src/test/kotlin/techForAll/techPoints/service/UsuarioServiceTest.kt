@@ -6,7 +6,6 @@ import techForAll.techPoints.dominio.TipoUsuario
 import techForAll.techPoints.domain.Usuario
 import techForAll.techPoints.dto.UsuarioDTOInput
 import techForAll.techPoints.repository.EnderecoRepository
-import techForAll.techPoints.repository.TipoUsuarioRepository
 import techForAll.techPoints.repository.UsuarioRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
