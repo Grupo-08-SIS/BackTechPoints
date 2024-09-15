@@ -34,7 +34,7 @@ class EnderecoController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -56,7 +56,7 @@ class EnderecoController @Autowired constructor(
                 ResponseEntity.status(204).build()
             }
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -76,7 +76,7 @@ class EnderecoController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -96,7 +96,27 @@ class EnderecoController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
+
+    @Operation(summary = "Deletar endereço", description = "Deleta um endereço pelo ID")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "204", description = "Endereço deletado com sucesso"),
+            ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @DeleteMapping("/deletar/{idEndereco}")
+    fun deletarEndereco(@PathVariable idEndereco: Long): ResponseEntity<Any> {
+        return try {
+            service.deletarEndereco(idEndereco)
+            ResponseEntity.status(204).build()
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Endereço não encontrado"))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 }

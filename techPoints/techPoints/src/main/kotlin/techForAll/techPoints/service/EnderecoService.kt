@@ -34,11 +34,19 @@ class EnderecoService @Autowired constructor(
             .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
 
         enderecoAtualizado["cep"]?.let { enderecoExistente.cep = it as String }
-        enderecoAtualizado["logradouro"]?.let { enderecoExistente.logradouro = it as String }
+        enderecoAtualizado["rua"]?.let { enderecoExistente.rua = it as String }
         enderecoAtualizado["numero"]?.let { enderecoExistente.numero = it as String }
         enderecoAtualizado["cidade"]?.let { enderecoExistente.cidade = it as String }
         enderecoAtualizado["estado"]?.let { enderecoExistente.estado = it as String }
+        enderecoExistente.dataAtualizacao = LocalDateTime.now()
 
         return repository.save(enderecoExistente)
+    }
+
+    fun deletarEndereco(idEndereco: Long) {
+        val enderecoExistente = repository.findById(idEndereco)
+            .orElseThrow { NoSuchElementException("Endereço não encontrado com o ID: $idEndereco") }
+
+        repository.delete(enderecoExistente)
     }
 }

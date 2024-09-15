@@ -37,7 +37,7 @@ class DadosEmpresaController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
 
     }
@@ -60,7 +60,7 @@ class DadosEmpresaController @Autowired constructor(
                 ResponseEntity.status(204).build()
             }
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -83,7 +83,7 @@ class DadosEmpresaController @Autowired constructor(
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 
@@ -110,7 +110,27 @@ class DadosEmpresaController @Autowired constructor(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor"))
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
+
+    @Operation(summary = "Deletar empresa", description = "Deleta uma empresa pelo ID")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "204", description = "Empresa deletada com sucesso"),
+            ApiResponse(responseCode = "404", description = "Empresa não encontrada"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @DeleteMapping("/deletar/{idEmpresa}")
+    fun deletarEmpresa(@PathVariable idEmpresa: Long): ResponseEntity<Any> {
+        return try {
+            service.deletarEmpresa(idEmpresa)
+            ResponseEntity.status(204).build()
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Empresa não encontrada"))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
 

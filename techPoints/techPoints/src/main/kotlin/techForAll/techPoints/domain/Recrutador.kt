@@ -1,21 +1,20 @@
 package techForAll.techPoints.domain
-
 import jakarta.persistence.*
-import techForAll.techPoints.dtos.ListToJsonConverter
+import techForAll.techPoints.dtos.LongListToJsonConverter
 
 
 @Entity
 @Table(name = "recrutador")
 class Recrutador(
 
-    @Convert(converter = ListToJsonConverter::class)
+
     @Column(name = "favoritos_json", columnDefinition = "json")
+    @Convert(converter = LongListToJsonConverter::class)
     var favoritos: List<Long> = emptyList(),
 
-    @Convert(converter = ListToJsonConverter::class)
     @Column(name = "interessados_json", columnDefinition = "json")
+    @Convert(converter = LongListToJsonConverter::class)
     var interessados: List<Long> = emptyList(),
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
