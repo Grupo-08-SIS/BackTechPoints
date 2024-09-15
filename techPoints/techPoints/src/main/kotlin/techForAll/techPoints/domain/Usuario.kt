@@ -30,6 +30,7 @@ abstract class Usuario(
         @Column(nullable = false)
         var telefone: String,
 
+        @Lob
         @Column(nullable = true)
         var imagemPerfil: ByteArray?,
 
