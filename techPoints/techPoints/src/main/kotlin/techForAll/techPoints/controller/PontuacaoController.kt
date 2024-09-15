@@ -5,15 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import techForAll.techPoints.domain.Aluno
-import techForAll.techPoints.domain.Curso
-import techForAll.techPoints.domain.Pontuacao
 import techForAll.techPoints.dtos.PontuacaoComPontosDTO
 import techForAll.techPoints.service.PontuacaoService
-<<<<<<< HEAD
 import java.time.YearMonth
-=======
->>>>>>> origin/main
 
 @RestController
 @RequestMapping("/pontuacoes")
@@ -44,13 +38,10 @@ class PontuacaoController @Autowired constructor(
 
         return service.recuperarKPIEntregas(idAluno);
     }
-<<<<<<< HEAD
 
     @GetMapping("/pontos-mes/{idAluno}")
     fun recuperarPontosPorMes(@PathVariable idAluno: Long): Map<Long, Map<YearMonth, Int>> {
 
         return service.recuperarPontosConquistadosPorMes(idAluno);
     }
-=======
->>>>>>> origin/main
 }
