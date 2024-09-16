@@ -200,6 +200,7 @@ class UsuarioService @Autowired constructor(
                 "autenticado" to usuario.autenticado,
                 "dataCriacao" to usuario.dataCriacao,
                 "escolaridade" to usuario.escolaridade,
+                "descricao" to usuario.descricao,
                 "dataNascimento" to usuario.dtNasc,
                 "dataAtualizacao" to usuario.dataAtualizacao,
                 "deletado" to usuario.deletado,

@@ -1,7 +1,7 @@
 package techForAll.techPoints.service
 
 import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
+
 import jakarta.persistence.criteria.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
