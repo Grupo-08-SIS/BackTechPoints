@@ -2,6 +2,7 @@ package techForAll.techPoints.domain
 
 import jakarta.persistence.*
 import java.time.LocalDate
+import java.time.Period
 
 @Entity
 @Table(name = "aluno")
@@ -67,6 +68,10 @@ class Aluno(
             imagemPerfil = this.imagemPerfil,
             autenticado = this.autenticado
         )
+    }
+
+    fun calcularIdade(): Int {
+        return Period.between(this.dtNasc, LocalDate.now()).years
     }
 }
 

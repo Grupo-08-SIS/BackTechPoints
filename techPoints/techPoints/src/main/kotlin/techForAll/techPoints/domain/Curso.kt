@@ -14,5 +14,5 @@ class Curso(
     var totalAtividades: Int,
 
     @Column(nullable = false)
-    var totalAtividadesDoAluno: Int
+    var totalAtividadesDoAluno: Int,
 )

@@ -31,7 +31,7 @@ abstract class Usuario(
         var telefone: String,
 
         @Lob
-        @Column(nullable = true)
+        @Column(nullable = true, length = 52428800)
         var imagemPerfil: ByteArray?,
 
         @Column(nullable = false)

@@ -1,10 +1,8 @@
 package techForAll.techPoints.controller
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import techForAll.techPoints.dtos.PontuacaoComPontosDTO
 import techForAll.techPoints.service.PontuacaoService
 import java.time.YearMonth
@@ -40,8 +38,29 @@ class PontuacaoController @Autowired constructor(
     }
 
     @GetMapping("/pontos-mes/{idAluno}")
-    fun recuperarPontosPorMes(@PathVariable idAluno: Long): Map<Long, Map<YearMonth, Int>> {
+    fun recuperarPontosPorMes(@PathVariable idAluno: Long): Map<Pair<Long, String>, Map<YearMonth, Int>> {
 
         return service.recuperarPontosConquistadosPorMes(idAluno);
+    }
+
+    @GetMapping("/pontos-totais/{idAluno}")
+    fun recuperarPontosTotaisPorCurso(@PathVariable idAluno: Long): Map<Long, Map<String, Any>> {
+        return service.recuperarPontosTotaisPorCurso(idAluno)
+    }
+
+    @GetMapping("/ranking")
+    fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
+        return service.recuperarRankingPorCurso()
+    }
+
+    @GetMapping("/alunos")
+    fun recuperarRankingComFiltros(
+        @RequestParam(required = false) idade: Int?,
+        @RequestParam(required = false) escolaridade: String?,
+        @RequestParam(required = false) cidade: String?,
+        @RequestParam(required = false) cursoId: Long?
+    ): ResponseEntity<Map<Long, Map<String, Any>>> {
+        val ranking = service.recuperarRankingComFiltro(idade, escolaridade, cidade, cursoId)
+        return ResponseEntity.ok(ranking)
     }
 }
