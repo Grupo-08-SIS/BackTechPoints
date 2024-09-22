@@ -87,8 +87,12 @@ class UsuarioService @Autowired constructor(
         usuarioRepository.delete(usuario)
     }
 
-    fun listarUsuarios(): List<Map<String, Any?>> {
-        return usuarioRepository.findAll().map { usuario -> mapearUsuario(usuario) }
+    fun listarUsuarios(tipo: String?): List<Map<String, Any?>> {
+        return when (tipo?.lowercase()) {
+            "aluno" -> usuarioRepository.findAll().filterIsInstance<Aluno>().map { aluno -> mapearUsuario(aluno) }
+            "recrutador" -> usuarioRepository.findAll().filterIsInstance<Recrutador>().map { recrutador -> mapearUsuario(recrutador) }
+            else -> usuarioRepository.findAll().map { usuario -> mapearUsuario(usuario) }
+        }
     }
 
     fun buscarUsuarioPorId(idUsuario: Long): Map<String, Any?> {
