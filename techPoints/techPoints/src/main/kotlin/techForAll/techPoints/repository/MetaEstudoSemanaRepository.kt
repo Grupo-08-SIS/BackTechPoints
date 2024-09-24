@@ -6,5 +6,5 @@ import java.util.Optional
 
 interface MetaEstudoSemanaRepository: JpaRepository<MetaEstudoSemana, Long> {
 
-    fun findByAlunoId(alunoId: Long): Optional<MetaEstudoSemana>
+    fun findByAlunoEmail(email: String): Optional<MetaEstudoSemana>
 }

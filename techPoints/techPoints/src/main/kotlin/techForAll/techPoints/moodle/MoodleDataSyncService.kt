@@ -1,14 +1,11 @@
-package techForAll.techPoints.service.cron
+package techForAll.techPoints.moodle
 
 import jakarta.transaction.Transactional
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import techForAll.techPoints.domain.MetaEstudoSemana
 import techForAll.techPoints.domain.Pontuacao
 import techForAll.techPoints.domain.TempoSessao
 import techForAll.techPoints.repository.*
-import techForAll.techPoints.service.MoodleService
-import kotlin.jvm.optionals.getOrElse
 
 @Component
 class MoodleDataSyncService(
@@ -20,7 +17,8 @@ class MoodleDataSyncService(
     val moodleService: MoodleService
 ) {
 
-    @Scheduled(cron = "0 0 0 * * *") // Executa todo dia à meia-noite
+    // @Scheduled(cron = "0 0 0 * * *") // Executa todo dia à meia-noite
+    @Scheduled(cron = "*/10 * * * * *") // Para testar -> 10 segundos
     @Transactional
     fun sincronizarDadosDoMoodle() {
 
@@ -28,12 +26,16 @@ class MoodleDataSyncService(
         val moodleTemposSessao = moodleService.buscarTemposSessao();
 
         moodlePontuacoes.forEach { pontuacaoMoodle ->
-            val aluno = alunoRepository.findByMoodleId(pontuacaoMoodle.alunoId);
+            val aluno = alunoRepository.findByEmail(pontuacaoMoodle.alunoEmail);
             val curso = cursoRepository.findByNome(pontuacaoMoodle.cursoNome);
 
             try {
                 val cursoEncontrado = curso.get();
+                if (aluno.isEmpty) {
+                    TODO("THROW EXCEPTION ALUNO NOT FOUND");
+                }
 
+                val alunoEncontrado = aluno.get();
                 val pontuacao = Pontuacao(
                     id = 0L, // Deixe o JPA gerar o ID
                     dataEntrega = pontuacaoMoodle.dataEntrega,
@@ -41,7 +43,7 @@ class MoodleDataSyncService(
                     notaAtividade = pontuacaoMoodle.notaAtividade,
                     notaAluno = pontuacaoMoodle.notaAluno,
                     curso = cursoEncontrado,
-                    aluno = aluno
+                    aluno = alunoEncontrado
                 );
                 pontuacaoRepository.save(pontuacao);
             } catch (e: Exception) {
@@ -51,18 +53,23 @@ class MoodleDataSyncService(
         }
 
         moodleTemposSessao.forEach { tempoMoodle ->
-            val aluno = alunoRepository.findByMoodleId(tempoMoodle.alunoId);
-            val metaEstudoSemana = metaEstudoSemana.findByAlunoId(tempoMoodle.alunoId);
+            val aluno = alunoRepository.findByEmail(tempoMoodle.alunoEmail);
+            val metaEstudoSemana = metaEstudoSemana.findByAlunoEmail(tempoMoodle.alunoEmail);
 
             try {
 
                 val metaEncontrada = metaEstudoSemana.get();
+                if (aluno.isEmpty) {
+                    TODO("THROW EXCEPTION ALUNO NOT FOUND");
+                }
+
+                val alunoEncontrado = aluno.get();
 
                 val tempoSessao = TempoSessao(
                     id = 0L,
                     diaSessao = tempoMoodle.diaSessao,
                     qtdTempoSessao = tempoMoodle.qtdTempoSessao,
-                    aluno = aluno,
+                    aluno = alunoEncontrado,
                     metaEstudoSemana = metaEncontrada
                 );
                 tempoSessaoRepository.save(tempoSessao);
