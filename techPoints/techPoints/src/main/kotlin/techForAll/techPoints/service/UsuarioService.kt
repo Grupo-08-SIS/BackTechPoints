@@ -36,6 +36,8 @@ class UsuarioService @Autowired constructor(
                     imagemPerfil = null,
                     dtNasc = request.dtNasc!!,
                     escolaridade = request.escolaridade!!,
+                    sexo = request.sexo,
+                    etnia = request.etnia,
                     autenticado = request.autenticado,
                     endereco = endereco
                 )
@@ -140,6 +142,8 @@ class UsuarioService @Autowired constructor(
 
             if (usuarioExistente is Aluno) {
                 atualizacao["escolaridade"]?.let { usuarioExistente.escolaridade = it as String }
+                atualizacao["sexo"]?.let { usuarioExistente.sexo = it as String }
+                atualizacao["etnia"]?.let { usuarioExistente.etnia = it as String }
                 atualizacao["dataNascimento"]?.let { usuarioExistente.dtNasc = it as LocalDate }
                 atualizacao["descricao"]?.let { usuarioExistente.descricao = it as String }
             }
@@ -203,6 +207,8 @@ class UsuarioService @Autowired constructor(
                 "tipoUsuario" to "Aluno",
                 "autenticado" to usuario.autenticado,
                 "dataCriacao" to usuario.dataCriacao,
+                "sexo" to usuario.sexo,
+                "etnia" to usuario.etnia,
                 "escolaridade" to usuario.escolaridade,
                 "descricao" to usuario.descricao,
                 "dataNascimento" to usuario.dtNasc,

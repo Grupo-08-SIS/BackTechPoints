@@ -19,6 +19,12 @@ class Aluno(
     @Column(nullable = false)
     var escolaridade: String,
 
+    @Column(nullable = true)
+    var sexo: String?,
+
+    @Column(nullable = true)
+    var etnia: String?,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id")
     var endereco: Endereco,
@@ -55,6 +61,8 @@ class Aluno(
         return Aluno(
             cursos = this.cursos,
             escolaridade = this.escolaridade,
+            sexo = this.sexo,
+            etnia = this.etnia,
             endereco = endereco,
             descricao = this.descricao,
             dtNasc = this.dtNasc,

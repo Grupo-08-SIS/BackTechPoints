@@ -17,5 +17,7 @@ data class UsuarioInput (
     val cnpj: String?,
     val dtNasc: LocalDate?,
     val escolaridade: String?,
+    val sexo: String?,
+    val etnia: String?,
     val cargoUsuario: String?
 )
