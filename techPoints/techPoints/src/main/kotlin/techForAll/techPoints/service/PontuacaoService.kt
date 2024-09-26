@@ -165,6 +165,8 @@ class PontuacaoService @Autowired constructor(
     fun recuperarRankingComFiltro(
         idade: Int?,
         escolaridade: String?,
+        sexo: String?,
+        etnia: String?,
         primeiroNome: String?,
         sobrenome: String?,
         cidade: String?,
@@ -179,6 +181,22 @@ class PontuacaoService @Autowired constructor(
             predicates.add(
                 criteriaBuilder.equal(
                     root.get<Aluno>("aluno").get<String>("escolaridade"),
+                    it
+                )
+            )
+        }
+        sexo?.let {
+            predicates.add(
+                criteriaBuilder.equal(
+                    root.get<Aluno>("aluno").get<String>("sexo"),
+                    it
+                )
+            )
+        }
+        etnia?.let {
+            predicates.add(
+                criteriaBuilder.equal(
+                    root.get<Aluno>("aluno").get<String>("etnia"),
                     it
                 )
             )
