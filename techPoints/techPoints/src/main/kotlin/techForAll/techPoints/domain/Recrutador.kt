@@ -16,6 +16,19 @@ class Recrutador(
     @Convert(converter = LongListToJsonConverter::class)
     var interessados: List<Long> = emptyList(),
 
+    @Column(name = "processoSeletivo_json", columnDefinition = "json")
+    @Convert(converter = LongListToJsonConverter::class)
+    var processoSeletivo: List<Long> = emptyList(),
+
+    @Column(name = "contratados_json", columnDefinition = "json")
+    @Convert(converter = LongListToJsonConverter::class)
+    var contratados: List<Long> = emptyList(),
+
+    @Column(name = "cancelados_json", columnDefinition = "json")
+    @Convert(converter = LongListToJsonConverter::class)
+    var cancelados: List<Long> = emptyList(),
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
     var empresa: DadosEmpresa,
