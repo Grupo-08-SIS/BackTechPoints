@@ -1,3 +1,5 @@
+package techForAll.techPoints.config
+
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.ConfigurationProperties

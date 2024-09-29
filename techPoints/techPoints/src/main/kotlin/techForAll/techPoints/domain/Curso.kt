@@ -16,3 +16,4 @@ class Curso(
     @Column(nullable = false)
     var totalAtividadesDoAluno: Int,
 )
+

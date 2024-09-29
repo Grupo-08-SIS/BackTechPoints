@@ -9,3 +9,4 @@ data class PontuacaoMoodleDto(
     val notaAtividade: Double,
     val notaAluno: Double?
 )
+
