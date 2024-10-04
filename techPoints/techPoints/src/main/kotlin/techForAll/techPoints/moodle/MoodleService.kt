@@ -26,8 +26,6 @@ class MoodleService(
     private val jdbcTemplate = moodleJdbcTemplateConfig.moodleJdbcTemplate();
 
     fun buscarECadastrarCursos() {
-
-        println("oxi")
         val sql = """
         SELECT
             mdl_course.id AS id_curso,

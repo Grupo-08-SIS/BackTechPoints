@@ -175,6 +175,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`pontuacao` (
                                                   `id` BIGINT NOT NULL AUTO_INCREMENT,
                                                   `data_entrega` VARCHAR(255) NOT NULL,
     `nome_atividade` VARCHAR(255) NOT NULL,
+    `aluno_email` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `FK9c8ylx7wp8cl5bakvfaswjs04` (`aluno_id` ASC) VISIBLE,
     INDEX `FKgdxtiwh119bqpvksatc74eqcn` (`curso_id` ASC) VISIBLE,
