@@ -13,7 +13,10 @@ class MoodleDataSyncService(
 ) {
 
    // @Scheduled(cron = "*/10 * * * * *") Testar funcionamento
-    @Scheduled(cron = "0 0 0 * * *")
+   // @Scheduled(cron = "0 0 0 * * *")
+    fun sintonizarDados(){
+       sincronizarDadosDoMoodle();
+    }
     fun sincronizarDadosDoMoodle() {
 
         val cursos = moodleService.buscarCursos();
