@@ -19,16 +19,17 @@ class TechJobsDbService(
 
         cursos.forEach { curso ->
             val sqlInserirCurso = """
-            INSERT INTO curso (id, nome, total_atividades, total_atividades_do_aluno)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO curso (id, nome, categoria, total_atividades, total_atividades_do_aluno)
+            VALUES (?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
             nome = VALUES(nome),
+            categoria = VALUES(categoria),
             total_atividades = VALUES(total_atividades),
             total_atividades_do_aluno = VALUES(total_atividades_do_aluno)
         """
             jdbcTemplateTechJobs.update(
                 sqlInserirCurso,
-                curso.id, curso.nome, curso.totalAtividades, curso.totalAtividadesDoAluno
+                curso.id, curso.nome, curso.categoria, curso.totalAtividades, curso.totalAtividadesDoAluno
             )
         }
     }
@@ -37,15 +38,15 @@ class TechJobsDbService(
 
         pontuacoes.forEach { pontuacao ->
             val sqlInserirPontuacao = """
-            INSERT INTO pontuacao (aluno_id, aluno_email, curso_nome, data_entrega, nome_atividade, nota_atividade, nota_aluno)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO pontuacao (aluno_id, aluno_email, curso_id, curso_nome, data_entrega, nome_atividade, nota_atividade, nota_aluno)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
             data_entrega = VALUES(data_entrega),
             nota_aluno = VALUES(nota_aluno)
         """
             jdbcTemplateTechJobs.update(
                 sqlInserirPontuacao,
-                pontuacao.alunoId, pontuacao.alunoEmail, pontuacao.cursoNome, pontuacao.dataEntrega, pontuacao.nomeAtividade, pontuacao.notaAtividade, pontuacao.notaAluno
+                pontuacao.alunoId, pontuacao.alunoEmail, pontuacao.cursoId, pontuacao.cursoNome, pontuacao.dataEntrega, pontuacao.nomeAtividade, pontuacao.notaAtividade, pontuacao.notaAluno
             )
         }
     }

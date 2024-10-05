@@ -11,7 +11,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
- -- DROP SCHEMA `mydb`;
+DROP SCHEMA IF EXISTS `mydb`;
 CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8mb3 ;
 USE `mydb` ;
 
@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`curso` (
                                               `total_atividades_do_aluno` INT NOT NULL,
                                               `id` BIGINT NOT NULL AUTO_INCREMENT,
                                               `nome` VARCHAR(255) NOT NULL,
+                                              `categoria` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`))
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb3;
@@ -176,6 +177,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`pontuacao` (
                                                   `data_entrega` VARCHAR(255) NOT NULL,
     `nome_atividade` VARCHAR(255) NOT NULL,
     `aluno_email` VARCHAR(255) NOT NULL,
+    `curso_nome` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `FK9c8ylx7wp8cl5bakvfaswjs04` (`aluno_id` ASC) VISIBLE,
     INDEX `FKgdxtiwh119bqpvksatc74eqcn` (`curso_id` ASC) VISIBLE,
@@ -244,6 +246,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`tempo_sessao` (
                                                      `id` BIGINT NOT NULL AUTO_INCREMENT,
                                                      `meta_estudo_semana_id` BIGINT NULL DEFAULT NULL,
                                                      `dia_sessao` VARCHAR(255) NOT NULL,
+                                                     `aluno_email` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `FKmn6cqce8epfnd5hxa4clratp0` (`aluno_id` ASC) VISIBLE,
     INDEX `FKp1nh2k98c8o4e32vimprkoy2r` (`meta_estudo_semana_id` ASC) VISIBLE,
@@ -261,6 +264,8 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-SELECT * FROM aluno;
+SELECT * FROM curso;
+SELECT * FROM pontuacao;
+SELECT * FROM tempo_sessao;
 
 

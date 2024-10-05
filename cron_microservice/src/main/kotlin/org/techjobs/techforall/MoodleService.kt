@@ -21,12 +21,15 @@ class MoodleService (
         SELECT
             mdl_course.id AS id_curso,
             mdl_course.fullname AS nome_curso,
+            categoria.name AS curso_categoria,
             COUNT(atividade.id) AS total_atividades,
             COUNT(DISTINCT nota.userid) AS total_alunos_com_notas
         FROM
             mdl_course
         JOIN
             mdl_grade_items atividade ON atividade.courseid = mdl_course.id
+        JOIN 
+			mdl_course_categories AS categoria ON categoria.id =  mdl_course.category
         LEFT JOIN
             mdl_grade_grades nota ON nota.itemid = atividade.id
         GROUP BY
@@ -37,6 +40,7 @@ class MoodleService (
             CursoMoodleDto(
                 id = rs.getLong("id_curso"),
                 nome = rs.getString("nome_curso"),
+                categoria = rs.getString("curso_categoria"),
                 totalAtividades = rs.getInt("total_atividades"),
                 totalAtividadesDoAluno = rs.getInt("total_alunos_com_notas")
             )
@@ -49,8 +53,10 @@ class MoodleService (
         val sql = """
         SELECT 
 			aluno.id AS aluno_id, 
-            aluno.email AS aluno_email,
+            aluno.	email AS aluno_email,
             curso.fullname AS curso_nome,
+            curso.id AS curso_id,
+            categoria.name AS curso_categoria,
             FROM_UNIXTIME(nota.timemodified) AS data_entrega, 
             item.itemname AS nome_atividade,
             nota.rawgrademax AS nota_atividade, 
@@ -62,7 +68,9 @@ class MoodleService (
         JOIN 
             mdl_grade_items AS item ON item.id = nota.itemid
         JOIN 
-            mdl_course AS curso ON curso.id = item.courseid;
+            mdl_course AS curso ON curso.id = item.courseid
+		JOIN 
+			mdl_course_categories AS categoria ON categoria.id = curso.category;
     """
         return jdbcTemplateMoodle.query(sql) { rs, _ ->
             val dataEntrega = rs.getString("data_entrega")
@@ -80,6 +88,8 @@ class MoodleService (
                     dataEntrega = "Não entregue", // ou qualquer mensagem que faça sentido
                     nomeAtividade = nomeAtividade ?: "Atividade não informada",
                     notaAtividade = notaAtividade,
+                    cursoId = rs.getLong("curso_id"),
+                    cursoCategoria = rs.getString("curso_categoria"),
                     notaAluno = notaAluno
                 )
             }
@@ -92,6 +102,8 @@ class MoodleService (
                 dataEntrega = dataEntrega,
                 nomeAtividade = nomeAtividade,
                 notaAtividade = notaAtividade,
+                cursoId = rs.getLong("curso_id"),
+                cursoCategoria = rs.getString("curso_categoria"),
                 notaAluno = notaAluno
             )
         }
