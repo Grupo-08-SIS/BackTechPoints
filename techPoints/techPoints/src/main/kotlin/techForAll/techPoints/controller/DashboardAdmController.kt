@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import techForAll.techPoints.dtos.CursoAlunosDto
-import techForAll.techPoints.dtos.DemografiaDto
 import techForAll.techPoints.service.DashboardAdmService
 
 @RestController
@@ -47,9 +46,9 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
         ]
     )
     @GetMapping("/demografia-alunos")
-    fun getDemografiaAlunos(@RequestParam tipoLista: String): ResponseEntity<Any> {
+    fun getDemografiaAlunos(@RequestParam tipoLista: String, @RequestParam(required = false) idEmpresa: Long?): ResponseEntity<Any> {
         return try {
-            val demografia = dashAdmService.getDemografiaPorTipoLista(tipoLista)
+            val demografia = dashAdmService.getDemografiaPorTipoLista(tipoLista, idEmpresa)
             ResponseEntity.status(200).body(demografia)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to "Tipo de lista inválido"))

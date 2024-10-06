@@ -30,16 +30,16 @@ class DashboardAdmService@Autowired constructor(
         return demografia
     }
 
-    fun getDemografiaPorTipoLista(tipoLista: String): DemografiaDto {
-        var ids = when (tipoLista) {
-            "contratados" -> dashAdmRepositoy.findIdsContratados()
-            "interessados" -> dashAdmRepositoy.findIdsInteressados()
-            "processoSeletivo" -> dashAdmRepositoy.findIdsProcessoSeletivo()
+    fun getDemografiaPorTipoLista(tipoLista: String, idEmpresa: Long?): DemografiaDto {
+        val ids = when (tipoLista) {
+            "contratados" -> if (idEmpresa != null) dashAdmRepositoy.findIdsContratadosByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsContratados()
+            "interessados" -> if (idEmpresa != null) dashAdmRepositoy.findIdsInteressadosByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsInteressados()
+            "processoSeletivo" -> if (idEmpresa != null) dashAdmRepositoy.findIdsProcessoSeletivoByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsProcessoSeletivo()
             else -> throw IllegalArgumentException("Tipo de lista inválido")
         }
-        ids = filtrarIds(ids)
-        val demografia = getDemografiaAlunosPorLista(ids)
-        demografia.cursosFeitos.putAll(getCursosFeitosPorAlunos(ids))
+        val filteredIds = filtrarIds(ids)
+        val demografia = getDemografiaAlunosPorLista(filteredIds)
+        demografia.cursosFeitos.putAll(getCursosFeitosPorAlunos(filteredIds))
         return demografia
     }
 
