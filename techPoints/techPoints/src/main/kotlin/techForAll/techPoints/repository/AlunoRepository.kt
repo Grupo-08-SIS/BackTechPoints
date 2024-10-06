@@ -7,4 +7,6 @@ import techForAll.techPoints.domain.Curso
 
 @Repository
 interface AlunoRepository : JpaRepository<Aluno, Long> {
+
+    fun findByIdIn(ids: List<Any>): List<Aluno>
 }

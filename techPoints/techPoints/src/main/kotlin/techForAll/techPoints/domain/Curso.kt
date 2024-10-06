@@ -2,7 +2,9 @@ package techForAll.techPoints.domain
 
 import jakarta.persistence.*
 
+
 @Entity
+@Table(name = "curso")
 class Curso(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
@@ -15,4 +17,7 @@ class Curso(
 
     @Column(nullable = false)
     var totalAtividadesDoAluno: Int,
+
+    @ManyToMany(mappedBy = "cursos")
+    var alunos: List<Aluno>? = emptyList()
 )
