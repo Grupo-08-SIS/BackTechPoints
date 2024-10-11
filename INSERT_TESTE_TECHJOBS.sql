@@ -31,12 +31,12 @@ VALUES ('1990-01-01', 1, 3, 'Aluno do ensino médio', 'Ensino Médio Completo');
 
 INSERT INTO `mydb`.`aluno` (`dt_nasc`, `endereco_id`, `id`, `descricao`, `escolaridade`)
 VALUES ('1995-05-15', 2, 4, 'Aluno de graduação', 'Ensino Superior Incompleto');
-/*
-INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`)
-VALUES (10, 5, 'Curso de Programação');
 
-INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`)
-VALUES (8, 3, 'Curso de Matemática');
+INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`, `categoria`)
+VALUES (10, 5, 'Curso de Programação', 'Programação');
+
+INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`, `categoria`)
+VALUES (8, 3, 'Curso de Matemática', 'Programação');
 
 INSERT INTO `mydb`.`aluno_curso` (`aluno_id`, `curso_id`)
 VALUES (1, 1);
@@ -80,11 +80,11 @@ VALUES (2.5, 1, 1, '2024-09-07');
 INSERT INTO `mydb`.`tempo_sessao` (`qtd_tempo_sessao`, `aluno_id`, `meta_estudo_semana_id`, `dia_sessao`)
 VALUES (3.0, 2, 2, '2024-09-07');
 
-INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`)
-VALUES (10, 5, 'Introdução à Programação');
+INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`, `categoria`)
+VALUES (10, 5, 'Introdução à Programação', 'Programação');
 
-INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`)
-VALUES (8, 4, 'Banco de Dados Relacional');
+INSERT INTO `mydb`.`curso` (`total_atividades`, `total_atividades_do_aluno`, `nome`, `categoria`)
+VALUES (8, 4, 'Banco de Dados Relacional', 'Programação');
 
 INSERT INTO `mydb`.`aluno_curso` (`aluno_id`, `curso_id`)
 VALUES (1, 2); -- Supondo que o curso com id 2 já exista
@@ -118,7 +118,7 @@ VALUES (8.5, 8.5, 1, 3, '2024-09-07', 'Atividade 1 - Estruturas de Dados');
 
 INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
 VALUES (7.0, 7.0, 2, 1, '2024-09-06', 'Atividade 2 - Programação Orientada a Objetos');
-/*
+
 INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `curso_id`, `data_entrega`, `nome_atividade`)
 VALUES (NULL, 9.0, 3, 4, '2024-09-05', 'Atividade 3 - Redes de Computadores');
 
@@ -144,4 +144,3 @@ INSERT INTO `mydb`.`pontuacao` (`nota_aluno`, `nota_atividade`, `aluno_id`, `cur
 VALUES (5.0, 10.0, 1, 3, '2024-09-10', 'Atividade 10 - Machine Learning');
 
 SELECT * from pontuacao where aluno_id = 2;
-*/

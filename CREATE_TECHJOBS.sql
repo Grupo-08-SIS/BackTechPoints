@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`endereco` (
     `estado` VARCHAR(255) NOT NULL,
     `logradouro` VARCHAR(255) NOT NULL,
     `numero` VARCHAR(255) NOT NULL,
+    `rua` VARCHAR(255),
     PRIMARY KEY (`id`))
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb3;

@@ -5,6 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "usuario")
 abstract class Usuario(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long = 0,
