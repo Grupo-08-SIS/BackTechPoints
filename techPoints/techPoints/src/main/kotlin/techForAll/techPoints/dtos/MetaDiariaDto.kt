@@ -7,11 +7,11 @@ data class MetaDiariaDto(
 
     var nomeDia: String,
 
+    var data: String,
+
     var qtdTempoEstudo: String,
 
     var ativado: Boolean,
-
-    var metaAtingida: Boolean = false,
 
     var metaEstudoSemana: Long
 )

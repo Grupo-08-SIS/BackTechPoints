@@ -32,12 +32,14 @@ class MetaDeEstudoController @Autowired constructor(
     fun cadastrarMetaDiaria(
         @RequestParam metaEstudoSemanaId: Long,
         @RequestParam nomeDia: String,
+        @RequestParam data: String,
         @RequestParam qtdTempoEstudo: String,
         @RequestParam ativado: Boolean): ResponseEntity<Any> {
         return try {
             val novaMetaDiaria  = metaService.cadastrarMetaDiaria(
                 metaEstudoSemanaId,
                 nomeDia,
+                data,
                 qtdTempoEstudo,
                 ativado
             )

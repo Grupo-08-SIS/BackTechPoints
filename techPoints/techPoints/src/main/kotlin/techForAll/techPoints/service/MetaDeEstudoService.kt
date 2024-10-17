@@ -20,6 +20,7 @@ class MetaDeEstudoService @Autowired constructor(
     fun cadastrarMetaDiaria(
         metaEstudoSemanaId: Long,
         nomeDia: String,
+        data: String,
         qtdTempoEstudo: String,
         ativado: Boolean
     ): MetaDiariaDto {
@@ -58,6 +59,7 @@ class MetaDeEstudoService @Autowired constructor(
             val novaMetaDiaria = TempoEstudo(
                 id = diaId,
                 nomeDia = nomeDia,
+                data = data,
                 qtdTempoEstudo = qtdTempoEstudo,
                 ativado = ativado,
                 metaEstudoSemana = metaEstudoSemana
@@ -72,9 +74,9 @@ class MetaDeEstudoService @Autowired constructor(
         return MetaDiariaDto(
             id = tempoEstudo.id,
             nomeDia = tempoEstudo.nomeDia,
+            data = tempoEstudo.data,
             qtdTempoEstudo = tempoEstudo.qtdTempoEstudo,
             ativado = tempoEstudo.ativado,
-            metaAtingida = tempoEstudo.metaAtingida,
             metaEstudoSemana = tempoEstudo.metaEstudoSemana.id!!
         )
     }
