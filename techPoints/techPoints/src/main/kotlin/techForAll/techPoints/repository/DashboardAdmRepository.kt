@@ -14,6 +14,9 @@ interface DashboardAdmRepository : JpaRepository<Curso, Long> {
     fun findAlunosPorCurso(): List<CursoAlunosDto>
 
 
+    @Query(value = "SELECT contratados_json, interessados_json, processo_seletivo_json  FROM Recrutador WHERE empresa_id = :idEmpresa", nativeQuery = true)
+    fun findIdsTodosByEmpresa(idEmpresa: Long): List<Any>
+
     @Query(value = "SELECT contratados_json FROM Recrutador WHERE empresa_id = :idEmpresa", nativeQuery = true)
     fun findIdsContratadosByEmpresa(idEmpresa: Long): List<Any>
 
@@ -22,6 +25,9 @@ interface DashboardAdmRepository : JpaRepository<Curso, Long> {
 
     @Query(value = "SELECT processo_seletivo_json FROM Recrutador WHERE empresa_id = :idEmpresa", nativeQuery = true)
     fun findIdsProcessoSeletivoByEmpresa(idEmpresa: Long): List<Any>
+
+    @Query(value = "SELECT contratados_json, interessados_json, processo_seletivo_json FROM Recrutador", nativeQuery = true)
+    fun findIdsTodos(): List<Any>
 
     @Query(value = "SELECT contratados_json FROM Recrutador", nativeQuery = true)
     fun findIdsContratados(): List<Any>

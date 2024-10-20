@@ -41,6 +41,7 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Demografia dos alunos retornada com sucesso"),
+            ApiResponse(responseCode = "204", description = "Nenhum dado encontrado"),
             ApiResponse(responseCode = "400", description = "Tipo de lista inválido"),
             ApiResponse(responseCode = "500", description = "Erro interno do servidor")
         ]
@@ -52,6 +53,9 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
             ResponseEntity.status(200).body(demografia)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body(mapOf("message" to "Tipo de lista inválido"))
+
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(204).body(mapOf("message" to "Nenhum dado encontrado"))
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
