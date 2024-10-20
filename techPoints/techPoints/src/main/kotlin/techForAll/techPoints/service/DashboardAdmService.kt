@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dtos.CursoAlunosDto
 import techForAll.techPoints.dtos.DemografiaDto
 
@@ -16,13 +17,99 @@ import java.util.concurrent.ArrayBlockingQueue
 class DashboardAdmService@Autowired constructor(
     private val dashAdmRepositoy: DashboardAdmRepository,
     private val alunoRepository: AlunoRepository,
-    private val pontuacaoService: PontuacaoService
+    private val pontuacaoService: PontuacaoService,
+    private val usuarioService: UsuarioService
 ){
     fun getAlunosPorCurso(): List<CursoAlunosDto> {
         return dashAdmRepositoy.findAlunosPorCurso()
     }
 
-    fun processarFilaDemografia(idsFila: ArrayBlockingQueue<Long>): DemografiaDto {
+    fun getDemografiaPorTipoLista(tipoLista: String, idEmpresa: Long?): DemografiaDto {
+
+        val ids = getAlunosPorTipoLista(tipoLista, idEmpresa)
+
+        val idsFila = processarIdsJson(ids)
+        if (idsFila.isEmpty()){
+            throw NoSuchElementException("Nenhum aluno encontrado")
+        }
+        val demografia = processarFilaDemografia(idsFila)
+        demografia.cursosFeitos.putAll(processarFilaCursosFeitosPorAlunos(idsFila))
+        return demografia
+    }
+    fun gerarRelatorioDemografiaEmpresas(tipoLista: String, idEmpresa: Long?): String {
+
+        val ids = getAlunosPorTipoLista(tipoLista, idEmpresa)
+
+        val idsFila = processarIdsJson(ids)
+
+        return gerarRelatorioCSV(idsFila.toList())
+    }
+
+    fun gerarRelatorioCSV(ids: List<Long>): String {
+        val csvHeader = listOf(
+            "ID", "Nome de Usuário", "CPF", "Primeiro Nome", "Sobrenome", "Email", "Telefone", "Tipo Usuário", "Sexo",
+            "Etnia", "Escolaridade", "Data de Nascimento", "Deletado", "CEP", "Rua", "Cidade", "Estado", "Cursos"
+        )
+
+        val csvRows = ids.map { id ->
+            val alunoComCursos = comporAlunoComCursos(id)
+
+            val cursos = alunoComCursos["cursos"] as? Map<Long, Map<String, Any>>
+            val endereco = alunoComCursos["endereco"] as Map<String, String>
+
+            listOf(
+                alunoComCursos["id"],
+                alunoComCursos["nomeUsuario"],
+                alunoComCursos["cpf"],
+                alunoComCursos["primeiroNome"],
+                alunoComCursos["sobrenome"],
+                alunoComCursos["email"],
+                alunoComCursos["telefone"],
+                alunoComCursos["tipoUsuario"],
+                alunoComCursos["sexo"],
+                alunoComCursos["etnia"],
+                alunoComCursos["escolaridade"],
+                alunoComCursos["dataNascimento"],
+                alunoComCursos["deletado"],
+                endereco["cep"],
+                endereco["rua"],
+                endereco["cidade"],
+                endereco["estado"],
+                cursos!!.entries.joinToString("; ") { (cursoId, cursoData) ->
+                    "${cursoData["nomeCurso"]} (Pontos: ${cursoData["pontosTotais"]})"
+                }
+            ).joinToString(",")
+        }
+
+        return (listOf(csvHeader.joinToString(",")) + csvRows).joinToString("\n")
+    }
+
+    fun comporAlunoComCursos(idAluno: Long): Map<String, Any?> {
+
+        val aluno = usuarioService.buscarUsuarioPorId(idAluno)
+
+        val cursos = pontuacaoService.recuperarPontosTotaisPorCurso(idAluno)
+
+        return aluno.toMutableMap().apply {
+            this["cursos"] = cursos
+
+            val endereco = aluno["endereco"]
+            this["endereco"] = if (endereco is Endereco) {
+
+                mapOf(
+                    "cep" to endereco.cep,
+                    "rua" to endereco.rua,
+                    "numero" to endereco.numero,
+                    "cidade" to endereco.cidade,
+                    "estado" to endereco.estado
+                )
+            } else {
+                throw IllegalStateException("Endereço não pode ser nulo")
+            }
+        }
+    }
+
+    private fun processarFilaDemografia(idsFila: ArrayBlockingQueue<Long>): DemografiaDto {
         val demografia = DemografiaDto()
 
         val tamanhoInicial = idsFila.size
@@ -41,7 +128,7 @@ class DashboardAdmService@Autowired constructor(
         return demografia
     }
 
-    fun getDemografiaPorTipoLista(tipoLista: String, idEmpresa: Long?): DemografiaDto {
+    private fun getAlunosPorTipoLista(tipoLista: String, idEmpresa: Long?): List<Any>{
         val ids = when (tipoLista) {
             "todos" -> if (idEmpresa != null)dashAdmRepositoy.findIdsTodosByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsTodos()
             "contratados" -> if (idEmpresa != null) dashAdmRepositoy.findIdsContratadosByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsContratados()
@@ -49,13 +136,7 @@ class DashboardAdmService@Autowired constructor(
             "processoSeletivo" -> if (idEmpresa != null) dashAdmRepositoy.findIdsProcessoSeletivoByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsProcessoSeletivo()
             else -> throw IllegalArgumentException("Tipo de lista inválido")
         }
-        val idsFiltrados = processarIdsJson(ids)
-        if (idsFiltrados.isEmpty()){
-            throw NoSuchElementException("Nenhum aluno encontrado")
-        }
-        val demografia = processarFilaDemografia(idsFiltrados)
-        demografia.cursosFeitos.putAll(processarFilaCursosFeitosPorAlunos(idsFiltrados))
-        return demografia
+        return ids
     }
 
     private fun processarIdsJson(idStrings: List<Any>): ArrayBlockingQueue<Long> {

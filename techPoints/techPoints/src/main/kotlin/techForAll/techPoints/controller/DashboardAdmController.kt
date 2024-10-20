@@ -60,6 +60,36 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+    @Operation(summary = "Gerar relatório CSV de demografia das listas", description = "Retorna um arquivo CSV com a demografia dos alunos inseridos nas listas dos recrutadores")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Relatório CSV gerado com sucesso"),
+            ApiResponse(responseCode = "400", description = "Tipo de lista inválido"),
+            ApiResponse(responseCode = "204", description = "Nenhum dado encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/relatorio-demografia-listas")
+    fun gerarRelatorioDemografiaListas(@RequestParam tipoLista: String, @RequestParam(required = false) idEmpresa: Long?): ResponseEntity<ByteArray> {
+        return try {
+
+            val csv = dashAdmService.gerarRelatorioDemografiaEmpresas(tipoLista, idEmpresa)
+
+            val arquivoCsv = csv.toByteArray(Charsets.UTF_8)
+
+            ResponseEntity.ok()
+                .header("Content-Type", "text/csv")
+                .header("Content-Disposition", "attachment; filename=\"relatorio_demografia_listas.csv\"")
+                .body(arquivoCsv)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(400).body("Tipo de lista inválido".toByteArray())
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(204).body("Nenhum dado encontrado".toByteArray())
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body("Erro interno do servidor: ${e.message}".toByteArray())
+        }
+    }
+
 
 
 }
