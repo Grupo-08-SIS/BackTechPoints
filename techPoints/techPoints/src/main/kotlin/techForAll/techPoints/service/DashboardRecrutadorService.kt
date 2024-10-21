@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
 import techForAll.techPoints.domain.Aluno
+import techForAll.techPoints.domain.Recrutador
 import techForAll.techPoints.repository.AlunoRepository
 import techForAll.techPoints.repository.RecrutadorRepository
 
@@ -14,81 +15,66 @@ class DashboardRecrutadorService @Autowired constructor(
     private val alunoRepository: AlunoRepository,
 ) {
 
-    fun adicionarFavorito(idRecrutador: Long, idAluno: Long) {
+    fun adicionarAluno(idRecrutador: Long, idAluno: Long, tipoLista: String) {
         val recrutador = recrutadorRepository.findById(idRecrutador)
             .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
 
         alunoRepository.findById(idAluno)
             .orElseThrow { NoSuchElementException("Aluno com ID $idAluno não encontrado") }
 
-        adicionarLista(idAluno, recrutador.favoritos, "favoritos") { listaAtualizada ->
-            recrutador.favoritos = listaAtualizada
-        }
+        moverParaLista(idAluno, recrutador, tipoLista)
         recrutadorRepository.save(recrutador)
     }
 
-    fun adicionarInteressado(idRecrutador: Long, idAluno: Long) {
-        val recrutador = recrutadorRepository.findById(idRecrutador)
-            .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
 
-        alunoRepository.findById(idAluno)
-            .orElseThrow { NoSuchElementException("Aluno com ID $idAluno não encontrado") }
-
-        adicionarLista(idAluno, recrutador.interessados, "interessados") { listaAtualizada ->
-            recrutador.interessados = listaAtualizada
-        }
-        recrutadorRepository.save(recrutador)
-    }
-
-    private fun adicionarLista(
-        idAluno: Long,
-        lista: List<Long>,
-        tipo: String,
-        atualizarLista: (List<Long>) -> Unit
-    ) {
-        if (!lista.contains(idAluno)) {
-            atualizarLista(lista + idAluno)
-        } else {
-            throw IllegalArgumentException("Aluno já está na lista de $tipo")
-        }
-    }
-
-    fun removerFavorito(idRecrutador: Long, idAluno: Long) {
-        val recrutador = recrutadorRepository.findById(idRecrutador)
-            .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
-
-        if (!recrutador.favoritos.contains(idAluno)) {
-            throw IllegalArgumentException("Aluno não está na lista de favoritos")
-        }
+    private fun moverParaLista(idAluno: Long, recrutador: Recrutador, novaLista: String) {
 
         recrutador.favoritos = recrutador.favoritos.filter { it != idAluno }
-        recrutadorRepository.save(recrutador)
+        recrutador.interessados = recrutador.interessados.filter { it != idAluno }
+        recrutador.processoSeletivo = recrutador.processoSeletivo.filter { it != idAluno }
+        recrutador.contratados = recrutador.contratados.filter { it != idAluno }
+        recrutador.cancelados = recrutador.cancelados.filter { it != idAluno }
+
+        when (novaLista) {
+            "favoritos" -> recrutador.favoritos = recrutador.favoritos + idAluno
+            "interessados" -> recrutador.interessados = recrutador.interessados + idAluno
+            "processoSeletivo" -> recrutador.processoSeletivo = recrutador.processoSeletivo + idAluno
+            "contratados" -> recrutador.contratados = recrutador.contratados + idAluno
+            "cancelados" -> recrutador.cancelados = recrutador.cancelados + idAluno
+            else -> throw IllegalArgumentException("Lista inválida")
+        }
     }
 
-    fun removerInteressado(idRecrutador: Long, idAluno: Long) {
+    fun removerAluno(idRecrutador: Long, idAluno: Long, tipoLista: String) {
         val recrutador = recrutadorRepository.findById(idRecrutador)
             .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
 
-        if (!recrutador.interessados.contains(idAluno)) {
-            throw IllegalArgumentException("Aluno não está na lista de interessados")
+        when (tipoLista) {
+            "favoritos" -> recrutador.favoritos = recrutador.favoritos.filter { it != idAluno }
+            "interessados" -> recrutador.interessados = recrutador.interessados.filter { it != idAluno }
+            "processoSeletivo" -> recrutador.processoSeletivo = recrutador.processoSeletivo.filter { it != idAluno }
+            "contratados" -> recrutador.contratados = recrutador.contratados.filter { it != idAluno }
+            "cancelados" -> recrutador.cancelados = recrutador.cancelados.filter { it != idAluno }
+            else -> throw IllegalArgumentException("Lista inválida")
         }
 
-        recrutador.interessados = recrutador.interessados.filter { it != idAluno }
         recrutadorRepository.save(recrutador)
     }
 
-    fun listarFavoritos(idRecrutador: Long): List<Map<String, Any?>> {
+    fun listarAlunos(idRecrutador: Long, tipoLista: String): List<Map<String, Any?>> {
         val recrutador = recrutadorRepository.findById(idRecrutador)
             .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
 
-        return listarAlunosIds(recrutador.favoritos)
-    }
+        val ids = when (tipoLista) {
+            "favoritos" -> recrutador.favoritos
+            "interessados" -> recrutador.interessados
+            "processoSeletivo" -> recrutador.processoSeletivo
+            "contratados" -> recrutador.contratados
+            "cancelados" -> recrutador.cancelados
+            else -> throw IllegalArgumentException("Lista inválida")
+        }
 
-    fun listarInteressados(idRecrutador: Long): List<Map<String, Any?>> {
-        val recrutador = recrutadorRepository.findById(idRecrutador)
-            .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
-
-        return listarAlunosIds(recrutador.interessados)
+        return listarAlunosIds(ids)
     }
 
     private fun listarAlunosIds(ids: List<Long>): List<Map<String, Any?>> {

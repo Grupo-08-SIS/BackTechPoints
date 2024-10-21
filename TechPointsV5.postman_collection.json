@@ -1,328 +1,11 @@
 {
 	"info": {
 		"_postman_id": "b0290830-71ef-4127-b87f-4968e075deda",
-		"name": "TechPointsV4",
+		"name": "TechPointsV5",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "32896562"
 	},
 	"item": [
-		{
-			"name": "Rh",
-			"item": [
-				{
-					"name": "Buscar alunos por curso ou cidade",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/dashboardRh/alunos",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"dashboardRh",
-								"alunos"
-							],
-							"query": [
-								{
-									"key": "cidade",
-									"value": "Rio de Janeiro",
-									"disabled": true
-								},
-								{
-									"key": "curso",
-									"value": "Liderança",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Dashboards",
-			"item": [
-				{
-					"name": "Qtd de pontos total do user em cada curso",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/grafico/pontos-por-curso?idUsuario=1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"grafico",
-								"pontos-por-curso"
-							],
-							"query": [
-								{
-									"key": "idUsuario",
-									"value": "1"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Classificação de usuários no site",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/grafico/classificacao?cursoId=4",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"grafico",
-								"classificacao"
-							],
-							"query": [
-								{
-									"key": "cursoId",
-									"value": "4"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "KPI Atividades Totais x Feitas",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/grafico/atividadesDoUsuario/3",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"grafico",
-								"atividadesDoUsuario",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "KPI Semana Atual x Semana Passada ",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/grafico/pontosDaSemana/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"grafico",
-								"pontosDaSemana",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Gráfico de Linha Pontos por dia x Curso",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/grafico/pontosAoLongoDoTempo/3?=",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"grafico",
-								"pontosAoLongoDoTempo",
-								"3"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": ""
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Gráfico Pontos por Curso x Mês",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": []
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"followRedirects": true,
-						"disableUrlEncoding": false,
-						"disableCookies": false
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "User-Agent",
-								"value": "insomnia/9.2.0"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/grafico/pontosPorCursoAoMes/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"grafico",
-								"pontosPorCursoAoMes",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
 		{
 			"name": "Dados Empresa",
 			"item": [
@@ -609,6 +292,14 @@
 								"nova-senha"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validar token",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -925,8 +616,11 @@
 						{
 							"listen": "test",
 							"script": {
+								"exec": [
+									""
+								],
 								"type": "text/javascript",
-								"exec": []
+								"packages": {}
 							}
 						}
 					],
@@ -948,7 +642,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8080/usuarios/imagem/1?=",
+							"raw": "http://localhost:8080/usuarios/imagem/1?id=1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -961,8 +655,8 @@
 							],
 							"query": [
 								{
-									"key": "",
-									"value": ""
+									"key": "id",
+									"value": "1"
 								}
 							]
 						}
@@ -1476,12 +1170,31 @@
 			"name": "DashRecrutador",
 			"item": [
 				{
-					"name": "Adicionar favorito",
+					"name": "Adicionar a lista",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "idRecrutador",
+								"value": "2",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "tipoLista",
+								"value": "favoritos",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "idAluno",
+								"value": "1",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
-							"raw": "http://localhost:8080/dashboardRecrutador/{idRecrutador}/favoritos/{idAluno}",
+							"raw": "http://localhost:8080/dashboardRecrutador/2/favoritos/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1489,21 +1202,21 @@
 							"port": "8080",
 							"path": [
 								"dashboardRecrutador",
-								"{idRecrutador}",
+								"2",
 								"favoritos",
-								"{idAluno}"
+								"6"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Adicionar Interessado",
+					"name": "Listar alunos de uma lista",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/dashboardRecrutador/{idRecrutador}/interessados/{idAluno}",
+							"raw": "http://localhost:8080/dashboardRecrutador/2/listar/favoritos",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1511,37 +1224,21 @@
 							"port": "8080",
 							"path": [
 								"dashboardRecrutador",
-								"{idRecrutador}",
-								"interessados",
-								"{idAluno}"
+								"2",
+								"listar",
+								"favoritos"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Listar favoritos",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Interessados",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "Remover favorito",
+					"name": "Remover da lista",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/dashboardRecrutador/{idRecrutador}/favoritos/{idAluno}",
+							"raw": "http://localhost:8080/dashboardRecrutador/2/favoritos/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1549,31 +1246,180 @@
 							"port": "8080",
 							"path": [
 								"dashboardRecrutador",
-								"{idRecrutador}",
+								"2",
 								"favoritos",
-								"{idAluno}"
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pontuacao",
+			"item": [
+				{
+					"name": "PontosAtividadeCurso",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pontuacoes/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pontuacoes",
+								"1"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Remover interessado",
+					"name": "KpiPontos",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/dashboardRecrutador/{idRecrutador}/favoritos/{idAluno}",
+							"raw": "http://localhost:8080/pontuacoes/kpi-semana/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"dashboardRecrutador",
-								"{idRecrutador}",
-								"favoritos",
-								"{idAluno}"
+								"pontuacoes",
+								"kpi-semana",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "KpiEntregas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pontuacoes/kpi-entregas/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pontuacoes",
+								"kpi-entregas",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PontosPorMês",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pontuacoes/pontos-mes/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pontuacoes",
+								"pontos-mes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PontosTotatis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pontuacoes/pontos-totais/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pontuacoes",
+								"pontos-totais",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ranking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pontuacoes/ranking",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pontuacoes",
+								"ranking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RankingComFiltro",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/pontuacoes/alunos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pontuacoes",
+								"alunos"
+							],
+							"query": [
+								{
+									"key": "escolaridade",
+									"value": "Ensino Médio Completo",
+									"disabled": true
+								},
+								{
+									"key": "idade",
+									"value": "29",
+									"disabled": true
+								},
+								{
+									"key": "cursoId",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "cidade",
+									"value": "São Paulo",
+									"disabled": true
+								}
 							]
 						}
 					},

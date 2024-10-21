@@ -56,11 +56,15 @@ class PontuacaoController @Autowired constructor(
     @GetMapping("/alunos")
     fun recuperarRankingComFiltros(
         @RequestParam(required = false) idade: Int?,
+        @RequestParam(required = false) primeiroNome: String?,
         @RequestParam(required = false) escolaridade: String?,
+        @RequestParam(required = false) sobrenome: String?,
+        @RequestParam(required = false) etnia: String?,
+        @RequestParam(required = false) sexo: String?,
         @RequestParam(required = false) cidade: String?,
         @RequestParam(required = false) cursoId: Long?
     ): ResponseEntity<Map<Long, Map<String, Any>>> {
-        val ranking = service.recuperarRankingComFiltro(idade, escolaridade, cidade, cursoId)
+        val ranking = service.recuperarRankingComFiltro(idade, primeiroNome, sobrenome, etnia, sexo, escolaridade, cidade, cursoId)
         return ResponseEntity.ok(ranking)
     }
 }

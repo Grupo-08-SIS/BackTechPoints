@@ -165,6 +165,10 @@ class PontuacaoService @Autowired constructor(
     fun recuperarRankingComFiltro(
         idade: Int?,
         escolaridade: String?,
+        sexo: String?,
+        etnia: String?,
+        primeiroNome: String?,
+        sobrenome: String?,
         cidade: String?,
         cursoId: Long?
     ): Map<Long, Map<String, Any>> {
@@ -181,6 +185,22 @@ class PontuacaoService @Autowired constructor(
                 )
             )
         }
+        sexo?.let {
+            predicates.add(
+                criteriaBuilder.equal(
+                    root.get<Aluno>("aluno").get<String>("sexo"),
+                    it
+                )
+            )
+        }
+        etnia?.let {
+            predicates.add(
+                criteriaBuilder.equal(
+                    root.get<Aluno>("aluno").get<String>("etnia"),
+                    it
+                )
+            )
+        }
         cidade?.let {
             predicates.add(
                 criteriaBuilder.equal(
@@ -190,6 +210,15 @@ class PontuacaoService @Autowired constructor(
             )
         }
         cursoId?.let { predicates.add(criteriaBuilder.equal(root.get<Curso>("curso").get<Long>("id"), it)) }
+
+        if (primeiroNome != null && sobrenome != null) {
+            predicates.add(
+                criteriaBuilder.and(
+                    criteriaBuilder.equal(root.get<Aluno>("aluno").get<String>("primeiro_nome"), primeiroNome),
+                    criteriaBuilder.equal(root.get<Aluno>("aluno").get<String>("sobrenome"), sobrenome)
+                )
+            )
+        }
 
         criteriaQuery.where(*predicates.toTypedArray())
         val query = entityManager.createQuery(criteriaQuery)

@@ -114,9 +114,9 @@ class UsuarioController @Autowired constructor(
         ]
     )
     @GetMapping("/listar")
-    fun listar(): ResponseEntity<Any> {
+    fun listar(@RequestParam(required = false) tipo: String?): ResponseEntity<Any> {
         return try {
-            val usuarios = usuarioService.listarUsuarios()
+            val usuarios = usuarioService.listarUsuarios(tipo)
             if (usuarios.isNotEmpty()) {
                 ResponseEntity.status(200).body(usuarios)
             } else {
