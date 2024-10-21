@@ -9,10 +9,10 @@ class TempoSessao(
     var id: Long,
 
     @Column(nullable = false)
-    var diaSessao: String, -> Domingo
+    var diaSessao: String,
 
     @Column(nullable = false)
-    var qtdTempoSessao: Int, -> 120 minutos
+    var qtdTempoSessao: Int,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")

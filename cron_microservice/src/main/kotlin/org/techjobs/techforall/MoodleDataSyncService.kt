@@ -12,8 +12,6 @@ class MoodleDataSyncService(
     val techJobsDbService: TechJobsDbService
 ) {
 
-   // @Scheduled(cron = "*/10 * * * * *") Testar funcionamento
-   // @Scheduled(cron = "0 0 0 * * *")
     fun sintonizarDados(){
        sincronizarDadosDoMoodle();
     }

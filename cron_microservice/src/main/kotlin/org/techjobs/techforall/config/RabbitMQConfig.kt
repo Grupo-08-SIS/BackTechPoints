@@ -9,7 +9,6 @@ class RabbitMQConfig {
 
     @Bean
     fun queue(): Queue {
-        // Defina o nome da fila para comunicação
         return Queue("moodleSyncQueue", true)
     }
 }
