@@ -10,4 +10,7 @@ import java.util.*
 interface AlunoRepository : JpaRepository<Aluno, Long> {
 
     fun findByEmail(email: String): Optional<Aluno>;
+  
+    fun findByIdIn(ids: List<Any>): List<Aluno>
+
 }
