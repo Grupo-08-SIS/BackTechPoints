@@ -12,7 +12,7 @@ class TempoSessao(
     var diaSessao: String,
 
     @Column(nullable = false)
-    var qtdTempoSessao: Double,
+    var qtdTempoSessao: Int,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aluno_id")

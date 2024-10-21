@@ -1,11 +1,10 @@
 package techForAll.techPoints.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.stereotype.Repository
 import techForAll.techPoints.domain.MetaEstudoSemana
+import java.util.Optional
 
-@Repository
-interface MetaEstudoSemanaRepository : JpaRepository<MetaEstudoSemana, Long> {
+interface MetaEstudoSemanaRepository: JpaRepository<MetaEstudoSemana, Long> {
 
-    fun findByAlunoId(alunoId: Long): MetaEstudoSemana?
+    fun findByAlunoEmail(email: String): Optional<MetaEstudoSemana>
 }

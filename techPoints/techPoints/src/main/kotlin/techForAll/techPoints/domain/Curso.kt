@@ -21,3 +21,4 @@ class Curso(
     @ManyToMany(mappedBy = "cursos")
     var alunos: List<Aluno>? = emptyList()
 )
+

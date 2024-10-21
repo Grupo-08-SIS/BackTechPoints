@@ -1,4 +1,4 @@
-package techForAll.techPoints
+package org.techjobs.techforall
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-class TechPointsApplication
+class TechCronJobs
 
 fun main(args: Array<String>) {
-	runApplication<TechPointsApplication>(*args)
+	runApplication<TechCronJobs>(*args)
 }
