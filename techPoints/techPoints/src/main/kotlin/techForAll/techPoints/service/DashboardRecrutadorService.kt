@@ -1,18 +1,18 @@
 package techForAll.techPoints.service
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Service
-import techForAll.techPoints.domain.Aluno
-import techForAll.techPoints.domain.Recrutador
+import techForAll.techPoints.domain.*
+import techForAll.techPoints.dtos.CursoDto
 import techForAll.techPoints.repository.AlunoRepository
+import techForAll.techPoints.repository.CursoMoodleRepository
 import techForAll.techPoints.repository.RecrutadorRepository
 
 @Service
 class DashboardRecrutadorService @Autowired constructor(
     private val recrutadorRepository: RecrutadorRepository,
     private val alunoRepository: AlunoRepository,
+    private val cursoRepository: CursoMoodleRepository
 ) {
 
     fun adicionarAluno(idRecrutador: Long, idAluno: Long, tipoLista: String) {
@@ -71,11 +71,28 @@ class DashboardRecrutadorService @Autowired constructor(
             "processoSeletivo" -> recrutador.processoSeletivo
             "contratados" -> recrutador.contratados
             "cancelados" -> recrutador.cancelados
-            else -> throw IllegalArgumentException("Lista inválida")
+            else -> throw IllegalArgumentException("List    a inválida")
         }
 
         return listarAlunosIds(ids)
     }
+
+    fun listarTodosOsCursos(): List<CursoDto> {
+        return cursoRepository.findAll().map { cursoToDto(it) }
+    }
+
+    fun listarCursosPorCategoria(nomeCategoria: String): List<CursoDto> {
+        return cursoRepository.findByCategoriaNome(nomeCategoria).map { cursoToDto(it) }
+    }
+
+    private fun cursoToDto(curso: CursoMoodle): CursoDto {
+        return CursoDto(
+            id = curso.id,
+            nome = curso.nome,
+            categoria = curso.categorias.map { it.nome }
+        )
+    }
+
 
     private fun listarAlunosIds(ids: List<Long>): List<Map<String, Any?>> {
         return ids.mapNotNull { alunoId ->

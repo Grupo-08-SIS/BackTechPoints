@@ -90,4 +90,36 @@ class DashboardRecrutadorController @Autowired constructor(
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+
+    @Operation(
+        summary = "Listar cursos cadastrados",
+        description = "Lista todos os cursos ou filtra pela categoria especificada"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Lista de cursos retornada com sucesso"),
+            ApiResponse(responseCode = "204", description = "Nenhum curso encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/listar")
+    fun listarCursos(
+        @RequestParam(required = false) categoria: String?
+    ): ResponseEntity<Any> {
+        return try {
+            val cursos = if (categoria.isNullOrEmpty()) {
+                recrutadorService.listarTodosOsCursos()
+            } else {
+                recrutadorService.listarCursosPorCategoria(categoria)
+            }
+
+            if (cursos.isEmpty()) {
+                ResponseEntity.status(204).body(mapOf("message" to "Nenhum curso encontrado"))
+            } else {
+                ResponseEntity.status(200).body(cursos)
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
 }

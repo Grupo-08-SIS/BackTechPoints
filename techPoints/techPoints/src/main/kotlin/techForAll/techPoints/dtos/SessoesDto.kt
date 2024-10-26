@@ -1,12 +1,12 @@
 package techForAll.techPoints.dtos
 
 
-class SessoesDto (
+class SessoesDto(
     var id: Long,
 
     var diaSessao: String,
 
-    var qtdTempoSessao: Double,
+    var qtdTempoSessao: Int,
 
     var metaEstudoSemana: Long
 )

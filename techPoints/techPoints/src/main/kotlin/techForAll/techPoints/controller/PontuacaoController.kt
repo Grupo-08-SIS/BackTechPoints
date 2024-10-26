@@ -19,12 +19,6 @@ class PontuacaoController @Autowired constructor(
         return service.recuperarTodosCursosAlunoPontuacao(idAluno);
     }
 
-//    @GetMapping("/{idAluno}/{idCurso}")
-//    fun recuperarPontosTotaisCurso(@PathVariable idAluno: Long, @PathVariable idCurso: Long): PontuacaoComPontosDTO {
-//
-//        return service.recuperarAlunoCursoEspecifico(idAluno, idCurso);
-//    }
-
     @GetMapping("/kpi-semana/{idAluno}")
     fun recuperarKPISemana(@PathVariable idAluno: Long): Map<String, Map<Long, Int>>{
 

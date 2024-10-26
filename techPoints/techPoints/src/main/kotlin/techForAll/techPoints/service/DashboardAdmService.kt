@@ -1,7 +1,4 @@
 package techForAll.techPoints.service
-
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import techForAll.techPoints.domain.Endereco
