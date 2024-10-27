@@ -12,18 +12,21 @@ import techForAll.techPoints.repository.RecrutadorRepository
 class DashboardRecrutadorService @Autowired constructor(
     private val recrutadorRepository: RecrutadorRepository,
     private val alunoRepository: AlunoRepository,
-    private val cursoRepository: CursoMoodleRepository
+    private val cursoRepository: CursoMoodleRepository,
+    private val notificacaoService: NotificacaoService
 ) {
 
     fun adicionarAluno(idRecrutador: Long, idAluno: Long, tipoLista: String) {
         val recrutador = recrutadorRepository.findById(idRecrutador)
             .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
 
-        alunoRepository.findById(idAluno)
+        val aluno = alunoRepository.findById(idAluno)
             .orElseThrow { NoSuchElementException("Aluno com ID $idAluno não encontrado") }
 
         moverParaLista(idAluno, recrutador, tipoLista)
         recrutadorRepository.save(recrutador)
+
+        notificacaoService.criarNotificacao(aluno, recrutador, recrutador.empresa.id, tipoLista)
     }
 
 

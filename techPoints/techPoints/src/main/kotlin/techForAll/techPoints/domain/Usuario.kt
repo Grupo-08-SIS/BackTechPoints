@@ -53,7 +53,7 @@ abstract class Usuario(
         @Column(nullable = true)
         var dataAtualizacao: LocalDateTime? = null
 ) {
-        abstract fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario
+        abstract fun criarUsuario(endereco: Endereco?, empresa: Empresa?): Usuario
 
         fun login(senha: String): Boolean {
                 if (this.senha == senha) {

@@ -1,6 +1,6 @@
 package techForAll.techPoints.service
 
-import techForAll.techPoints.domain.DadosEmpresa
+import techForAll.techPoints.domain.Empresa
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -16,10 +16,10 @@ class DadoEmpresaService @Autowired constructor(
     private val empresaRepository: DadosEmpresaRepository,
     private val enderecoRepository: EnderecoRepository
 ) {
-    fun cadastrarEmpresa(novaEmpresa: EmpresaInput): DadosEmpresa {
+    fun cadastrarEmpresa(novaEmpresa: EmpresaInput): Empresa {
         val endereco = enderecoRepository.findById(novaEmpresa.enderecoId)
             .orElseThrow { IllegalArgumentException("Endereço não encontrado") }
-        val dadosEmpresa = DadosEmpresa(
+        val empresa = Empresa(
             nomeEmpresa = novaEmpresa.nomeEmpresa,
             cnpj = novaEmpresa.cnpj,
             setorIndustria = novaEmpresa.setorIndustria,
@@ -27,7 +27,7 @@ class DadoEmpresaService @Autowired constructor(
             emailCorporativo = novaEmpresa.emailCorporativo,
             endereco = endereco
         )
-        return empresaRepository.save(dadosEmpresa)
+        return empresaRepository.save(empresa)
     }
 
     fun listarEmpresas(): List<EmpresaComRecrutadoresDto> {

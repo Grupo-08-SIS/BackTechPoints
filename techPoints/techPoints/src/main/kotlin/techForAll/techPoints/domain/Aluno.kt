@@ -56,7 +56,7 @@ class Aluno(
     tipoUsuario = 1,
     autenticado = autenticado
 ) {
-    override fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario {
+    override fun criarUsuario(endereco: Endereco?, empresa: Empresa?): Usuario {
         if (endereco == null) throw IllegalArgumentException("Endereço é obrigatório para Aluno")
         return Aluno(
             cursos = this.cursos,

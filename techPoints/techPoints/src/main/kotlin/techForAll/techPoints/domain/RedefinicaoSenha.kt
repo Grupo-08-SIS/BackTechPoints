@@ -47,7 +47,7 @@ class RedefinicaoSenha(
                 <p style="text-align: center;">Se você não solicitou a redefinição de senha, ignore este e-mail.</p>
                 <p style="text-align: center;">Atenciosamente,<br>Equipe Tech4All</p>
                 <footer style="text-align: center; font-size: 0.8em; color: #666;">
-                    <p>Tech4All - Endereço da Empresa - Cidade, Estado, CEP</p>
+                    <p>Tech4All - Rua Doutor Joviano Pacheco de Aguirre, 255 - Campo Limpo, São Paulo, SP, 05788-290</p>
                     <p><a href="https://www.tech4all.com" style="color: #007bff; text-decoration: none;">Visite nosso site</a></p>
                 </footer>
             </div>

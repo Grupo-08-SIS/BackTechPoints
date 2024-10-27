@@ -31,7 +31,7 @@ class Recrutador(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
-    var empresa: DadosEmpresa,
+    var empresa: Empresa,
 
     @Column(nullable = false)
     var cargoUsuario: String,
@@ -57,7 +57,7 @@ class Recrutador(
     tipoUsuario = 2,
     autenticado = autenticado
 ) {
-    override fun criarUsuario(endereco: Endereco?, empresa: DadosEmpresa?): Usuario {
+    override fun criarUsuario(endereco: Endereco?, empresa: Empresa?): Usuario {
         if (empresa == null) throw IllegalArgumentException("Empresa é obrigatória para Recrutador")
         return Recrutador(
             favoritos = this.favoritos,

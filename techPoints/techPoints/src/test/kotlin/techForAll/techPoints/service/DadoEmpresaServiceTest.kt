@@ -3,7 +3,7 @@ package techForAll.techPoints.service
 import techForAll.techPoints.TestObjects.dadoEmpresaDTOTeste1
 import techForAll.techPoints.TestObjects.empresaTeste1
 import techForAll.techPoints.TestObjects.usuarioTeste1
-import techForAll.techPoints.domain.DadosEmpresa
+import techForAll.techPoints.domain.Empresa
 import techForAll.techPoints.dto.DadosEmpresaDTOAtt
 import techForAll.techPoints.repository.DadosEmpresaRepository
 import techForAll.techPoints.repository.UsuarioRepository
@@ -30,7 +30,7 @@ class DadoEmpresaServiceTest {
 
         `when`(usuarioRepository.findById(dadoEmpresaDTO.idUsuario)).thenReturn(Optional.of(usuario))
 
-        val dadoEmpresaSalvo = DadosEmpresa(
+        val dadoEmpresaSalvo = Empresa(
             idEmpresa = dadoEmpresaDTO.idEmpresa,
             nomeEmpresa = dadoEmpresaDTO.nomeEmpresa,
             setorIndustria = dadoEmpresaDTO.setorIndustria,
@@ -104,7 +104,7 @@ class DadoEmpresaServiceTest {
         // Mock dos métodos do repositório para retornar os dados existentes e salvar os novos
         `when`(dadoEmpresaRepository.findById(idEmpresa)).thenReturn(Optional.of(empresaExistente))
         `when`(dadoEmpresaRepository.save(any())).then { invocation ->
-            invocation.getArgument<DadosEmpresa>(0).apply {
+            invocation.getArgument<Empresa>(0).apply {
                 assertEquals(novoNome, nomeEmpresa)
                 assertEquals(novoSetor, setorIndustria)
 
