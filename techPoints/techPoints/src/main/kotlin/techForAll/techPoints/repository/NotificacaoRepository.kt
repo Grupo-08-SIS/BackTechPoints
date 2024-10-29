@@ -6,5 +6,5 @@ import techForAll.techPoints.domain.Notificacao
 
 @Repository
 interface NotificacaoRepository : JpaRepository<Notificacao, Long>{
-    fun findByAlunoId(idAluno: Long): List<Notificacao>
+    fun findByAlunoIdAndStatusFalse(idAluno: Long): List<Notificacao>
 }

@@ -4,7 +4,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import techForAll.techPoints.domain.Aluno
-import techForAll.techPoints.domain.Empresa
+
 import techForAll.techPoints.domain.Notificacao
 import techForAll.techPoints.domain.Recrutador
 import techForAll.techPoints.repository.DadosEmpresaRepository
@@ -63,7 +63,7 @@ class NotificacaoService(
                     <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
                         <h2 style="text-align: center; color: #007bff;">Notificação de Adição à Lista</h2>
                         <p style="text-align: center;">Olá, $nomeAluno!</p>
-                        <p style="text-align: center;">Você foi adicionado à lista <strong>$tipoLista</strong> pelo recrutador <strong>$nomeRecrutador</strong> da empresa <strong>$nomeEmpresa</strong>.</p>
+                        <p style="text-align: center;">Você foi adicionado(a) à lista <strong>$tipoLista</strong> pelo(a) recrutador(a) <strong>$nomeRecrutador</strong> da empresa <strong>$nomeEmpresa</strong>.</p>
                         <p style="text-align: center;">Por favor, acesse sua conta para mais detalhes e acompanhe seu progresso.</p>
                         <p style="text-align: center;">Atenciosamente,<br>Equipe Tech4All</p>
                         <footer style="text-align: center; font-size: 0.8em; color: #666;">
@@ -87,7 +87,17 @@ class NotificacaoService(
         }
     }
 
+    fun marcarNotificacaoComoLida(idAluno: Long, idNotificacao: Long): Notificacao {
+        val notificacao = notificacaoRepository.findById(idNotificacao).orElseThrow { NoSuchElementException("Notificação não encontrada") }
+
+        if (notificacao.aluno.id != idAluno) {
+            throw IllegalArgumentException("Notificação não pertence ao aluno especificado")
+        }
+
+        notificacao.status = true
+        return notificacaoRepository.save(notificacao)
+    }
     fun getNotificacoesPorAluno(idAluno: Long): List<Notificacao> {
-        return notificacaoRepository.findByAlunoId(idAluno)
+        return notificacaoRepository.findByAlunoIdAndStatusFalse(idAluno)
     }
 }

@@ -1,6 +1,6 @@
 package techForAll.techPoints.domain
 import jakarta.persistence.*
-import techForAll.techPoints.dtos.LongListToJsonConverter
+import techForAll.techPoints.config.LongListToJsonConverter
 
 
 @Entity

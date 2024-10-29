@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import techForAll.techPoints.service.NotificacaoService
 
 @RestController
@@ -36,6 +33,34 @@ class NotificacaoController(
             } else {
                 ResponseEntity.status(204).build()
             }
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
+
+    @Operation(
+        summary = "Marcar notificação como lida",
+        description = "Marca a notificação especificada pelo ID como lida para o aluno especificado pelo ID"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Notificação marcada como lida com sucesso"),
+            ApiResponse(responseCode = "404", description = "Notificação ou aluno não encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @PatchMapping("/{idAluno}/notificacoes/{idNotificacao}/marcar-como-lida")
+    fun marcarNotificacaoComoLida(
+        @PathVariable idAluno: Long,
+        @PathVariable idNotificacao: Long
+    ): ResponseEntity<Any> {
+        return try {
+            val notificacao = notificacaoService.marcarNotificacaoComoLida(idAluno, idNotificacao)
+            ResponseEntity.status(200).body(notificacao)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to "Notificação ou aluno não encontrado"))
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(400).body(mapOf("message" to e.message))
         } catch (e: Exception) {
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }

@@ -1,4 +1,4 @@
-package techForAll.techPoints.dtos
+package techForAll.techPoints.config
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
