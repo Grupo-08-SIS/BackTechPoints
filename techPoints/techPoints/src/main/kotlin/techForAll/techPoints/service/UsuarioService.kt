@@ -127,7 +127,6 @@ class UsuarioService @Autowired constructor(
         return mapearUsuario(usuario)
     }
 
-
     fun atualizarUsuario(idUsuario: Long, atualizacao: Map<String, Any>): Any {
             val usuarioExistente = usuarioRepository.findById(idUsuario)
                 .orElseThrow { NoSuchElementException("Usuário não encontrado com o ID: $idUsuario") }

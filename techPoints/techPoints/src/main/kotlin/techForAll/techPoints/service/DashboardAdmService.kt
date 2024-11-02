@@ -125,7 +125,7 @@ class DashboardAdmService@Autowired constructor(
         return demografia
     }
 
-    private fun getAlunosPorTipoLista(tipoLista: String, idEmpresa: Long?): List<Any>{
+    fun getAlunosPorTipoLista(tipoLista: String, idEmpresa: Long?): List<Any>{
         val ids = when (tipoLista) {
             "todos" -> if (idEmpresa != null)dashAdmRepositoy.findIdsTodosByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsTodos()
             "contratados" -> if (idEmpresa != null) dashAdmRepositoy.findIdsContratadosByEmpresa(idEmpresa) else dashAdmRepositoy.findIdsContratados()
@@ -136,7 +136,7 @@ class DashboardAdmService@Autowired constructor(
         return ids
     }
 
-    private fun processarIdsJson(idStrings: List<Any>): ArrayBlockingQueue<Long> {
+    fun processarIdsJson(idStrings: List<Any>): ArrayBlockingQueue<Long> {
 
         val ids = mutableListOf<Long>()
 

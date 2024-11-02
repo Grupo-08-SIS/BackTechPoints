@@ -10,19 +10,26 @@ import techForAll.techPoints.domain.Curso
 import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.domain.Pontuacao
 import techForAll.techPoints.dtos.AlunoDto
+import techForAll.techPoints.dtos.ListaDto
 import techForAll.techPoints.dtos.PontuacaoComPontosDTO
 import techForAll.techPoints.repository.AlunoRepository
+import techForAll.techPoints.repository.DadosEmpresaRepository
+import techForAll.techPoints.repository.DashboardAdmRepository
 import techForAll.techPoints.repository.PontuacaoRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.concurrent.ArrayBlockingQueue
 
 
 @Service
 class PontuacaoService @Autowired constructor(
     private val entityManager: EntityManager,
     private val pontuacaoRepository: PontuacaoRepository,
-    private val alunoRepository: AlunoRepository
+    private val alunoRepository: AlunoRepository,
+    private val dashboardAdmRepository: DashboardAdmRepository,
+    private val dadosEmpresaRepository: DadosEmpresaRepository,
+    private val usuarioService: UsuarioService
 
 ) {
 
@@ -162,6 +169,7 @@ class PontuacaoService @Autowired constructor(
     }
 
 
+
     fun recuperarRankingComFiltro(
         idade: Int?,
         escolaridade: String?,
@@ -254,34 +262,74 @@ class PontuacaoService @Autowired constructor(
             )
         }
     }
+
+    fun buscarListasComAluno(idAluno: Long): List<ListaDto> {
+        val listasComAluno = mutableListOf<ListaDto>()
+        val tiposLista = listOf("contratados", "interessados", "processoSeletivo")
+
+        val empresas = dadosEmpresaRepository.findAll()
+
+        for (empresa in empresas) {
+            val idEmpresa = empresa.id
+
+            for (tipo in tiposLista) {
+                val listaRecrutadores = getAlunosPorTipoLista(tipo, idEmpresa)
+
+                listaRecrutadores.forEach { item ->
+                    if (item != null && item is Array<*> && item.size == 2) {
+                        val idRecrutador = item[0] as? Long
+                        val jsonLista = item[1] as? String
+
+                        if (idRecrutador != null && jsonLista != null && jsonLista.isNotBlank() && jsonLista != "[]") {
+
+                            val idsAlunos = processarIdsJson(jsonLista)
+
+                            if (idsAlunos != null && idsAlunos.contains(idAluno)) {
+                                val emailRecrutador = usuarioService.buscarUsuarioPorId(idRecrutador)["email"] as? String
+
+                                listasComAluno.add(
+                                    ListaDto(
+                                        nomeEmpresa = empresa.nomeEmpresa,
+                                        emailRecrutador = emailRecrutador ?: "Email não encontrado",
+                                        lista = tipo
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return listasComAluno
+    }
+
+    fun getAlunosPorTipoLista(tipoLista: String, idEmpresa: Long?): List<Any> {
+        val ids = when (tipoLista) {
+            "contratados" -> dashboardAdmRepository.findIdsRecrutadorAndContratadosByEmpresa(idEmpresa!!)
+            "interessados" -> dashboardAdmRepository.findIdsRecrutadorAndInteressadosByEmpresa(idEmpresa!!)
+            "processoSeletivo" -> dashboardAdmRepository.findIdsRecrutadorAndProcessoSeletivoByEmpresa(idEmpresa!!)
+            else -> throw IllegalArgumentException("Tipo de lista inválido")
+        }
+        return ids
+    }
+
+    fun processarIdsJson(idString: String): ArrayBlockingQueue<Long>? {
+        val ids = mutableListOf<Long>()
+
+        if (idString.isNotBlank() && idString != "[]") {
+            idString
+                .removeSurrounding("[", "]")
+                .split(",")
+                .mapNotNull { it.trim().toLongOrNull() }
+                .forEach { ids.add(it) }
+        }
+
+        return if (ids.isNotEmpty()) {
+            val idsFila = ArrayBlockingQueue<Long>(ids.size)
+            idsFila.addAll(ids)
+            idsFila
+        } else {
+            null
+        }
+    }
 }
-//    fun recuperarAlunoCursoEspecifico(idAluno: Long, idCurso: Long): PontuacaoComPontosDTO {
-//
-//        val aluno = alunoRepository.findById(idAluno);
-//
-//      if (aluno.isPresent) {
-//            val alunoPresente = aluno.get();
-//            if (alunoPresente.cursos?.isNotEmpty() == true) {
-//                alunoPresente.cursos = alunoPresente.cursos!!.filter { it.id == idCurso };
-//
-//               for (i in 1..alunoPresente.cursos!![0].totalAtividadesDoAluno){
-//
-//               }
-//
-//            } else {
-//                throw Exception()
-//            }
-//        } else {
-//            throw Exception()
-//        }
-//
-//
-//    }
-
-    // ALUNO:
-    // TODO: Soma total de Pontos do Curso
-    // TODO: Gráfico Radar <- Precisa de Banco Ainda
-    // TODO: Meta de Estudo <- Próxima Sprint
-
-    // RH
-    // TODO: Todos os Alunos de um Curso, junto com sua pontuação -> Ter filtro de Idade, Município, Escolaridade e Curso
