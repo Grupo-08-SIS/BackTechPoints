@@ -28,10 +28,6 @@ class ResetSenhaService(
                 return ResponseEntity.status(404).body(mapOf("message" to "Usuário não encontrado"))
             }
 
-            if (trocasSenhaAtivas.isNotEmpty()) {
-                return ResponseEntity.status(409)
-                    .body(mapOf("message" to "Uma troca de senha já está em andamento para este usuário."))
-            }
 
             val redefinicaoSenha = RedefinicaoSenha(
                 codigoRedefinicao = gerarResetCode(),
@@ -72,6 +68,10 @@ class ResetSenhaService(
             )
 
             if (redefinicaoSenha != null) {
+
+                if (redefinicaoSenha.valido == false){
+                    return ResponseEntity.status(400).body(mapOf("message" to "Token inválido ou expirado"))
+                }
                 val usuario = redefinicaoSenha.usuarioRedefinicao
                 usuario.senha = novaSenha
 
