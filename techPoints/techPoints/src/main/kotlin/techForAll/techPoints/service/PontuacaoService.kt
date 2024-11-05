@@ -18,7 +18,9 @@ import techForAll.techPoints.repository.DashboardAdmRepository
 import techForAll.techPoints.repository.PontuacaoRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ArrayBlockingQueue
 
 
@@ -71,17 +73,17 @@ class PontuacaoService @Autowired constructor(
         val inicioSemanaAtual = agora.with(DayOfWeek.MONDAY)
         val inicioSemanaPassada = inicioSemanaAtual.minusWeeks(1)
 
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
         val pontosSemanaAtual = alunoAgrupadoCurso.mapValues { entrada ->
             entrada.value.filter { atividade ->
-                val dataEntrega = LocalDate.parse(atividade.dataEntrega)
-                !dataEntrega.isBefore(inicioSemanaAtual)
-            }.sumOf { it.pontosAtividade };
+                atividade.dataEntrega != null && !LocalDateTime.parse(atividade.dataEntrega, formatter).toLocalDate().isBefore(inicioSemanaAtual)
+            }.sumOf { it.pontosAtividade }
         }
 
         val pontosSemanaPassada = alunoAgrupadoCurso.mapValues { entrada ->
             entrada.value.filter { atividade ->
-                val dataEntrega = LocalDate.parse(atividade.dataEntrega)
-                dataEntrega.isAfter(inicioSemanaPassada) && dataEntrega.isBefore(inicioSemanaAtual)
+                atividade.dataEntrega != null && LocalDateTime.parse(atividade.dataEntrega, formatter).toLocalDate().isAfter(inicioSemanaPassada) && LocalDateTime.parse(atividade.dataEntrega, formatter).toLocalDate().isBefore(inicioSemanaAtual)
             }.sumOf { it.pontosAtividade }
         }
 

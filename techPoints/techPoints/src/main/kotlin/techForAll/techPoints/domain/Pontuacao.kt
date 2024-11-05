@@ -7,7 +7,7 @@ class Pontuacao(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     var dataEntrega: String,
 
     @Column(nullable = false)

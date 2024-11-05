@@ -9,9 +9,9 @@ class MoodleSyncProducer(
     private val rabbitTemplate: RabbitTemplate
 ) {
 
-    //@Scheduled(cron = "*/10 * * * * *") // Testar funcionamento
+   // @Scheduled(cron = "0 * * * * *") // Testar funcionamento
     // Agendamento para meia-noite
-    @Scheduled(cron = "0 0 0 * * *")
+    //@Scheduled(cron = "0 0 0 * * *")
     fun enviarMensagemDeSincronizacao() {
         val mensagem = "Iniciar sincronização do Moodle"
         rabbitTemplate.convertAndSend("moodleSyncQueue", mensagem)
