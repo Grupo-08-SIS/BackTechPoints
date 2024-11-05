@@ -18,7 +18,18 @@ class DashboardAdmService@Autowired constructor(
     private val usuarioService: UsuarioService
 ){
     fun getAlunosPorCurso(): List<CursoAlunosDto> {
-        return dashAdmRepositoy.findAlunosPorCurso()
+        val rankingPorCurso = pontuacaoService.recuperarRankingPorCurso()
+
+        return rankingPorCurso.map { (cursoId, cursoData) ->
+            val nomeCurso = cursoData["nomeCurso"] as String
+            val ranking = cursoData["ranking"] as List<Map<String, Any>>
+            val quantidadeAlunos = ranking.size
+
+            CursoAlunosDto(
+                nomeCurso = nomeCurso,
+                quantidadeAlunos = quantidadeAlunos
+            )
+        }
     }
 
     fun getDemografiaPorTipoLista(tipoLista: String, idEmpresa: Long?): DemografiaDto {

@@ -9,11 +9,6 @@ import techForAll.techPoints.dtos.CursoAlunosDto
 @Repository
 interface DashboardAdmRepository : JpaRepository<Curso, Long> {
 
-    @Query("SELECT new techForAll.techPoints.dtos.CursoAlunosDto(c.nome, COUNT(a.id)) " +
-            "FROM Curso c JOIN c.alunos a GROUP BY c.nome")
-    fun findAlunosPorCurso(): List<CursoAlunosDto>
-
-
     @Query(value = "SELECT contratados_json, interessados_json, processo_seletivo_json  FROM Recrutador WHERE empresa_id = :idEmpresa", nativeQuery = true)
     fun findIdsTodosByEmpresa(idEmpresa: Long): List<Any>
 
