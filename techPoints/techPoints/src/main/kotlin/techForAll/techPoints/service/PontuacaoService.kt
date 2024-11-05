@@ -116,13 +116,17 @@ class PontuacaoService @Autowired constructor(
 
         val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno);
 
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
         return alunoAgrupadoCurso.mapKeys { entry ->
             val cursoId = entry.key
             val cursoNome = entry.value.firstOrNull()?.cursoNome ?: "Unknown"
             Pair(cursoId, cursoNome)
         }.mapValues { entry ->
-            entry.value.groupBy { atividade ->
-                YearMonth.from(LocalDate.parse(atividade.dataEntrega))
+            entry.value.filter { atividade ->
+                atividade.dataEntrega != null
+            }.groupBy { atividade ->
+                YearMonth.from(LocalDate.parse(atividade.dataEntrega, formatter))
             }.mapValues { (_, atividades) ->
                 atividades.sumOf { it.pontosAtividade }
             }
