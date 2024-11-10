@@ -38,7 +38,7 @@ class PontuacaoService @Autowired constructor(
 
     fun alunoExiste(idAluno: Long): Aluno {
 
-        return alunoRepository.findById(idAluno).orElseThrow();
+        return alunoRepository.findById(idAluno).orElseThrow{ NoSuchElementException("Aluno não Encontrado!") };
     }
 
     fun recuperarTodosCursosAlunoPontuacao(idAluno: Long): Map<Long, List<PontuacaoComPontosDTO>> {

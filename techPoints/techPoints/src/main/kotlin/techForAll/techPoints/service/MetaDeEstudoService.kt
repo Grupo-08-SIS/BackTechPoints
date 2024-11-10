@@ -26,7 +26,7 @@ class MetaDeEstudoService @Autowired constructor(
     ): MetaDiariaDto {
         val metaEstudoSemana = metaSemanalRepository.findById(metaEstudoSemanaId).orElseGet {
             val aluno = alunoRepository.findById(metaEstudoSemanaId)
-                .orElseThrow { Exception("Aluno não encontrado") }
+                .orElseThrow { NoSuchElementException("Aluno não encontrado") }
             val novaMetaEstudoSemana = MetaEstudoSemana(
                 id = metaEstudoSemanaId,
                 aluno = aluno,
@@ -92,7 +92,7 @@ class MetaDeEstudoService @Autowired constructor(
 
     fun obterMetaEstudoSemana(metaEstudoSemanaId: Long): MetaEstudoSemanaDto {
         val metaEstudoSemana = metaSemanalRepository.findById(metaEstudoSemanaId)
-            .orElseThrow { Exception("Meta de estudo semanal não encontrada") }
+            .orElseThrow { NoSuchElementException("Meta de estudo semanal não encontrada") }
 
         val diasAtivos = metaEstudoSemana.diasAtivos ?: emptyList()
         val sessoes = metaEstudoSemana.tempoSessao ?: emptyList()
