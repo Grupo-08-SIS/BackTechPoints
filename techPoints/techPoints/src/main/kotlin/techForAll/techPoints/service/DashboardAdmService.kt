@@ -112,7 +112,7 @@ class DashboardAdmService@Autowired constructor(
                     "estado" to endereco.estado
                 )
             } else {
-                throw IllegalStateException("Endereço não pode ser nulo")
+                throw IllegalStateException("Endereço não pode ser nulo. Verifique o ID informado e tente novamente.")
             }
         }
     }
