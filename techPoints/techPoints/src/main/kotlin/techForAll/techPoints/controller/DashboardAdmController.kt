@@ -72,21 +72,20 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
     @GetMapping("/relatorio-demografia-listas")
     fun gerarRelatorioDemografiaListas(@RequestParam tipoLista: String, @RequestParam(required = false) idEmpresa: Long?): ResponseEntity<ByteArray> {
         return try {
-
             val csv = dashAdmService.gerarRelatorioDemografiaEmpresas(tipoLista, idEmpresa)
 
             val arquivoCsv = csv.toByteArray(Charsets.UTF_8)
 
             ResponseEntity.ok()
-                .header("Content-Type", "text/csv")
+                .header("Content-Type", "text/csv; charset=UTF-8")
                 .header("Content-Disposition", "attachment; filename=\"relatorio_demografia_listas.csv\"")
                 .body(arquivoCsv)
         } catch (e: IllegalArgumentException) {
-            ResponseEntity.status(400).body("Tipo de lista inválido".toByteArray())
+            ResponseEntity.status(400).body("Tipo de lista inválido".toByteArray(Charsets.UTF_8))
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(204).body("Nenhum dado encontrado".toByteArray())
+            ResponseEntity.status(204).body("Nenhum dado encontrado".toByteArray(Charsets.UTF_8))
         } catch (e: Exception) {
-            ResponseEntity.status(500).body("Erro interno do servidor: ${e.message}".toByteArray())
+            ResponseEntity.status(500).body("Erro interno do servidor: ${e.message}".toByteArray(Charsets.UTF_8))
         }
     }
 
