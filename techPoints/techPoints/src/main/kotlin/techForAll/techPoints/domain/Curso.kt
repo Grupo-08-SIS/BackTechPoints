@@ -5,7 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "curso")
-class Curso(
+class   Curso(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
 
