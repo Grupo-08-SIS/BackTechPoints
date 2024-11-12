@@ -25,9 +25,11 @@ class DashboardRecrutadorService @Autowired constructor(
 
         moverParaLista(idAluno, recrutador, tipoLista)
         recrutadorRepository.save(recrutador)
-        if(tipoLista != "favoritos" || tipoLista != "cancelados"){
+
+        if (tipoLista != "favoritos" && tipoLista != "cancelados") {
             notificacaoService.criarNotificacao(aluno, recrutador, recrutador.empresa.id, tipoLista)
         }
+
     }
 
     fun moverParaLista(idAluno: Long, recrutador: Recrutador, novaLista: String) {
