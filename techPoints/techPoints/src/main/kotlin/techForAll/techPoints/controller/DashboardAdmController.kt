@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import techForAll.techPoints.dtos.CursoAlunosDto
 import techForAll.techPoints.service.DashboardAdmService
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RestController
 @RequestMapping("/dashboardAdm")
@@ -73,17 +75,49 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
     fun gerarRelatorioDemografiaListas(@RequestParam tipoLista: String, @RequestParam(required = false) idEmpresa: Long?): ResponseEntity<ByteArray> {
         return try {
             val csv = dashAdmService.gerarRelatorioDemografiaEmpresas(tipoLista, idEmpresa)
-
             val arquivoCsv = csv.toByteArray(Charsets.UTF_8)
+            val dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
             ResponseEntity.ok()
                 .header("Content-Type", "text/csv; charset=UTF-8")
-                .header("Content-Disposition", "attachment; filename=\"relatorio_demografia_listas.csv\"")
+                .header("Content-Disposition", "attachment; filename=\"relatorio_demografia_listas_$dataAtual.csv\"")
                 .body(arquivoCsv)
         } catch (e: IllegalArgumentException) {
             ResponseEntity.status(400).body("Tipo de lista inválido".toByteArray(Charsets.UTF_8))
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(204).body("Nenhum dado encontrado".toByteArray(Charsets.UTF_8))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body("Erro interno do servidor: ${e.message}".toByteArray(Charsets.UTF_8))
+        }
+    }
+    @Operation(summary = "Gerar relatório CSV de demografia dos alunos", description = "Retorna um arquivo CSV com a demografia" +
+            " dos alunos cadastrados no site")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Relatório CSV gerado com sucesso"),
+            ApiResponse(responseCode = "400", description = "Tipo de lista inválido"),
+            ApiResponse(responseCode = "204", description = "Nenhum dado encontrado"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @GetMapping("/relatorio-alunos")
+    fun gerarRelatorioAlunosFiltrados(
+        @RequestParam(required = false) sexo: String?,
+        @RequestParam(required = false) etnia: String?,
+        @RequestParam(required = false) idadeMaxima: Int?,
+        @RequestParam(required = false) idadeMinima: Int?,
+        @RequestParam(required = false) cidade: String?,
+        @RequestParam(required = false) escolaridade: String?
+    ): ResponseEntity<ByteArray> {
+        return try {
+            val csv = dashAdmService.gerarRelatorioDemografiaAlunos(sexo, etnia, idadeMaxima, idadeMinima, cidade, escolaridade)
+            val arquivoCsv = csv.toByteArray(Charsets.UTF_8)
+            val dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+            ResponseEntity.status(200)
+                .header("Content-Type", "text/csv; charset=UTF-8")
+                .header("Content-Disposition", "attachment; filename=\"relatorio_alunos_$dataAtual.csv\"")
+                .body(arquivoCsv)
         } catch (e: Exception) {
             ResponseEntity.status(500).body("Erro interno do servidor: ${e.message}".toByteArray(Charsets.UTF_8))
         }

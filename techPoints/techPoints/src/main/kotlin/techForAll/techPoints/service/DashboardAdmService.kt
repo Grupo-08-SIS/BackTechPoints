@@ -53,6 +53,19 @@ class DashboardAdmService@Autowired constructor(
         return gerarRelatorioCSV(idsFila.toList())
     }
 
+    fun gerarRelatorioDemografiaAlunos(
+        sexo: String?,
+        etnia: String?,
+        idadeMaxima: Int?,
+        idadeMinima: Int?,
+        cidade: String?,
+        escolaridade: String?
+    ): String {
+        val alunos = alunoRepository.findAlunosFiltrados(sexo, etnia, idadeMaxima, idadeMinima, cidade, escolaridade)
+
+        return gerarRelatorioAlunos(alunos)
+    }
+
     fun gerarRelatorioCSV(ids: List<Long>): String {
         val csvHeader = listOf(
             "ID", "Nome de Usuário", "CPF", "Primeiro Nome", "Sobrenome", "Email", "Telefone", "Tipo Usuário", "Sexo",
@@ -86,6 +99,41 @@ class DashboardAdmService@Autowired constructor(
                 cursos!!.entries.joinToString("; ") { (cursoId, cursoData) ->
                     "${cursoData["nomeCurso"]} (Pontos: ${cursoData["pontosTotais"]})"
                 }
+            ).joinToString(",")
+        }
+
+        return (listOf(csvHeader.joinToString(",")) + csvRows).joinToString("\n")
+    }
+
+    fun gerarRelatorioAlunos(ids: List<Long>): String {
+        val csvHeader = listOf(
+            "ID", "Nome de Usuário", "CPF", "Primeiro Nome", "Sobrenome", "Email", "Telefone", "Tipo Usuário", "Sexo",
+            "Etnia", "Escolaridade", "Data de Nascimento", "Deletado", "CEP", "Rua", "Cidade", "Estado",
+        )
+
+        val csvRows = ids.map { id ->
+            val alunoComCursos = comporAlunoComCursos(id)
+
+            val endereco = alunoComCursos["endereco"] as Map<String, String>
+
+            listOf(
+                alunoComCursos["id"],
+                alunoComCursos["nomeUsuario"],
+                alunoComCursos["cpf"],
+                alunoComCursos["primeiroNome"],
+                alunoComCursos["sobrenome"],
+                alunoComCursos["email"],
+                alunoComCursos["telefone"],
+                alunoComCursos["tipoUsuario"],
+                alunoComCursos["sexo"],
+                alunoComCursos["etnia"],
+                alunoComCursos["escolaridade"],
+                alunoComCursos["dataNascimento"],
+                alunoComCursos["deletado"],
+                endereco["cep"],
+                endereco["rua"],
+                endereco["cidade"],
+                endereco["estado"],
             ).joinToString(",")
         }
 

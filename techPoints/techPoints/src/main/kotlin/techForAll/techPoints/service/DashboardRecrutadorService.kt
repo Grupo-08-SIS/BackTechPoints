@@ -25,12 +25,12 @@ class DashboardRecrutadorService @Autowired constructor(
 
         moverParaLista(idAluno, recrutador, tipoLista)
         recrutadorRepository.save(recrutador)
-
-        notificacaoService.criarNotificacao(aluno, recrutador, recrutador.empresa.id, tipoLista)
+        if(tipoLista != "favoritos" || tipoLista != "cancelados"){
+            notificacaoService.criarNotificacao(aluno, recrutador, recrutador.empresa.id, tipoLista)
+        }
     }
 
-
-    private fun moverParaLista(idAluno: Long, recrutador: Recrutador, novaLista: String) {
+    fun moverParaLista(idAluno: Long, recrutador: Recrutador, novaLista: String) {
 
         recrutador.favoritos = recrutador.favoritos.filter { it != idAluno }
         recrutador.interessados = recrutador.interessados.filter { it != idAluno }
@@ -48,7 +48,7 @@ class DashboardRecrutadorService @Autowired constructor(
         }
     }
 
-    fun removerAluno(idRecrutador: Long, idAluno: Long, tipoLista: String) {
+     fun removerAluno(idRecrutador: Long, idAluno: Long, tipoLista: String) {
         val recrutador = recrutadorRepository.findById(idRecrutador)
             .orElseThrow { NoSuchElementException("Recrutador não encontrado") }
 
@@ -74,7 +74,7 @@ class DashboardRecrutadorService @Autowired constructor(
             "processoSeletivo" -> recrutador.processoSeletivo
             "contratados" -> recrutador.contratados
             "cancelados" -> recrutador.cancelados
-            else -> throw IllegalArgumentException("List    a inválida")
+            else -> throw IllegalArgumentException("Lista inválida")
         }
 
         return listarAlunosIds(ids)
