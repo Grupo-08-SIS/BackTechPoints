@@ -47,7 +47,7 @@ class GlobalExceptionHandler {
             message = ex.message ?: "Estado ilegal detectado",
             details = request.getDescription(false)
         )
-        return ResponseEntity(errorDetails, HttpStatus.CONFLICT) // Ou outro status adequado
+        return ResponseEntity(errorDetails, HttpStatus.CONFLICT)
     }
 
     data class ErrorResponse(
