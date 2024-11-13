@@ -20,7 +20,6 @@ interface AlunoRepository : JpaRepository<Aluno, Long> {
         WHERE (:sexo IS NULL OR a.sexo = :sexo)
         AND (:etnia IS NULL OR a.etnia = :etnia)
         AND (:idadeMaxima IS NULL OR (YEAR(CURRENT_DATE) - YEAR(a.dtNasc)) <= :idadeMaxima)
-        AND (:idadeMinima IS NULL OR (YEAR(CURRENT_DATE) - YEAR(a.dtNasc)) >= :idadeMinima)
         AND (:cidade IS NULL OR e.cidade = :cidade)
         AND (:escolaridade IS NULL OR a.escolaridade = :escolaridade)
     """)
@@ -28,7 +27,6 @@ interface AlunoRepository : JpaRepository<Aluno, Long> {
         @Param("sexo") sexo: String?,
         @Param("etnia") etnia: String?,
         @Param("idadeMaxima") idadeMaxima: Int?,
-        @Param("idadeMinima") idadeMinima: Int?,
         @Param("cidade") cidade: String?,
         @Param("escolaridade") escolaridade: String?
     ): List<Long>

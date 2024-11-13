@@ -57,11 +57,10 @@ class DashboardAdmService@Autowired constructor(
         sexo: String?,
         etnia: String?,
         idadeMaxima: Int?,
-        idadeMinima: Int?,
         cidade: String?,
         escolaridade: String?
     ): String {
-        val alunos = alunoRepository.findAlunosFiltrados(sexo, etnia, idadeMaxima, idadeMinima, cidade, escolaridade)
+        val alunos = alunoRepository.findAlunosFiltrados(sexo, etnia, idadeMaxima, cidade, escolaridade)
 
         return gerarRelatorioAlunos(alunos)
     }

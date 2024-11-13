@@ -105,12 +105,11 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
         @RequestParam(required = false) sexo: String?,
         @RequestParam(required = false) etnia: String?,
         @RequestParam(required = false) idadeMaxima: Int?,
-        @RequestParam(required = false) idadeMinima: Int?,
         @RequestParam(required = false) cidade: String?,
         @RequestParam(required = false) escolaridade: String?
     ): ResponseEntity<ByteArray> {
         return try {
-            val csv = dashAdmService.gerarRelatorioDemografiaAlunos(sexo, etnia, idadeMaxima, idadeMinima, cidade, escolaridade)
+            val csv = dashAdmService.gerarRelatorioDemografiaAlunos(sexo, etnia, idadeMaxima, cidade, escolaridade)
             val arquivoCsv = csv.toByteArray(Charsets.UTF_8)
             val dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
