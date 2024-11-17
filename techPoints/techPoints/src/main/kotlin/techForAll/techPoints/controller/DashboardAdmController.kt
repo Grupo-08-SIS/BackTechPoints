@@ -4,10 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import techForAll.techPoints.dtos.CursoAlunosDto
 import techForAll.techPoints.service.DashboardAdmService
 import java.time.LocalDate
@@ -122,6 +120,27 @@ class DashboardAdmController(private val dashAdmService: DashboardAdmService){
         }
     }
 
-
+    @Operation(
+        summary = "Cadastrar alunos em lote via CSV",
+        description = "Realiza o cadastro de vários alunos a partir de um arquivo CSV"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "201", description = "Alunos cadastrados com sucesso"),
+            ApiResponse(responseCode = "400", description = "Erro no formato do arquivo CSV ou dados inválidos"),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+        ]
+    )
+    @PostMapping("/cadastrar-alunos-lote")
+    fun cadastrarAlunosLote(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> {
+        return try {
+            val resultado = dashAdmService.processarArquivoCsv(file)
+            ResponseEntity.status(201).body(resultado)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(400).body(mapOf("message" to e.message))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
 
 }

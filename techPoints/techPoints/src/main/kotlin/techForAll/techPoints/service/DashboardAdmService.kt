@@ -1,18 +1,26 @@
 package techForAll.techPoints.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dtos.CursoAlunosDto
 import techForAll.techPoints.dtos.DemografiaDto
+import techForAll.techPoints.dtos.UsuarioInput
 
 import techForAll.techPoints.repository.AlunoRepository
 import techForAll.techPoints.repository.DashboardAdmRepository
+import techForAll.techPoints.repository.EnderecoRepository
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.time.LocalDate
 import java.util.concurrent.ArrayBlockingQueue
 
 
 @Service
 class DashboardAdmService@Autowired constructor(
     private val dashAdmRepositoy: DashboardAdmRepository,
+    private val enderecoRepository: EnderecoRepository,
+    private val enderecoService: EnderecoService,
     private val alunoRepository: AlunoRepository,
     private val pontuacaoService: PontuacaoService,
     private val usuarioService: UsuarioService
@@ -256,4 +264,94 @@ class DashboardAdmService@Autowired constructor(
 
         return cursosFeitos
     }
+
+    fun processarArquivoCsv(file: MultipartFile): Map<String, Any> {
+
+        if (file.isEmpty || !file.originalFilename!!.endsWith(".csv")) {
+            throw IllegalArgumentException("Arquivo inválido. Apenas arquivos CSV são permitidos.")
+        }
+
+        val bufferedReader = BufferedReader(InputStreamReader(file.inputStream, Charsets.UTF_8))
+        val alunosCadastrados = mutableListOf<UsuarioInput>()
+        val erros = mutableListOf<String>()
+
+        bufferedReader.useLines { lines ->
+
+            lines.drop(1).forEachIndexed { index, line ->
+                try {
+                    val data = line.split(",").map { it.trim() }
+
+                    // Verifica se a linha tem o número correto de colunas
+                    if (data.size == 16) {
+
+                        val nomeUsuario = data[0]
+                        val cpf = data[1]
+                        val email = data[2]
+                        val primeiroNome = data[3]
+                        val sobrenome = data[4]
+                        val telefone = data[5]
+                        val senha = data[6]
+                        val dtNasc = LocalDate.parse(data[7])
+                        val escolaridade = data[8]
+                        val sexo = data[9]
+                        val etnia = data[10]
+
+                        // Endereço
+                        val cep = data[11]
+                        val rua = data[12]
+                        val numero = data[13]
+                        val cidade = data[14]
+                        val estado = data[15]
+
+                        val enderecoCadastro = Endereco(
+                            cep = cep,
+                            rua = rua,
+                            numero = numero,
+                            cidade = cidade,
+                            estado = estado
+                        )
+                        enderecoService.cadastrarEndereco(enderecoCadastro)
+
+                        var endereco = enderecoRepository.findByCepAndNumero(cep, numero)
+
+                        val alunoInput = UsuarioInput(
+                            nomeUsuario = nomeUsuario,
+                            cpf = cpf,
+                            senha = senha,
+                            primeiroNome = primeiroNome,
+                            sobrenome = sobrenome,
+                            email = email,
+                            telefone = telefone,
+                            tipoUsuario = 1,
+                            autenticado = false,
+                            enderecoId = endereco!!.id,
+                            dtNasc = dtNasc,
+                            escolaridade = escolaridade,
+                            sexo = sexo,
+                            etnia = etnia,
+                            cnpj = null,
+                            cargoUsuario = null
+                        )
+
+                        usuarioService.cadastrarUsuario(alunoInput)
+
+                        alunosCadastrados.add(alunoInput)
+
+                    } else {
+                        erros.add("Linha ${index + 2}: Número de colunas incorreto")
+                    }
+
+                } catch (ex: Exception) {
+                    erros.add("Linha ${index + 2}: ${ex.message}")
+                }
+            }
+        }
+
+        return mapOf(
+            "sucesso" to alunosCadastrados.size,
+            "erros" to erros
+        )
+    }
+
+
 }

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface EnderecoRepository : JpaRepository<Endereco, Long> {
 
+    fun findByCepAndNumero(cep: String, numero: String): Endereco?
+
 }
