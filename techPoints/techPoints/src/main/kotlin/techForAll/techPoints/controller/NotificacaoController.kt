@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import techForAll.techPoints.dtos.NotificacaoDTO
 import techForAll.techPoints.service.NotificacaoService
 
 @RestController
@@ -28,8 +29,22 @@ class NotificacaoController(
     fun listarNotificacoesPorAluno(@PathVariable idAluno: Long): ResponseEntity<Any> {
         return try {
             val notificacoes = notificacaoService.getNotificacoesPorAluno(idAluno)
+
             if (notificacoes.isNotEmpty()) {
-                ResponseEntity.status(200).body(notificacoes)
+                // Mapeando as notificações para NotificacaoDTO
+                val notificacoesDTO = notificacoes.map {
+                    NotificacaoDTO(
+                        id = it.id,
+                        alunoNome = it.aluno.nomeUsuario,  // Retorna apenas o nome do aluno, por exemplo
+                        alunoId = it.aluno.id,
+                        status = it.status,
+                        recrutador = it.recrutador.nomeUsuario,
+                        empresa = it.empresa.nomeEmpresa,
+                        lista = it.lista,
+                        data = it.data
+                    )
+                }
+                ResponseEntity.status(200).body(notificacoesDTO)
             } else {
                 ResponseEntity.status(204).build()
             }
