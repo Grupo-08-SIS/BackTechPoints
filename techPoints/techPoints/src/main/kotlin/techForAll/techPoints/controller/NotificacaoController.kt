@@ -71,7 +71,20 @@ class NotificacaoController(
     ): ResponseEntity<Any> {
         return try {
             val notificacao = notificacaoService.marcarNotificacaoComoLida(idAluno, idNotificacao)
-            ResponseEntity.status(200).body(notificacao)
+
+            // Mapeando a notificação para o NotificacaoDTO
+            val notificacaoDTO = NotificacaoDTO(
+                id = notificacao.id,
+                alunoNome = notificacao.aluno.nomeUsuario,
+                alunoId = notificacao.aluno.id,
+                status = notificacao.status,
+                recrutador = notificacao.recrutador.nomeUsuario,
+                empresa = notificacao.empresa.nomeEmpresa,
+                lista = notificacao.lista,
+                data = notificacao.data
+            )
+
+            ResponseEntity.status(200).body(notificacaoDTO)
         } catch (e: NoSuchElementException) {
             ResponseEntity.status(404).body(mapOf("message" to "Notificação ou aluno não encontrado"))
         } catch (e: IllegalArgumentException) {
