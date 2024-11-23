@@ -1,5 +1,6 @@
 package techForAll.techPoints.service
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import techForAll.techPoints.domain.Endereco
@@ -12,7 +13,10 @@ import techForAll.techPoints.repository.DashboardAdmRepository
 import techForAll.techPoints.repository.EnderecoRepository
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.sql.Date
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.concurrent.ArrayBlockingQueue
 
 
@@ -66,11 +70,13 @@ class DashboardAdmService@Autowired constructor(
         etnia: String?,
         idadeMaxima: Int?,
         cidade: String?,
-        escolaridade: String?
+        escolaridade: String?,
+        arquivo: String
     ): String {
         val alunos = alunoRepository.findAlunosFiltrados(sexo, etnia, idadeMaxima, cidade, escolaridade)
-
-        return gerarRelatorioAlunos(alunos)
+        if (arquivo == "csv") {
+            return gerarRelatorioAlunos(alunos)
+        } else  return gerarRelatorioTXT(alunos)
     }
 
     fun gerarRelatorioCSV(ids: List<Long>): String {
@@ -110,6 +116,45 @@ class DashboardAdmService@Autowired constructor(
         }
 
         return (listOf(csvHeader.joinToString(",")) + csvRows).joinToString("\n")
+    }
+
+    fun gerarRelatorioTXT(ids: List<Long>): String {
+        val dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+        val txtHeader = "00ARQUIVO_USUARIOS${dataAtual.padEnd(24)}V1"
+
+        val txtRows = ids.map { id ->
+            val alunoComDados = comporAlunoComCursos(id)
+            val endereco = alunoComDados["endereco"] as Map<String, String>
+
+
+            val dataNascimento = alunoComDados["dataNascimento"]
+
+            println(dataNascimento)
+
+            "02" + listOf(
+                alunoComDados["id"].toString().padEnd(3).substring(0, 3),
+                alunoComDados["nomeUsuario"].toString().padEnd(20).substring(0, 20),
+                alunoComDados["cpf"].toString().padEnd(11).substring(0, 11),
+                alunoComDados["email"]?.toString()?.padEnd(40)?.substring(0, 40),
+                alunoComDados["primeiroNome"].toString().padEnd(20).substring(0, 20),
+                alunoComDados["sobrenome"].toString().padEnd(20).substring(0, 20),
+                alunoComDados["telefone"].toString().padEnd(11).substring(0, 11),
+                alunoComDados["dataNascimento"].toString().padEnd(10).substring(0, 10),
+                alunoComDados["escolaridade"].toString().padEnd(22).substring(0, 22),
+                alunoComDados["sexo"].toString().padEnd(9).substring(0, 9),
+                alunoComDados["etnia"].toString().padEnd(8).substring(0, 8),
+                alunoComDados["deletado"].toString().padEnd(5).substring(0, 5),
+                endereco["cep"].toString().padEnd(9).substring(0, 9),
+                endereco["rua"].toString().padEnd(30).substring(0, 30),
+                endereco["numero"].toString().padEnd(5).substring(0, 5),
+                endereco["cidade"].toString().padEnd(30).substring(0, 30),
+                endereco["estado"].toString().padEnd(2).substring(0, 2)
+            ).joinToString("")
+        }
+
+        val txtTrailer = "01${ids.size.toString().padStart(10, '0')}"
+
+        return (listOf(txtHeader) + txtRows + txtTrailer).joinToString("\r\n")
     }
 
     fun gerarRelatorioAlunos(ids: List<Long>): String {
@@ -281,7 +326,6 @@ class DashboardAdmService@Autowired constructor(
                 try {
                     val data = line.split(",").map { it.trim() }
 
-                    // Verifica se a linha tem o número correto de colunas
                     if (data.size == 16) {
 
                         val nomeUsuario = data[0]
@@ -296,7 +340,6 @@ class DashboardAdmService@Autowired constructor(
                         val sexo = data[9]
                         val etnia = data[10]
 
-                        // Endereço
                         val cep = data[11]
                         val rua = data[12]
                         val numero = data[13]
@@ -353,5 +396,118 @@ class DashboardAdmService@Autowired constructor(
         )
     }
 
+    fun processarArquivoTxt(file: MultipartFile): Map<String, Any> {
+        if (file.isEmpty || !file.originalFilename!!.endsWith(".txt")) {
+            throw IllegalArgumentException("Arquivo inválido. Apenas arquivos TXT são permitidos.")
+        }
 
+        val bufferedReader = BufferedReader(InputStreamReader(file.inputStream, Charsets.UTF_8))
+        val usuariosCadastrados = mutableListOf<UsuarioInput>()
+        val erros = mutableListOf<String>()
+        var qtdRegistrosEsperados = 0
+
+        bufferedReader.useLines { lines ->
+            lines.forEachIndexed { index, line ->
+                try {
+                    when {
+
+                        line.startsWith("00") -> {
+                            if (line.length < 32) {
+                                erros.add("Linha ${index + 1}: Header com tamanho inválido.")
+                            }
+                        }
+
+
+                        line.startsWith("02") -> {
+                            if (line.length < 249) {
+                                erros.add("Linha ${index + 1}: Registro com tamanho insuficiente.")
+                                return@forEachIndexed
+                            }
+
+                            val nomeUsuario = line.substring(2, 22).trim()        // Tamanho: 20
+                            val cpf = line.substring(22, 33).trim()              // Tamanho: 11
+                            val email = line.substring(33, 73).trim()            // Tamanho: 40
+                            val primeiroNome = line.substring(73, 93).trim()     // Tamanho: 20
+                            val sobrenome = line.substring(93, 113).trim()        // Tamanho: 20
+                            val telefone = line.substring(113, 124).trim()        // Tamanho: 11
+                            var dtNasc = line.substring(124, 134).trim()     // Tamanho: 10)
+                            val escolaridade = line.substring(134, 156).trim()   // Tamanho: 22
+                            val sexo = line.substring(156, 165).trim()           // Tamanho: 9
+                            val etnia = line.substring(165, 173).trim()          // Tamanho: 8
+                            val cep = line.substring(173, 182).trim()            // Tamanho: 9
+                            val rua = line.substring(182, 212).trim()            // Tamanho: 30
+                            val numero = line.substring(212, 217).trim()         // Tamanho: 5
+                            val cidade = line.substring(217, 247).trim()         // Tamanho: 30
+                            val estado = line.substring(247, 249).trim()         // Tamanho: 2
+
+                            val senhaGerada =  "@Arast$cpf"
+
+                            val dataFormatada =  LocalDate.parse(dtNasc, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+                            val enderecoCadastro = Endereco(
+                                cep = cep,
+                                rua = rua,
+                                numero = numero,
+                                cidade = cidade,
+                                estado = estado
+                            )
+
+                            enderecoService.cadastrarEndereco(enderecoCadastro)
+                            val endereco = enderecoRepository.findByCepAndNumero(cep, numero)
+                                ?: throw IllegalStateException("Endereço não encontrado após cadastro.")
+
+
+                            val usuarioInput = UsuarioInput(
+                                nomeUsuario = nomeUsuario,
+                                cpf = cpf,
+                                senha = senhaGerada,
+                                primeiroNome = primeiroNome,
+                                sobrenome = sobrenome,
+                                email = email,
+                                telefone = telefone,
+                                tipoUsuario = 1,
+                                autenticado = false,
+                                enderecoId = endereco.id,
+                                dtNasc = dataFormatada,
+                                escolaridade = escolaridade,
+                                sexo = sexo,
+                                etnia = etnia,
+                                cnpj = null,
+                                cargoUsuario = null
+                            )
+
+                            usuarioService.cadastrarUsuario(usuarioInput)
+                            usuariosCadastrados.add(usuarioInput)
+                        }
+
+                        line.startsWith("01") -> {
+                            if (line.length >= 12) {
+                                qtdRegistrosEsperados = line.substring(2, 12).trim().toInt()
+                            } else {
+                                erros.add("Linha ${index + 1}: Trailer com tamanho insuficiente.")
+                            }
+                        }
+
+                        else -> {
+                            erros.add("Linha ${index + 1}: Registro inválido ou desconhecido.")
+                        }
+                    }
+                } catch (ex: Exception) {
+                    erros.add("Linha ${index + 1}: Erro ao processar - ${ex.message}")
+                }
+            }
+        }
+
+        if (qtdRegistrosEsperados != usuariosCadastrados.size) {
+            erros.add(
+                "Quantidade de registros informada no trailer ($qtdRegistrosEsperados) " +
+                        "não corresponde ao número de registros processados (${usuariosCadastrados.size})."
+            )
+        }
+
+        return mapOf(
+            "sucesso" to usuariosCadastrados.size,
+            "erros" to erros
+        )
+    }
 }
