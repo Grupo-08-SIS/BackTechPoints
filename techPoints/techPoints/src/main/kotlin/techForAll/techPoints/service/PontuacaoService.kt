@@ -41,14 +41,24 @@ class PontuacaoService @Autowired constructor(
         return alunoRepository.findById(idAluno).orElseThrow{ NoSuchElementException("Aluno não Encontrado!") };
     }
 
-    fun recuperarTodosCursosAlunoPontuacao(idAluno: Long): Map<Long, List<PontuacaoComPontosDTO>> {
+    fun recuperarTodosCursosAlunoPontuacao(
+        idAluno: Long,
+        dataInicio: LocalDate? = null,
+        dataFim: LocalDate? = null
+    ): Map<Long, List<PontuacaoComPontosDTO>> {
 
-        val aluno = alunoExiste(idAluno);
-        val atividades = pontuacaoRepository.findByAlunoOrderByCurso(aluno);
-        val atividadesPontos = atividades.map { pontuacao ->
+        val aluno = alunoExiste(idAluno)
+        val atividades = pontuacaoRepository.findByAlunoOrderByCurso(aluno)
 
+        val atividadesFiltradas = atividades.filter { pontuacao ->
+            val dataEntrega = pontuacao.dataEntrega?.let { LocalDate.parse(it) }
+            (dataInicio == null || (dataEntrega != null && !dataEntrega.isBefore(dataInicio))) &&
+                    (dataFim == null || (dataEntrega != null && !dataEntrega.isAfter(dataFim)))
+        }
+
+        val atividadesPontos = atividadesFiltradas.map { pontuacao ->
             val notaAlunoCorrigida = pontuacao.notaAluno ?: 0.0
-            val pontos = pontuacao.getPontosAtividade();
+            val pontos = pontuacao.getPontosAtividade()
 
             PontuacaoComPontosDTO(
                 id = pontuacao.id,
@@ -63,8 +73,9 @@ class PontuacaoService @Autowired constructor(
             )
         }
 
-        return atividadesPontos.groupBy { it.cursoId };
+        return atividadesPontos.groupBy { it.cursoId }
     }
+
 
     fun recuperarKPISemanaPassadaAndAtual(idAluno: Long): Map<String, Map<Long, Int>> {
 
@@ -90,9 +101,13 @@ class PontuacaoService @Autowired constructor(
         return mapOf("semanaPassada" to pontosSemanaPassada, "semanaAtual" to pontosSemanaAtual)
     }
 
-    fun recuperarKPIEntregas(idAluno: Long): Map<String, Int> {
+    fun recuperarKPIEntregas(
+        idAluno: Long,
+        dataInicio: LocalDate? = null,
+        dataFim: LocalDate? = null
+    ): Map<String, Int> {
 
-        val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno);
+        val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno, dataInicio, dataFim)
 
         val atividadesEntregues: Int = alunoAgrupadoCurso.values
             .flatten()
@@ -109,8 +124,8 @@ class PontuacaoService @Autowired constructor(
             "atividadesEntregues" to atividadesEntregues,
             "atividadesNaoEntregues" to diferenca
         )
-
     }
+
 
     fun recuperarPontosConquistadosPorMes(idAluno: Long): Map<Pair<Long, String>, Map<YearMonth, Int>> {
 
@@ -134,15 +149,28 @@ class PontuacaoService @Autowired constructor(
 
     }
 
-    fun recuperarPontosTotaisPorCurso(idAluno: Long): Map<Long, Map<String, Any>> {
+    fun recuperarPontosTotaisPorCurso(
+        idAluno: Long,
+        dataInicio: LocalDate? = null,
+        dataFim: LocalDate? = null
+    ): Map<Long, Map<String, Any>> {
         val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno)
 
         return alunoAgrupadoCurso.mapValues { entry ->
             val cursoNome = entry.value.firstOrNull()?.cursoNome ?: "Unknown"
-            val totalPontos = entry.value.sumOf { it.pontosAtividade }
+
+            val atividadesFiltradas = entry.value.filter { atividade ->
+                val dataAtividade = atividade.dataEntrega?.let { LocalDate.parse(it) }
+                (dataInicio == null || (dataAtividade != null && !dataAtividade.isBefore(dataInicio))) &&
+                        (dataFim == null || (dataAtividade != null && !dataAtividade.isAfter(dataFim)))
+            }
+
+            val totalPontos = atividadesFiltradas.sumOf { it.pontosAtividade }
+
             mapOf("nomeCurso" to cursoNome, "pontosTotais" to totalPontos)
         }
     }
+
 
     fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
         val todasPontuacoes = pontuacaoRepository.findAll()

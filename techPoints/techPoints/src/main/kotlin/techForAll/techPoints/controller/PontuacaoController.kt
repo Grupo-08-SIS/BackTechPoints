@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import techForAll.techPoints.dtos.PontuacaoComPontosDTO
 import techForAll.techPoints.service.PontuacaoService
+import java.time.LocalDate
 import java.time.YearMonth
 
 @RestController
@@ -17,10 +18,18 @@ class PontuacaoController @Autowired constructor(
 ) {
 
     @GetMapping("/{idAluno}")
-    fun recuperarPontosAtividadeAgrupadoCurso(@PathVariable idAluno: Long): Map<Long, List<PontuacaoComPontosDTO>> {
+    fun recuperarPontosAtividadeAgrupadoCurso(
+        @PathVariable idAluno: Long,
+        @RequestParam(required = false) dataInicio: String?,
+        @RequestParam(required = false) dataFim: String?
+    ): Map<Long, List<PontuacaoComPontosDTO>> {
 
-        return service.recuperarTodosCursosAlunoPontuacao(idAluno);
+        val dataInicioParsed = dataInicio?.let { LocalDate.parse(it) }
+        val dataFimParsed = dataFim?.let { LocalDate.parse(it) }
+
+        return service.recuperarTodosCursosAlunoPontuacao(idAluno, dataInicioParsed, dataFimParsed)
     }
+
 
     @GetMapping("/kpi-semana/{idAluno}")
     fun recuperarKPISemana(@PathVariable idAluno: Long): Map<String, Map<Long, Int>>{
@@ -29,10 +38,18 @@ class PontuacaoController @Autowired constructor(
     }
 
     @GetMapping("/kpi-entregas/{idAluno}")
-    fun recuperarKPIEntrega(@PathVariable idAluno: Long): Map<String, Int> {
+    fun recuperarKPIEntrega(
+        @PathVariable idAluno: Long,
+        @RequestParam(required = false) dataInicio: String?,
+        @RequestParam(required = false) dataFim: String?
+    ): Map<String, Int> {
 
-        return service.recuperarKPIEntregas(idAluno);
+        val dataInicioParsed = dataInicio?.let { LocalDate.parse(it) }
+        val dataFimParsed = dataFim?.let { LocalDate.parse(it) }
+
+        return service.recuperarKPIEntregas(idAluno, dataInicioParsed, dataFimParsed)
     }
+
 
     @GetMapping("/pontos-mes/{idAluno}")
     fun recuperarPontosPorMes(@PathVariable idAluno: Long): Map<Pair<Long, String>, Map<YearMonth, Int>> {
@@ -41,10 +58,13 @@ class PontuacaoController @Autowired constructor(
     }
 
     @GetMapping("/pontos-totais/{idAluno}")
-    fun recuperarPontosTotaisPorCurso(@PathVariable idAluno: Long): Map<Long, Map<String, Any>> {
-        return service.recuperarPontosTotaisPorCurso(idAluno)
+    fun recuperarPontosTotaisPorCurso(
+        @PathVariable idAluno: Long,
+        @RequestParam(required = false) dataInicio: LocalDate?,
+        @RequestParam(required = false) dataFim: LocalDate?
+    ): Map<Long, Map<String, Any>> {
+        return service.recuperarPontosTotaisPorCurso(idAluno, dataInicio, dataFim)
     }
-
     @GetMapping("/ranking")
     fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
         return service.recuperarRankingPorCurso()

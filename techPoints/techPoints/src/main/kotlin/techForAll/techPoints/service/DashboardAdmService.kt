@@ -424,13 +424,13 @@ class DashboardAdmService@Autowired constructor(
                                 return@forEachIndexed
                             }
 
-                            val nomeUsuario = line.substring(2, 22).trim()        // Tamanho: 20
+                            val nomeUsuario = line.substring(2, 22).trim()       // Tamanho: 20
                             val cpf = line.substring(22, 33).trim()              // Tamanho: 11
                             val email = line.substring(33, 73).trim()            // Tamanho: 40
                             val primeiroNome = line.substring(73, 93).trim()     // Tamanho: 20
-                            val sobrenome = line.substring(93, 113).trim()        // Tamanho: 20
-                            val telefone = line.substring(113, 124).trim()        // Tamanho: 11
-                            var dtNasc = line.substring(124, 134).trim()     // Tamanho: 10)
+                            val sobrenome = line.substring(93, 113).trim()       // Tamanho: 20
+                            val telefone = line.substring(113, 124).trim()       // Tamanho: 11
+                            var dtNasc = line.substring(124, 134).trim()         // Tamanho: 10
                             val escolaridade = line.substring(134, 156).trim()   // Tamanho: 22
                             val sexo = line.substring(156, 165).trim()           // Tamanho: 9
                             val etnia = line.substring(165, 173).trim()          // Tamanho: 8
