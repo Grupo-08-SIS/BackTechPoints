@@ -27,7 +27,7 @@ class Endereco(
     var dataCriacao: LocalDateTime = LocalDateTime.now(),
 
     @Column(nullable = true)
-    var dataAtualizacao: LocalDateTime? = null,
+    var dataAtualizacao: LocalDateTime? = LocalDateTime.now(),
 
 )
 
