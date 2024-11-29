@@ -23,6 +23,9 @@ class Empresa(
     @Column(nullable = false, unique = true)
     var emailCorporativo: String,
 
+    @Column(nullable = true)
+    var senhaRepresante: String? = null,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "endereco_id")
     var endereco: Endereco,
@@ -35,6 +38,12 @@ class Empresa(
 
     @Column(nullable = true)
     var dataAtualizacao: LocalDateTime? = null,
+
+    @Column(nullable = true)
+    var representanteLegal: String? = null,
+
+    @Column(nullable = true)
+    var sobrenomeRepresentante: String? = null,
 
     @OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY)
     var recrutadores: List<Recrutador> = listOf()

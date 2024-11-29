@@ -18,6 +18,8 @@ class DadosEmpresaController @Autowired constructor(
     private val service: DadoEmpresaService
 ) {
 
+    // TODO: Login and logout endpoints para Empresa
+
     @Operation(
         summary = "Cadastrar dados de uma nova empresa",
         description = "Retorna os detalhes da empresa cadastrada"

@@ -28,7 +28,6 @@ class Recrutador(
     @Convert(converter = LongListToJsonConverter::class)
     var cancelados: List<Long> = emptyList(),
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
     var empresa: Empresa,
