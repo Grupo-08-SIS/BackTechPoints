@@ -60,6 +60,7 @@ class MetaDeEstudoService @Autowired constructor(
             metaDiariaExistente.qtdTempoEstudo = qtdTempoEstudo
             metaDiariaExistente.ativado = ativado
             metaDiariaRepository.save(metaDiariaExistente)
+            metaDiariaExistente
         } else {
             val novaMetaDiaria = TempoEstudo(
                 id = diaId,
