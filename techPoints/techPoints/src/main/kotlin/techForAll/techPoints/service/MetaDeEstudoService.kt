@@ -9,6 +9,8 @@ import techForAll.techPoints.dtos.MetaDiariaDto
 import techForAll.techPoints.dtos.MetaEstudoSemanaDto
 import techForAll.techPoints.dtos.SessoesDto
 import techForAll.techPoints.repository.*
+import java.util.*
+import kotlin.NoSuchElementException
 
 @Service
 class MetaDeEstudoService @Autowired constructor(
@@ -17,6 +19,7 @@ class MetaDeEstudoService @Autowired constructor(
     private val sessaoRepository: TempoSessaoRepository,
     private val metaDiariaRepository: TempoEstudoRepository
 ) {
+
     fun cadastrarMetaDiaria(
         metaEstudoSemanaId: Long,
         nomeDia: String,
@@ -35,8 +38,10 @@ class MetaDeEstudoService @Autowired constructor(
                 tempoSessao = emptyList()
             )
             metaSemanalRepository.save(novaMetaEstudoSemana)
+            novaMetaEstudoSemana
         }
 
+        println("metaEstudoSemana: $metaEstudoSemana")
         val diaIdMap = mapOf(
             "segunda" to 1L,
             "terça" to 2L,
@@ -47,7 +52,7 @@ class MetaDeEstudoService @Autowired constructor(
             "domingo" to 7L
         )
 
-        val diaId = diaIdMap[nomeDia.toLowerCase()] ?: throw IllegalArgumentException("Nome do dia inválido")
+        val diaId = diaIdMap[nomeDia.lowercase()] ?: throw IllegalArgumentException("Nome do dia inválido")
 
         val metaDiariaExistente = metaDiariaRepository.findByMetaEstudoSemanaIdAndNomeDia(metaEstudoSemanaId, nomeDia)
 
@@ -55,6 +60,7 @@ class MetaDeEstudoService @Autowired constructor(
             metaDiariaExistente.qtdTempoEstudo = qtdTempoEstudo
             metaDiariaExistente.ativado = ativado
             metaDiariaRepository.save(metaDiariaExistente)
+            metaDiariaExistente
         } else {
             val novaMetaDiaria = TempoEstudo(
                 id = diaId,
@@ -65,6 +71,7 @@ class MetaDeEstudoService @Autowired constructor(
                 metaEstudoSemana = metaEstudoSemana
             )
             metaDiariaRepository.save(novaMetaDiaria)
+            novaMetaDiaria
         }
 
         return mapMetaDiariaDto(tempoEstudo)

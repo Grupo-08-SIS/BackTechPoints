@@ -202,8 +202,6 @@ class PontuacaoService @Autowired constructor(
         }
     }
 
-
-
     fun recuperarRankingComFiltro(
         idade: Int?,
         escolaridade: String?,

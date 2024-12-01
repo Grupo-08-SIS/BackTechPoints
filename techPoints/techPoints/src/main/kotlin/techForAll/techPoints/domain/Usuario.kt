@@ -78,4 +78,5 @@ abstract class Usuario(
                         throw IllegalArgumentException("Usuário já está ativo")
                 }
         }
+
 }
