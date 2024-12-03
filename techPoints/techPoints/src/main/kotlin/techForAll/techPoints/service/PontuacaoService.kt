@@ -12,16 +12,15 @@ import techForAll.techPoints.domain.Pontuacao
 import techForAll.techPoints.dtos.AlunoDto
 import techForAll.techPoints.dtos.ListaDto
 import techForAll.techPoints.dtos.PontuacaoComPontosDTO
-import techForAll.techPoints.repository.AlunoRepository
-import techForAll.techPoints.repository.DadosEmpresaRepository
-import techForAll.techPoints.repository.DashboardAdmRepository
-import techForAll.techPoints.repository.PontuacaoRepository
+import techForAll.techPoints.repository.*
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
+import kotlin.NoSuchElementException
 
 
 @Service
@@ -34,7 +33,6 @@ class PontuacaoService @Autowired constructor(
     private val usuarioService: UsuarioService
 
 ) {
-
 
     fun alunoExiste(idAluno: Long): Aluno {
 
@@ -50,10 +48,20 @@ class PontuacaoService @Autowired constructor(
         val aluno = alunoExiste(idAluno)
         val atividades = pontuacaoRepository.findByAlunoOrderByCurso(aluno)
 
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+
         val atividadesFiltradas = atividades.filter { pontuacao ->
-            val dataEntrega = pontuacao.dataEntrega?.let { LocalDate.parse(it) }
-            (dataInicio == null || (dataEntrega != null && !dataEntrega.isBefore(dataInicio))) &&
-                    (dataFim == null || (dataEntrega != null && !dataEntrega.isAfter(dataFim)))
+            val dataEntrega = pontuacao.dataEntrega?.let {
+                try {
+                    LocalDate.parse(it, formatter)
+                } catch (e: Exception) {
+                    null
+                }
+            }
+
+            dataEntrega != null &&
+                    (dataInicio == null || !dataEntrega.isBefore(dataInicio)) &&
+                    (dataFim == null || !dataEntrega.isAfter(dataFim))
         }
 
         val atividadesPontos = atividadesFiltradas.map { pontuacao ->
@@ -61,21 +69,20 @@ class PontuacaoService @Autowired constructor(
             val pontos = pontuacao.getPontosAtividade()
 
             PontuacaoComPontosDTO(
-                id = pontuacao.id,
+                id = pontuacao.id!!,
                 dataEntrega = pontuacao.dataEntrega,
                 nomeAtividade = pontuacao.nomeAtividade,
                 notaAtividade = pontuacao.notaAtividade,
                 notaAluno = notaAlunoCorrigida,
                 pontosAtividade = pontos,
                 cursoId = pontuacao.curso.id,
-                cursoNome = pontuacao.curso.nome,
+                cursoNome = pontuacao.curso_nome,
                 alunoId = pontuacao.aluno.id
             )
         }
 
         return atividadesPontos.groupBy { it.cursoId }
     }
-
 
     fun recuperarKPISemanaPassadaAndAtual(idAluno: Long): Map<String, Map<Long, Int>> {
 
@@ -103,29 +110,26 @@ class PontuacaoService @Autowired constructor(
 
     fun recuperarKPIEntregas(
         idAluno: Long,
-        dataInicio: LocalDate? = null,
-        dataFim: LocalDate? = null
+        dataInicio: String? = null,
+        dataFim: String? = null
     ): Map<String, Int> {
 
-        val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno, dataInicio, dataFim)
+        val atividadesNoPeriodo = pontuacaoRepository.findAtividadesByAlunoAndPeriodo(
+            idAluno = idAluno,
+            dataInicio,
+            dataFim
+        )
 
-        val atividadesEntregues: Int = alunoAgrupadoCurso.values
-            .flatten()
-            .count { atividade -> atividade.notaAluno != 0.0 }
+        val atividadesEntregues = atividadesNoPeriodo.count { it.notaAluno != 0.0 }
 
-        val atividadesTotais: Int = alunoAgrupadoCurso.values
-            .flatten()
-            .count()
-
-        val diferenca = atividadesTotais - atividadesEntregues
+        val atividadesTotais = atividadesNoPeriodo.size
 
         return mapOf(
             "atividadesTotais" to atividadesTotais,
             "atividadesEntregues" to atividadesEntregues,
-            "atividadesNaoEntregues" to diferenca
+            "atividadesNaoEntregues" to (atividadesTotais - atividadesEntregues)
         )
     }
-
 
     fun recuperarPontosConquistadosPorMes(idAluno: Long): Map<Pair<Long, String>, Map<YearMonth, Int>> {
 
@@ -154,15 +158,27 @@ class PontuacaoService @Autowired constructor(
         dataInicio: LocalDate? = null,
         dataFim: LocalDate? = null
     ): Map<Long, Map<String, Any>> {
+
         val alunoAgrupadoCurso = recuperarTodosCursosAlunoPontuacao(idAluno)
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
 
         return alunoAgrupadoCurso.mapValues { entry ->
             val cursoNome = entry.value.firstOrNull()?.cursoNome ?: "Unknown"
 
-            val atividadesFiltradas = entry.value.filter { atividade ->
-                val dataAtividade = atividade.dataEntrega?.let { LocalDate.parse(it) }
-                (dataInicio == null || (dataAtividade != null && !dataAtividade.isBefore(dataInicio))) &&
-                        (dataFim == null || (dataAtividade != null && !dataAtividade.isAfter(dataFim)))
+
+            val atividadesFiltradas = entry.value.filter { pontuacao ->
+                val dataEntrega = pontuacao.dataEntrega?.let {
+                    try {
+                        LocalDate.parse(it, formatter)
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+
+                dataEntrega != null &&
+                        (dataInicio == null || !dataEntrega.isBefore(dataInicio)) &&
+                        (dataFim == null || !dataEntrega.isAfter(dataFim))
             }
 
             val totalPontos = atividadesFiltradas.sumOf { it.pontosAtividade }
@@ -170,7 +186,6 @@ class PontuacaoService @Autowired constructor(
             mapOf("nomeCurso" to cursoNome, "pontosTotais" to totalPontos)
         }
     }
-
 
     fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
         val todasPontuacoes = pontuacaoRepository.findAll()

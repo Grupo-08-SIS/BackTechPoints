@@ -44,10 +44,7 @@ class PontuacaoController @Autowired constructor(
         @RequestParam(required = false) dataFim: String?
     ): Map<String, Int> {
 
-        val dataInicioParsed = dataInicio?.let { LocalDate.parse(it) }
-        val dataFimParsed = dataFim?.let { LocalDate.parse(it) }
-
-        return service.recuperarKPIEntregas(idAluno, dataInicioParsed, dataFimParsed)
+        return service.recuperarKPIEntregas(idAluno, dataInicio, dataFim)
     }
 
 
@@ -65,6 +62,7 @@ class PontuacaoController @Autowired constructor(
     ): Map<Long, Map<String, Any>> {
         return service.recuperarPontosTotaisPorCurso(idAluno, dataInicio, dataFim)
     }
+
     @GetMapping("/ranking")
     fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
         return service.recuperarRankingPorCurso()

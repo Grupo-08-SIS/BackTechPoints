@@ -4,13 +4,19 @@ import jakarta.persistence.*
 
 
 @Entity
-@Table(name = "curso")
-class   Curso(
+@Table(name = "curso_aluno")
+class  Curso(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
 
     @Column(nullable = false)
+    var curso_id_moodle: Long,
+
+    @Column(nullable = false)
     var nome: String,
+
+    @Column(nullable = false)
+    var aluno_email: String,
 
     @Column(nullable = false)
     var totalAtividades: Int,
@@ -18,7 +24,8 @@ class   Curso(
     @Column(nullable = false)
     var totalAtividadesDoAluno: Int,
 
-    @ManyToMany(mappedBy = "cursos")
-    var alunos: List<Aluno>? = emptyList()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aluno_id")
+    var aluno: Aluno
 )
 

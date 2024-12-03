@@ -10,6 +10,9 @@ class Pontuacao(
     @Column(nullable = true)
     var dataEntrega: String,
 
+    @Column(nullable = true)
+    var dataCriacao: String,
+
     @Column(nullable = false)
     var aluno_email: String,
 

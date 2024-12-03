@@ -10,6 +10,4 @@ import techForAll.techPoints.domain.CursoMoodle
 interface CursoMoodleRepository: JpaRepository<CursoMoodle, Long> {
 
 
-    @Query("SELECT c FROM CursoMoodle c JOIN c.categorias cat WHERE cat.nome = :nomeCategoria")
-    fun findByCategoriaNome(@Param("nomeCategoria") nomeCategoria: String): List<CursoMoodle>
 }

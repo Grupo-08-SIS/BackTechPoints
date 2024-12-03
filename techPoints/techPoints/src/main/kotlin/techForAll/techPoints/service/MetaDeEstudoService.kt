@@ -16,7 +16,6 @@ import kotlin.NoSuchElementException
 class MetaDeEstudoService @Autowired constructor(
     private val metaSemanalRepository: MetaEstudoSemanaRepository,
     private val alunoRepository: AlunoRepository,
-    private val sessaoRepository: TempoSessaoRepository,
     private val metaDiariaRepository: TempoEstudoRepository
 ) {
 

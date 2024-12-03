@@ -8,14 +8,6 @@ import java.time.Period
 @Table(name = "aluno")
 class Aluno(
 
-    @ManyToMany
-    @JoinTable(
-        name = "aluno_curso",
-        joinColumns = [JoinColumn(name = "aluno_id")],
-        inverseJoinColumns = [JoinColumn(name = "curso_id")]
-    )
-    var cursos: List<Curso>? = emptyList(),
-
     @Column(nullable = false)
     var escolaridade: String,
 
@@ -59,7 +51,6 @@ class Aluno(
     override fun criarUsuario(endereco: Endereco?, empresa: Empresa?): Usuario {
         if (endereco == null) throw IllegalArgumentException("Endereço é obrigatório para Aluno")
         return Aluno(
-            cursos = this.cursos,
             escolaridade = this.escolaridade,
             sexo = this.sexo,
             etnia = this.etnia,
