@@ -58,12 +58,12 @@ class PontuacaoServiceTest{
                 estado = "São Paulo"
             ),
             dtNasc = LocalDate.of(2000, 1, 1),
-            nomeUsuario = "Juninho",
+            nomeUsuario = "junior",
             cpf = "12345678901",
             senha = "senha",
             primeiroNome = "Junior",
             sobrenome = "Games",
-            email = "juninho@email.com",
+            email = "junior@email.com",
             telefone = "123456789",
             imagemPerfil = null,
             autenticado = true
@@ -102,12 +102,12 @@ class PontuacaoServiceTest{
                 estado = "São Paulo"
             ),
             dtNasc = LocalDate.of(2000, 1, 1),
-            nomeUsuario = "Juninho",
+            nomeUsuario = "junior",
             cpf = "12345678901",
             senha = "senha",
             primeiroNome = "Junior",
             sobrenome = "Games",
-            email = "juninho@email.com",
+            email = "junior@email.com",
             telefone = "123456789",
             imagemPerfil = null,
             autenticado = true
@@ -118,11 +118,20 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso(id = 1L, nome = "Curso 1", totalAtividades = 20, totalAtividadesDoAluno = 2),
+            curso = Curso
+                (
+                id = 1L,
+                nome = "Curso 1",
+                totalAtividades = 20,
+                totalAtividadesDoAluno = 2,
+                aluno_email = "junior@email.com",
+                curso_id_moodle = 1,
+                aluno = aluno,
+            ),
             aluno = aluno,
-            aluno_email = "juninho@email.com",
-            curso_nome = "Curso 1"
-
+            aluno_email = "junior@email.com",
+            curso_nome = "Curso 1",
+            dataCriacao = "2024-12-03"
         )
         `when`(alunoRepository.findById(alunoId)).thenReturn(Optional.of(aluno))
         `when`(pontuacaoRepository.findByAlunoOrderByCurso(aluno)).thenReturn(listOf(pontuacao))
@@ -149,12 +158,12 @@ class PontuacaoServiceTest{
                 estado = "São Paulo"
             ),
             dtNasc = LocalDate.of(2000, 1, 1),
-            nomeUsuario = "Juninho",
+            nomeUsuario = "junior",
             cpf = "12345678901",
             senha = "senha",
             primeiroNome = "Junior",
             sobrenome = "Games",
-            email = "juninho@email.com",
+            email = "junior@email.com",
             telefone = "123456789",
             imagemPerfil = null,
             autenticado = true
@@ -165,10 +174,20 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso(id = 1L, nome = "Curso 1", totalAtividades = 20, totalAtividadesDoAluno = 2),
+            curso = Curso
+                (
+                id = 1L,
+                nome = "Curso 1",
+                totalAtividades = 20,
+                totalAtividadesDoAluno = 2,
+                aluno_email = "junior@email.com",
+                curso_id_moodle = 1,
+                aluno = aluno,
+            ),
             aluno = aluno,
-            aluno_email = "juninho@email.com",
-            curso_nome = "Curso 1"
+            aluno_email = "junior@email.com",
+            curso_nome = "Curso 1",
+            dataCriacao = "2024-12-03"
         )
         `when`(alunoRepository.findById(alunoId)).thenReturn(Optional.of(aluno))
         `when`(pontuacaoRepository.findByAlunoOrderByCurso(aluno)).thenReturn(listOf(pontuacao))
@@ -194,12 +213,12 @@ class PontuacaoServiceTest{
                 estado = "São Paulo"
             ),
             dtNasc = LocalDate.of(2000, 1, 1),
-            nomeUsuario = "Juninho",
+            nomeUsuario = "junior",
             cpf = "12345678901",
             senha = "senha",
             primeiroNome = "Junior",
             sobrenome = "Games",
-            email = "juninho@email.com",
+            email = "junior@email.com",
             telefone = "123456789",
             imagemPerfil = null,
             autenticado = true
@@ -210,10 +229,20 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso(id = 1L, nome = "Curso 1", totalAtividades = 20, totalAtividadesDoAluno = 2),
+            curso = Curso
+                (
+                id = 1L,
+                nome = "Curso 1",
+                totalAtividades = 20,
+                totalAtividadesDoAluno = 2,
+                aluno_email = "junior@email.com",
+                curso_id_moodle = 1,
+                aluno = aluno,
+            ),
             aluno = aluno,
-            aluno_email = "juninho@email.com",
-            curso_nome = "Curso 1"
+            aluno_email = "junior@email.com",
+            curso_nome = "Curso 1",
+            dataCriacao = "2024-12-03"
         )
         `when`(alunoRepository.findById(alunoId)).thenReturn(Optional.of(aluno))
         `when`(pontuacaoRepository.findByAlunoOrderByCurso(aluno)).thenReturn(listOf(pontuacao))
@@ -240,12 +269,12 @@ class PontuacaoServiceTest{
                 estado = "São Paulo"
             ),
             dtNasc = LocalDate.of(2000, 1, 1),
-            nomeUsuario = "Juninho",
+            nomeUsuario = "junior",
             cpf = "12345678901",
             senha = "senha",
             primeiroNome = "Junior",
             sobrenome = "Games",
-            email = "juninho@email.com",
+            email = "junior@email.com",
             telefone = "123456789",
             imagemPerfil = null,
             autenticado = true
@@ -256,10 +285,20 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso(id = 1L, nome = "Curso 1", totalAtividades = 20, totalAtividadesDoAluno = 2),
+            curso = Curso
+                (
+                id = 1L,
+                nome = "Curso 1",
+                totalAtividades = 20,
+                totalAtividadesDoAluno = 2,
+                aluno_email = "junior@email.com",
+                curso_id_moodle = 1,
+                aluno = aluno,
+            ),
             aluno = aluno,
-            aluno_email = "juninho@email.com",
-            curso_nome = "Curso 1"
+            aluno_email = "junior@email.com",
+            curso_nome = "Curso 1",
+            dataCriacao = "2024-12-03"
         )
         `when`(alunoRepository.findById(alunoId)).thenReturn(Optional.of(aluno))
         `when`(pontuacaoRepository.findByAlunoOrderByCurso(aluno)).thenReturn(listOf(pontuacao))
