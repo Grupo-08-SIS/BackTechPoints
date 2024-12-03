@@ -3,7 +3,6 @@ package techForAll.techPoints.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import techForAll.techPoints.domain.*
-import techForAll.techPoints.dtos.CursoDto
 import techForAll.techPoints.repository.AlunoRepository
 import techForAll.techPoints.repository.CursoMoodleRepository
 import techForAll.techPoints.repository.RecrutadorRepository
@@ -82,20 +81,15 @@ class DashboardRecrutadorService @Autowired constructor(
         return listarAlunosIds(ids)
     }
 
-    fun listarTodosOsCursos(): List<CursoDto> {
-        return cursoRepository.findAll().map { cursoToDto(it) }
+    fun listarTodosOsCursos(): List<CursoMoodle> {
+        return cursoRepository.findAll()
     }
 
-    fun listarCursosPorCategoria(nomeCategoria: String): List<CursoDto> {
-        return cursoRepository.findByCategoriaNome(nomeCategoria).map { cursoToDto(it) }
-    }
 
-    private fun cursoToDto(curso: CursoMoodle): CursoDto {
-        return CursoDto(
-            id = curso.id,
-            nome = curso.nome,
-            categoria = curso.categorias.map { it.nome }
-        )
+    fun listarCursosPorCategoria(categoria: String): List<CursoMoodle> {
+        return cursoRepository.findAll().filter { curso ->
+            curso.categorias?.contains(categoria, ignoreCase = true) == true
+        }
     }
 
 
