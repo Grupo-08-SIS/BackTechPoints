@@ -118,15 +118,11 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso
+            curso = CursoMoodle
                 (
                 id = 1L,
                 nome = "Curso 1",
-                totalAtividades = 20,
-                totalAtividadesDoAluno = 2,
-                aluno_email = "junior@email.com",
-                curso_id_moodle = 1,
-                aluno = aluno,
+                categorias = "Tecnologia"
             ),
             aluno = aluno,
             aluno_email = "junior@email.com",
@@ -174,15 +170,11 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso
+            curso = CursoMoodle
                 (
                 id = 1L,
                 nome = "Curso 1",
-                totalAtividades = 20,
-                totalAtividadesDoAluno = 2,
-                aluno_email = "junior@email.com",
-                curso_id_moodle = 1,
-                aluno = aluno,
+                categorias = "Tecnologia"
             ),
             aluno = aluno,
             aluno_email = "junior@email.com",
@@ -229,15 +221,11 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso
+            curso = CursoMoodle
                 (
                 id = 1L,
                 nome = "Curso 1",
-                totalAtividades = 20,
-                totalAtividadesDoAluno = 2,
-                aluno_email = "junior@email.com",
-                curso_id_moodle = 1,
-                aluno = aluno,
+                categorias = "Tecnologia"
             ),
             aluno = aluno,
             aluno_email = "junior@email.com",
@@ -285,15 +273,11 @@ class PontuacaoServiceTest{
             nomeAtividade = "Atividade 1",
             notaAtividade = 10.0,
             notaAluno = 9.0,
-            curso = Curso
+            curso = CursoMoodle
                 (
                 id = 1L,
                 nome = "Curso 1",
-                totalAtividades = 20,
-                totalAtividadesDoAluno = 2,
-                aluno_email = "junior@email.com",
-                curso_id_moodle = 1,
-                aluno = aluno,
+                categorias = "Tecnologia"
             ),
             aluno = aluno,
             aluno_email = "junior@email.com",
