@@ -24,6 +24,9 @@ interface PontuacaoRepository : JpaRepository<Pontuacao, Long> {
     ): List<Pontuacao>
 
 
+    @Query("SELECT p FROM Pontuacao p WHERE p.dataEntrega IS NOT NULL")
+    fun findAllPontuacoes(): List<Pontuacao>
+
 
 
 }

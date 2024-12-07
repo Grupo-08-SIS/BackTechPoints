@@ -120,7 +120,7 @@ class PontuacaoService @Autowired constructor(
             dataFim
         )
 
-        val atividadesEntregues = atividadesNoPeriodo.count { it.notaAluno != 0.0 }
+        val atividadesEntregues = atividadesNoPeriodo.count { it.dataEntrega != null }
 
         val atividadesTotais = atividadesNoPeriodo.size
 
@@ -188,7 +188,7 @@ class PontuacaoService @Autowired constructor(
     }
 
     fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
-        val todasPontuacoes = pontuacaoRepository.findAll()
+        val todasPontuacoes = pontuacaoRepository.findAllPontuacoes()
 
         val pontuacoesAgrupadasPorCurso = todasPontuacoes.groupBy { it.curso.id }
 
