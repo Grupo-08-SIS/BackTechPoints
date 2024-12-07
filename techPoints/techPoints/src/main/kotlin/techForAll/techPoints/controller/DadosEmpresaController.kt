@@ -136,5 +136,16 @@ class DadosEmpresaController @Autowired constructor(
         }
     }
 
+    @GetMapping("/buscar-por-cnpj/{cnpj}")
+    fun buscarPorCnpj(@PathVariable cnpj: String): ResponseEntity<Any> {
+        return try {
+            val empresa = service.buscarEmpresaPorCnpj(cnpj)
+            ResponseEntity.status(200).body(empresa)
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.status(404).body(mapOf("message" to e.message))
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
+        }
+    }
 }
 

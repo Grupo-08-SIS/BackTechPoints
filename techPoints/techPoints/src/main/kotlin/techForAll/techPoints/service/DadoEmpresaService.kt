@@ -4,6 +4,7 @@ import techForAll.techPoints.domain.Empresa
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dtos.EmpresaComRecrutadoresDto
 import techForAll.techPoints.dtos.EmpresaInput
 import techForAll.techPoints.repository.DadosEmpresaRepository
@@ -104,4 +105,30 @@ class DadoEmpresaService @Autowired constructor(
         empresaRepository.delete(empresaExistente)
     }
 
+    fun buscarEmpresaPorCnpj(cnpj: String): EmpresaComEnderecoDto {
+        val empresa = empresaRepository.findByCnpj(cnpj)
+            .orElseThrow { NoSuchElementException("Empresa não encontrada com o CNPJ: $cnpj") }
+
+        return EmpresaComEnderecoDto(
+            id = empresa.id,
+            nomeEmpresa = empresa.nomeEmpresa,
+            cnpj = empresa.cnpj,
+            setorIndustria = empresa.setorIndustria,
+            telefoneContato = empresa.telefoneContato,
+            emailCorporativo = empresa.emailCorporativo,
+            endereco = empresa.endereco
+        )
+    }
+
 }
+
+data class EmpresaComEnderecoDto(
+    val id: Long,
+    val nomeEmpresa: String,
+    val cnpj: String,
+    val setorIndustria: String,
+    val telefoneContato: String,
+    val emailCorporativo: String,
+    val endereco: Endereco
+)
+
