@@ -300,11 +300,14 @@ class UsuarioController @Autowired constructor(
                 .contentLength(imagemPerfil.size.toLong())
                 .body(byteArrayResource)
         } catch (e: NoSuchElementException) {
-            ResponseEntity.status(204).body(mapOf("message" to "Usuário não encontrado ou imagem de perfil não encontrada"))
+
+            ResponseEntity.noContent().build()
         } catch (e: Exception) {
+
             ResponseEntity.status(500).body(mapOf("message" to "Erro interno do servidor: ${e.message}"))
         }
     }
+
 
     @Operation(summary = "Reativar usuário", description = "Reativa o usuário correspondente ao e-mail e senha fornecidos")
     @ApiResponses(

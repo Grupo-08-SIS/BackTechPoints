@@ -80,7 +80,12 @@ class PontuacaoController @Autowired constructor(
         @RequestParam(required = false) cursoId: Long?
     ): ResponseEntity<Map<Long, Map<String, Any>>> {
         val ranking = service.recuperarRankingComFiltro(idade, primeiroNome, sobrenome, etnia, sexo, escolaridade, cidade, cursoId)
-        return ResponseEntity.ok(ranking)
+
+        return if (ranking.isEmpty()) {
+            ResponseEntity.noContent().build()
+        } else {
+            ResponseEntity.ok(ranking)
+        }
     }
 
     @GetMapping("/lista")
