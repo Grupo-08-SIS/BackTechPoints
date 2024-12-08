@@ -2,7 +2,6 @@ package techForAll.techPoints.domain
 import jakarta.persistence.*
 import techForAll.techPoints.config.LongListToJsonConverter
 
-
 @Entity
 @Table(name = "recrutador")
 class Recrutador(
