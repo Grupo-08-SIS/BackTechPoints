@@ -1,11 +1,13 @@
 package techForAll.techPoints.service
 
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.Mockito.*
-import org.springframework.boot.test.context.SpringBootTest
+import org.mockito.junit.jupiter.MockitoExtension
 import techForAll.techPoints.domain.Empresa
 import techForAll.techPoints.domain.Endereco
 import techForAll.techPoints.dtos.EmpresaInput
@@ -14,19 +16,18 @@ import techForAll.techPoints.repository.EnderecoRepository
 import java.time.LocalDateTime
 import java.util.*
 
-@SpringBootTest
-class DadoEmpresaServiceTest {
+@ExtendWith(MockitoExtension::class)
+class DadosEmpresaServiceTest {
 
-    private lateinit var dadoEmpresaService: DadoEmpresaService
+    @InjectMocks
+    private lateinit var dadoEmpresaService: DadosEmpresaService
+
+    @Mock
     private lateinit var empresaRepository: DadosEmpresaRepository
+
+    @Mock
     private lateinit var enderecoRepository: EnderecoRepository
 
-    @BeforeEach
-    fun setup() {
-        empresaRepository = mock(DadosEmpresaRepository::class.java)
-        enderecoRepository = mock(EnderecoRepository::class.java)
-        dadoEmpresaService = DadoEmpresaService(empresaRepository, enderecoRepository)
-    }
 
     @Test
     fun `cadastrarEmpresa deve salvar e retornar empresa criada`() {
@@ -202,4 +203,57 @@ class DadoEmpresaServiceTest {
         verify(empresaRepository, times(1)).findById(1L)
         verify(empresaRepository, times(1)).delete(empresaMock)
     }
+
+    @Test
+    fun `buscarEmpresaPorCnpj deve retornar DTO quando encontrar empresa pelo CNPJ`() {
+        val empresaMock = Empresa(
+            id = 1L,
+            nomeEmpresa = "TechForAll",
+            cnpj = "12345678901234",
+            setorIndustria = "Tecnologia",
+            telefoneContato = "999999999",
+            emailCorporativo = "contato@techforall.com",
+            endereco = Endereco(
+                id = 1L,
+                rua = "Rua 1",
+                cidade = "Cidade X",
+                estado = "Estado Y",
+                cep = "12345-678",
+                numero = "123",
+                dataCriacao = LocalDateTime.now(),
+                dataAtualizacao = null
+            )
+        )
+
+        `when`(empresaRepository.findByCnpj("12345678901234")).thenReturn(Optional.of(empresaMock))
+
+        val resultado = dadoEmpresaService.buscarEmpresaPorCnpj("12345678901234")
+
+        assertNotNull(resultado)
+        assertEquals(empresaMock.id, resultado.id)
+        assertEquals(empresaMock.nomeEmpresa, resultado.nomeEmpresa)
+        assertEquals(empresaMock.cnpj, resultado.cnpj)
+        assertEquals(empresaMock.setorIndustria, resultado.setorIndustria)
+        assertEquals(empresaMock.telefoneContato, resultado.telefoneContato)
+        assertEquals(empresaMock.emailCorporativo, resultado.emailCorporativo)
+        assertEquals(empresaMock.endereco, resultado.endereco)
+
+        verify(empresaRepository, times(1)).findByCnpj("12345678901234")
+    }
+
+    @Test
+    fun `buscarEmpresaPorCnpj deve lançar NoSuchElementException quando o CNPJ não for encontrado`() {
+        val cnpj = "98765432109876"
+
+        `when`(empresaRepository.findByCnpj(cnpj)).thenReturn(Optional.empty())
+
+        val exception = assertThrows<NoSuchElementException> {
+            dadoEmpresaService.buscarEmpresaPorCnpj(cnpj)
+        }
+
+        assertEquals("Empresa não encontrada com o CNPJ: $cnpj", exception.message)
+
+        verify(empresaRepository, times(1)).findByCnpj(cnpj)
+    }
+
 }
