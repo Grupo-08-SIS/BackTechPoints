@@ -4,7 +4,7 @@ import techForAll.techPoints.domain.Empresa
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import techForAll.techPoints.domain.Endereco
+import techForAll.techPoints.dtos.EmpresaComEnderecoDto
 import techForAll.techPoints.dtos.EmpresaComRecrutadoresDto
 import techForAll.techPoints.dtos.EmpresaInput
 import techForAll.techPoints.repository.DadosEmpresaRepository
@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 import java.util.NoSuchElementException
 
 @Service
-class DadoEmpresaService @Autowired constructor(
+class DadosEmpresaService @Autowired constructor(
     private val empresaRepository: DadosEmpresaRepository,
     private val enderecoRepository: EnderecoRepository
 ) {
@@ -122,13 +122,4 @@ class DadoEmpresaService @Autowired constructor(
 
 }
 
-data class EmpresaComEnderecoDto(
-    val id: Long,
-    val nomeEmpresa: String,
-    val cnpj: String,
-    val setorIndustria: String,
-    val telefoneContato: String,
-    val emailCorporativo: String,
-    val endereco: Endereco
-)
 

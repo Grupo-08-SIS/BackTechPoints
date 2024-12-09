@@ -217,7 +217,7 @@ class DashboardAdmService@Autowired constructor(
         }
     }
 
-    private fun processarFilaDemografia(idsFila: ArrayBlockingQueue<Long>): DemografiaDto {
+    fun processarFilaDemografia(idsFila: ArrayBlockingQueue<Long>): DemografiaDto {
         val demografia = DemografiaDto()
 
         val tamanhoInicial = idsFila.size
@@ -292,7 +292,7 @@ class DashboardAdmService@Autowired constructor(
         } else  throw NoSuchElementException("Nenhum aluno encontrado")
     }
 
-    private fun processarFilaCursosFeitosPorAlunos(idsFila: ArrayBlockingQueue<Long>): Map<String, Int> {
+    fun processarFilaCursosFeitosPorAlunos(idsFila: ArrayBlockingQueue<Long>): Map<String, Int> {
         val cursosFeitos = mutableMapOf<String, Int>()
 
         while (idsFila.isNotEmpty()) {
@@ -373,7 +373,10 @@ class DashboardAdmService@Autowired constructor(
                             sexo = sexo,
                             etnia = etnia,
                             cnpj = null,
-                            cargoUsuario = null
+                            cargoUsuario = null,
+                            imagemPerfil =  null,
+                            descricao =  null,
+                            nivelAcesso = null
                         )
 
                         usuarioService.cadastrarUsuario(alunoInput)
@@ -473,7 +476,10 @@ class DashboardAdmService@Autowired constructor(
                                 sexo = sexo,
                                 etnia = etnia,
                                 cnpj = null,
-                                cargoUsuario = null
+                                cargoUsuario = null,
+                                imagemPerfil =  null,
+                                descricao =  null,
+                                nivelAcesso =  null
                             )
 
                             usuarioService.cadastrarUsuario(usuarioInput)

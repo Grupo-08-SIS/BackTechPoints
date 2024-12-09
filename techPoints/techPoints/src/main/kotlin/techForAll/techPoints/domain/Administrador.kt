@@ -1,37 +1,23 @@
 package techForAll.techPoints.domain
 
 import jakarta.persistence.*
-import java.time.LocalDate
-import java.time.Period
+import java.time.LocalDateTime
+
 
 @Entity
-@Table(name = "aluno")
-class Aluno(
-
+@Table(name = "administrador")
+class Administrador(
     @Column(nullable = false)
-    var escolaridade: String,
+    var cargo: String,
 
     @Column(nullable = true)
-    var sexo: String?,
-
-    @Column(nullable = true)
-    var etnia: String?,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "endereco_id")
-    var endereco: Endereco,
+    var ultimoAcesso: LocalDateTime? = null,
 
     @Column(nullable = true)
     var descricao: String? = null,
 
-    @Column(nullable = false)
-    var dtNasc: LocalDate,
-
-    @OneToMany(mappedBy = "aluno", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var pontuacoes: MutableList<Pontuacao> = mutableListOf(),
-
-    @OneToMany(mappedBy = "aluno", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var cursos: MutableList<Curso> = mutableListOf(),
+    @Column(nullable = true)
+    var nivelAcesso: Int,
 
     nomeUsuario: String,
     cpf: String,
@@ -51,18 +37,15 @@ class Aluno(
     email = email,
     telefone = telefone,
     imagemPerfil = imagemPerfil,
-    tipoUsuario = 1,
+    tipoUsuario = 3,
     autenticado = autenticado
 ) {
     override fun criarUsuario(endereco: Endereco?, empresa: Empresa?): Usuario {
-        if (endereco == null) throw IllegalArgumentException("Endereço é obrigatório para Aluno")
-        return Aluno(
-            escolaridade = this.escolaridade,
-            sexo = this.sexo,
-            etnia = this.etnia,
-            endereco = endereco,
+        return Administrador(
+            cargo = this.cargo,
+            ultimoAcesso = this.ultimoAcesso,
             descricao = this.descricao,
-            dtNasc = this.dtNasc,
+            nivelAcesso = this.nivelAcesso,
             nomeUsuario = this.nomeUsuario,
             cpf = this.cpf,
             senha = this.senha,
@@ -74,10 +57,4 @@ class Aluno(
             autenticado = this.autenticado
         )
     }
-
-    fun calcularIdade(): Int {
-        return Period.between(this.dtNasc, LocalDate.now()).years
-    }
 }
-
-

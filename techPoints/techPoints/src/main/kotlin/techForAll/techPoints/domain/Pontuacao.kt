@@ -31,7 +31,7 @@ class Pontuacao(
     @JoinColumn(name = "curso_id")
     var curso: CursoMoodle,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "aluno_id")
     var aluno: Aluno
 ) {

@@ -1,6 +1,5 @@
 package techForAll.techPoints.controller
 
-import techForAll.techPoints.service.DadoEmpresaService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -10,15 +9,14 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import techForAll.techPoints.dtos.EmpresaInput
+import techForAll.techPoints.service.DadosEmpresaService
 
 @RestController
 @RequestMapping("/empresa")
 @Validated
 class DadosEmpresaController @Autowired constructor(
-    private val service: DadoEmpresaService
+    private val service: DadosEmpresaService
 ) {
-
-    // TODO: Login and logout endpoints para Empresa
 
     @Operation(
         summary = "Cadastrar dados de uma nova empresa",

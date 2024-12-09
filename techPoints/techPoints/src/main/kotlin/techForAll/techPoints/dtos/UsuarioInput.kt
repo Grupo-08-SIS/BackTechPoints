@@ -19,5 +19,7 @@ data class UsuarioInput (
     val escolaridade: String?,
     val sexo: String?,
     val etnia: String?,
-    val cargoUsuario: String?
+    val cargoUsuario: String?,
+    val descricao: String?,
+    val nivelAcesso: Int?
 )

@@ -1,6 +1,7 @@
 package techForAll.techPoints.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import techForAll.techPoints.domain.Administrador
 import techForAll.techPoints.domain.Aluno
 import techForAll.techPoints.domain.Curso
 import techForAll.techPoints.domain.Recrutador
@@ -17,7 +18,8 @@ class UsuarioService @Autowired constructor(
     private val recrutadorRepository: RecrutadorRepository,
     private val usuarioRepository: UsuarioRepository,
     private val dadosEmpresaRepository: DadosEmpresaRepository,
-    private val enderecoRepository: EnderecoRepository
+    private val enderecoRepository: EnderecoRepository,
+    private val administradorRepository: AdministradorRepository
 
     ) {
 
@@ -65,6 +67,24 @@ class UsuarioService @Autowired constructor(
                 )
                 recrutadorRepository.save(recrutador.criarUsuario(null, empresa) as Recrutador)
             }
+            3 -> {
+                val administrador = Administrador(
+                    cargo = request.cargoUsuario!!,
+                    ultimoAcesso =  null,
+                    descricao = request.descricao!!,
+                    nivelAcesso = request.nivelAcesso!!,
+                    nomeUsuario = request.nomeUsuario,
+                    cpf = request.cpf,
+                    senha = request.senha,
+                    primeiroNome = request.primeiroNome,
+                    sobrenome = request.sobrenome,
+                    email = request.email,
+                    telefone = request.telefone,
+                    imagemPerfil = null,
+                    autenticado = request.autenticado
+                )
+                administradorRepository.save(administrador.criarUsuario(null, null) as Administrador)
+            }
 
             else -> throw IllegalArgumentException("Tipo de usuário inválido")
         }
@@ -94,6 +114,7 @@ class UsuarioService @Autowired constructor(
         return when (tipo?.lowercase()) {
             "aluno" -> usuarioRepository.findAll().filterIsInstance<Aluno>().map { aluno -> mapearUsuario(aluno) }
             "recrutador" -> usuarioRepository.findAll().filterIsInstance<Recrutador>().map { recrutador -> mapearUsuario(recrutador) }
+            "administrador" -> usuarioRepository.findAll().filterIsInstance<Administrador>().map { administrador -> mapearUsuario(administrador) }
             else -> usuarioRepository.findAll().map { usuario -> mapearUsuario(usuario) }
         }
     }
@@ -108,11 +129,16 @@ class UsuarioService @Autowired constructor(
         val usuario = usuarioRepository.findByEmail(email)
             ?: throw IllegalArgumentException("Usuário não encontrado")
 
+        if (usuario is Administrador) {
+            usuario.ultimoAcesso = LocalDateTime.now()
+        }
+
         usuario.login(senha)
         usuarioRepository.save(usuario)
 
         return mapearUsuario(usuario)
     }
+
 
     fun logoffUsuario(idUsuario: Long) {
         val usuario = usuarioRepository.findById(idUsuario)
@@ -152,7 +178,11 @@ class UsuarioService @Autowired constructor(
                 atualizacao["cargoUsuario"]?.let { usuarioExistente.cargoUsuario = it as String }
             }
 
-
+            if (usuarioExistente is Administrador) {
+                atualizacao["cargo"]?.let { usuarioExistente.cargo = it as String }
+                atualizacao["descricao"]?.let { usuarioExistente.descricao = it as String }
+                atualizacao["nivelAcesso"]?.let { usuarioExistente.nivelAcesso = it as Int }
+            }
 
         usuarioRepository.save(usuarioExistente)
 
@@ -166,10 +196,6 @@ class UsuarioService @Autowired constructor(
 
         val usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow { NoSuchElementException("Usuário não encontrado") }
-
-        if (usuario == null) {
-            throw NoSuchElementException("Usuário não encontrado para o ID: $idUsuario")
-        }
 
         usuario.imagemPerfil = novaFoto
         usuarioRepository.save(usuario)
@@ -194,7 +220,7 @@ class UsuarioService @Autowired constructor(
         }
     }
 
-    private fun mapearUsuario(usuario: Any): Map<String, Any?> {
+    fun mapearUsuario(usuario: Any): Map<String, Any?> {
         return when (usuario) {
             is Aluno -> mapOf(
                 "id" to usuario.id,
@@ -242,6 +268,25 @@ class UsuarioService @Autowired constructor(
                     "dataCriacao" to usuario.empresa.dataCriacao,
                     "recrutadores" to usuario.empresa.recrutadores.map { it.nomeUsuario }
                 )
+            )
+            is Administrador -> mapOf(
+                "id" to usuario.id,
+                "nomeUsuario" to usuario.nomeUsuario,
+                "cpf" to usuario.cpf,
+                "primeiroNome" to usuario.primeiroNome,
+                "sobrenome" to usuario.sobrenome,
+                "email" to usuario.email,
+                "telefone" to usuario.telefone,
+                "tipoUsuario" to "Administrador",
+                "autenticado" to usuario.autenticado,
+                "cargo" to usuario.cargo,
+                "descricao" to usuario.descricao,
+                "nivelAcesso" to usuario.nivelAcesso,
+                "ultimoAcesso" to usuario.ultimoAcesso,
+                "dataCriacao" to usuario.dataCriacao,
+                "dataAtualizacao" to usuario.dataAtualizacao,
+                "deletado" to usuario.deletado,
+                "dataDeletado" to usuario.dataDeletado
             )
             else -> throw IllegalStateException("Tipo de usuário desconhecido")
         }

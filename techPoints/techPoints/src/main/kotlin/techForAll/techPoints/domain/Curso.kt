@@ -24,7 +24,7 @@ class  Curso(
     @Column(nullable = false)
     var totalAtividadesDoAluno: Int,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "aluno_id")
     var aluno: Aluno
 )
