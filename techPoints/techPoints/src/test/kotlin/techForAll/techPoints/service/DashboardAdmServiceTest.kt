@@ -18,7 +18,6 @@ import java.util.concurrent.ArrayBlockingQueue
 
 class DashboardAdmServiceTest {
 
-    private val demografiaDto = DemografiaDto()
     private val dashAdmRepository: DashboardAdmRepository = mock()
     private val enderecoRepository: EnderecoRepository = mock()
     private val enderecoService: EnderecoService = mock()
@@ -88,6 +87,66 @@ class DashboardAdmServiceTest {
     }
 
     @Test
+    fun `deve lancar excecao quando lista de alunos estiver vazia`() {
+
+        val tipoLista = "contratados"
+        val idEmpresa: Long? = 1L
+
+        `when`(dashAdmService.getAlunosPorTipoLista(tipoLista, idEmpresa)).thenReturn(emptyList())
+
+        val exception = assertThrows<NoSuchElementException> {
+            dashAdmService.getDemografiaPorTipoLista(tipoLista, idEmpresa)
+        }
+
+        assertEquals("Nenhum aluno encontrado", exception.message)
+    }
+
+
+    @Test
+    fun `deve processar lista de strings e retornar ArrayBlockingQueue com ids`() {
+
+        val idStrings = listOf("[1, 2, 3]", "[4, 5]")
+
+        val resultado = dashAdmService.processarIdsJson(idStrings)
+
+        assertEquals(5, resultado.size)
+        assertTrue(resultado.containsAll(listOf(1L, 2L, 3L, 4L, 5L)))
+    }
+
+    @Test
+    fun `deve processar array de strings e retornar ArrayBlockingQueue com ids`() {
+
+        val idStrings = listOf(arrayOf("[1, 2]", "[3, 4]"))
+
+        val resultado = dashAdmService.processarIdsJson(idStrings)
+
+        assertEquals(4, resultado.size)
+        assertTrue(resultado.containsAll(listOf(1L, 2L, 3L, 4L)))
+    }
+
+    @Test
+    fun `deve lançar exceção quando entrada estiver vazia ou inválida`() {
+
+        val idStrings = listOf<String>()
+
+        assertThrows<NoSuchElementException> {
+            dashAdmService.processarIdsJson(idStrings)
+        }
+    }
+
+    @Test
+    fun `deve ignorar valores nao numericos na lista`() {
+
+        val idStrings = listOf("[1, 2, abc, 4]", "[5, xyz]")
+
+
+        val resultado = dashAdmService.processarIdsJson(idStrings)
+
+        assertEquals(4, resultado.size)
+        assertTrue(resultado.containsAll(listOf(1L, 2L, 4L, 5L)))
+    }
+
+        @Test
     fun `gerarRelatorioTXT deve executar sem erros`() {
 
 
