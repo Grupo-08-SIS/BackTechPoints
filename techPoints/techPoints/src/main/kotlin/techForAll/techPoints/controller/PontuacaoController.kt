@@ -1,6 +1,9 @@
 package techForAll.techPoints.controller
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,92 +20,104 @@ class PontuacaoController @Autowired constructor(
     private val service: PontuacaoService
 ) {
 
+    @Operation(
+        summary = "Recuperar pontos agrupados por curso",
+        description = "Retorna as pontuações agrupadas por curso de um aluno, podendo filtrar por um intervalo de datas."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Pontuações retornadas com sucesso."),
+            ApiResponse(responseCode = "400", description = "Erro no processamento dos dados de entrada."),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+        ]
+    )
     @GetMapping("/{idAluno}")
     fun recuperarPontosAtividadeAgrupadoCurso(
-        @PathVariable idAluno: Long,
+        @PathVariable
+        @Parameter(description = "ID do aluno") idAluno: Long,
         @RequestParam(required = false) dataInicio: String?,
         @RequestParam(required = false) dataFim: String?
     ): Map<Long, List<PontuacaoComPontosDTO>> {
-
         val dataInicioParsed = dataInicio?.let { LocalDate.parse(it) }
         val dataFimParsed = dataFim?.let { LocalDate.parse(it) }
-
         return service.recuperarTodosCursosAlunoPontuacao(idAluno, dataInicioParsed, dataFimParsed)
     }
 
-
+    @Operation(
+        summary = "Recuperar KPI semanal",
+        description = "Retorna as métricas de desempenho do aluno na semana atual e anterior."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "KPIs retornados com sucesso."),
+            ApiResponse(responseCode = "404", description = "Aluno não encontrado."),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+        ]
+    )
     @GetMapping("/kpi-semana/{idAluno}")
-    fun recuperarKPISemana(@PathVariable idAluno: Long): Map<String, Map<Long, Int>>{
-
-        return service.recuperarKPISemanaPassadaAndAtual(idAluno);
+    fun recuperarKPISemana(
+        @PathVariable
+        @Parameter(description = "ID do aluno") idAluno: Long
+    ): Map<String, Map<Long, Int>> {
+        return service.recuperarKPISemanaPassadaAndAtual(idAluno)
     }
 
+    @Operation(
+        summary = "Recuperar KPI de entregas",
+        description = "Retorna as métricas de entregas realizadas pelo aluno em um intervalo de datas."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "KPIs retornados com sucesso."),
+            ApiResponse(responseCode = "404", description = "Aluno não encontrado."),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+        ]
+    )
     @GetMapping("/kpi-entregas/{idAluno}")
     fun recuperarKPIEntrega(
-        @PathVariable idAluno: Long,
+        @PathVariable
+        @Parameter(description = "ID do aluno") idAluno: Long,
         @RequestParam(required = false) dataInicio: String?,
         @RequestParam(required = false) dataFim: String?
     ): Map<String, Int> {
-
         return service.recuperarKPIEntregas(idAluno, dataInicio, dataFim)
     }
 
-
-    @GetMapping("/pontos-mes/{idAluno}")
-    fun recuperarPontosPorMes(@PathVariable idAluno: Long): Map<Pair<Long, String>, Map<YearMonth, Int>> {
-
-        return service.recuperarPontosConquistadosPorMes(idAluno);
-    }
-
-    @GetMapping("/pontos-totais/{idAluno}")
-    fun recuperarPontosTotaisPorCurso(
-        @PathVariable idAluno: Long,
-        @RequestParam(required = false) dataInicio: LocalDate?,
-        @RequestParam(required = false) dataFim: LocalDate?
-    ): Map<Long, Map<String, Any>> {
-        return service.recuperarPontosTotaisPorCurso(idAluno, dataInicio, dataFim)
-    }
-
-    @GetMapping("/ranking")
-    fun recuperarRankingPorCurso(): Map<Long, Map<String, Any>> {
-        return service.recuperarRankingPorCurso()
-    }
-
-    @GetMapping("/alunos")
-    fun recuperarRankingComFiltros(
-        @RequestParam(required = false) idade: Int?,
-        @RequestParam(required = false) primeiroNome: String?,
-        @RequestParam(required = false) escolaridade: String?,
-        @RequestParam(required = false) sobrenome: String?,
-        @RequestParam(required = false) etnia: String?,
-        @RequestParam(required = false) sexo: String?,
-        @RequestParam(required = false) cidade: String?,
-        @RequestParam(required = false) cursoId: Long?
-    ): ResponseEntity<Map<Long, Map<String, Any>>> {
-        val ranking = service.recuperarRankingComFiltro(idade, primeiroNome, sobrenome, etnia, sexo, escolaridade, cidade, cursoId)
-
-        return if (ranking.isEmpty()) {
-            ResponseEntity.noContent().build()
-        } else {
-            ResponseEntity.ok(ranking)
-        }
-    }
-
-    @GetMapping("/lista")
     @Operation(
-        summary = "Recuperar lista de alunos",
-        description = "Endpoint para recuperar listas associadas a um aluno específico pelo seu ID."
+        summary = "Recuperar pontuação mensal",
+        description = "Retorna a pontuação acumulada por mês agrupada por cursos do aluno."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Pontuações retornadas com sucesso."),
+            ApiResponse(responseCode = "404", description = "Aluno não encontrado."),
+            ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
+        ]
+    )
+    @GetMapping("/pontos-mes/{idAluno}")
+    fun recuperarPontosPorMes(
+        @PathVariable
+        @Parameter(description = "ID do aluno") idAluno: Long
+    ): Map<Pair<Long, String>, Map<YearMonth, Int>> {
+        return service.recuperarPontosConquistadosPorMes(idAluno)
+    }
+
+    @Operation(
+        summary = "Recuperar listas do aluno",
+        description = "Retorna as listas associadas a um aluno pelo ID."
     )
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Listas recuperadas com sucesso."),
             ApiResponse(responseCode = "204", description = "Nenhuma lista encontrada."),
-            ApiResponse(responseCode = "400", description = "ID do aluno inválido."),
+            ApiResponse(responseCode = "400", description = "ID inválido."),
             ApiResponse(responseCode = "500", description = "Erro interno do servidor.")
         ]
     )
+    @GetMapping("/lista")
     fun recuperarAlunoLista(
-        @RequestParam(required = true) idAluno: Long
+        @RequestParam
+        @Parameter(description = "ID do aluno") idAluno: Long
     ): ResponseEntity<Any> {
         return try {
             if (idAluno <= 0) {

@@ -41,7 +41,7 @@ class DashboardRecrutadorService @Autowired constructor(
 
         when (novaLista) {
             "favoritos" -> recrutador.favoritos = recrutador.favoritos + idAluno
-            "interessados" -> recrutador.interessados = recrutador.interessados + idAluno
+                "interessados" -> recrutador.interessados = recrutador.interessados + idAluno
             "processoSeletivo" -> recrutador.processoSeletivo = recrutador.processoSeletivo + idAluno
             "contratados" -> recrutador.contratados = recrutador.contratados + idAluno
             "cancelados" -> recrutador.cancelados = recrutador.cancelados + idAluno
